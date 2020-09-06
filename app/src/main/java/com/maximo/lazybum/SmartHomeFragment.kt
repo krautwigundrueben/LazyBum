@@ -2,60 +2,65 @@ package com.maximo.lazybum
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.maximo.lazybum.dummy.DummyContent
+import kotlinx.android.synthetic.main.fragment_smart_home.view.*
 
-/**
- * A fragment representing a list of Items.
- */
 class SmartHomeFragment : Fragment() {
 
-    private var columnCount = 1
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+        val deviceList = mutableListOf<Device>()
 
-        arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-        }
-    }
+        deviceList.add(
+            Device(
+                0,
+                "Kaffeemaschine",
+                "Küche",
+                R.drawable.ic_coffee,
+                "http://192.168.178.34",
+                false,
+                Command("","","","",0)
+            )
+        )
+        deviceList.add(
+            Device(
+                1,
+                "LED Grid",
+                "Wohnzimmer",
+                R.drawable.ic_led_grid,
+                "http://192.168.178.32",
+                false,
+                Command("toggle", "", "33000000", "rgb", 2000)
+            )
+        )
+        deviceList.add(
+            Device(
+                2,
+                "Strahler",
+                "Wohnzimmer",
+                R.drawable.ic_spots,
+                "http://192.168.178.45",
+                false,
+                Command("toggle", "40", "", "", 0)
+            ))
+        deviceList.add(
+            Device(
+                3,
+                "Esstischlampe",
+                "Essbereich",
+                R.drawable.ic_dining,
+                "http://192.168.178.46",
+                false,
+                Command("toggle", "", "", "", 0)
+            )
+        )
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
         val view = inflater.inflate(R.layout.fragment_smart_home, container, false)
+        val listView = view.smart_home_list
+        listView.adapter = MyListAdapter(requireContext(), R.layout.row, deviceList)
 
-        // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
-                }
-                adapter = MyItemRecyclerViewAdapter(DummyContent.ITEMS)
-            }
-        }
         return view
-    }
-
-    companion object {
-
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
-
-        // TODO: Customize parameter initialization
-        @JvmStatic
-        fun newInstance(columnCount: Int) =
-            SmartHomeFragment().apply {
-                arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                }
-            }
     }
 }

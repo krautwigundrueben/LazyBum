@@ -1,12 +1,9 @@
-package com.maximo.lazybum.ui.main
+package com.maximo.lazybum
 
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import com.maximo.lazybum.MediaFragment
-import com.maximo.lazybum.SmartHomeFragment
-import com.maximo.lazybum.R
 
 private val TAB_TITLES = arrayOf(
         R.string.tab_smart_home,

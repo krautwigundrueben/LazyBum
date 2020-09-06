@@ -1,7 +1,8 @@
 <resources>
-    <string name="app_name">Lazybum</string>
-    <string name="tab_smart_home">Smart Home</string>
+    <string name="app_name">LazyBum</string>
+    <string name="tab_smart_home">Geräte</string>
     <string name="tab_media">Medien</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="device_icon_image">Device Icon Image</string>
+    <string name="device_list_title">Main Title</string>
+    <string name="device_list_sub_title">Sub Title</string>
 </resources>

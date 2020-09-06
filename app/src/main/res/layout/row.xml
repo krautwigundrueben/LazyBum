@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="64dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        app:srcCompat="@drawable/ic_coffee"
+        android:contentDescription="@string/device_icon_image"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="8dp"
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/device_list_title"
+            android:textColor="#000"
+            android:textStyle="bold"
+            android:layout_margin="5dp"
+            android:textSize="20sp"
+            android:id="@+id/textTitle"
+            />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/device_list_sub_title"
+            android:textColor="#a9a9a9"
+            android:textStyle="bold"
+            android:layout_margin="5dp"
+            android:textSize="15sp"
+            android:id="@+id/textLocation"
+            />
+
+    </LinearLayout>
+
+</LinearLayout>
