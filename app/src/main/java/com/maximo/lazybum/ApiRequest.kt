@@ -39,4 +39,10 @@ interface ApiRequest {
     fun set(
         @Query("turn") turn: String
     ): Call<JsonObject>
+
+    // my Arduino Mega
+    @POST("/")
+    fun sendCommand(
+        @Query("cmd") command: String
+    ): Call<StringBuffer>
 }

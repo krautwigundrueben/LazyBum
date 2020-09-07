@@ -55,5 +55,8 @@ dependencies {
 
     // retrofit log files
     implementation 'com.squareup.okhttp3:logging-interceptor:3.8.0'
-    implementation "org.jetbrains.kotlin:kotlin-reflect:1.4.0"
+    implementation 'org.jetbrains.kotlin:kotlin-reflect:1.4.0'
+
+    // circular seek bar
+    implementation 'com.sdsmdg.harjot:croller:1.0.7'
 }

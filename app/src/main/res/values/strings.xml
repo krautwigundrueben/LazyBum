@@ -5,4 +5,5 @@
     <string name="device_icon_image">Device Icon Image</string>
     <string name="device_list_title">Main Title</string>
     <string name="device_list_sub_title">Sub Title</string>
+    <string name="textSeekbar">Off</string>
 </resources>

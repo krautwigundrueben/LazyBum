@@ -19,7 +19,7 @@ class SmartHomeFragment : Fragment() {
                 "Kaffeemaschine",
                 "Küche",
                 R.drawable.ic_coffee,
-                "http://192.168.178.34",
+                "http://192.168.178.47",
                 false,
                 Command("","","","",0)
             )
@@ -54,6 +54,17 @@ class SmartHomeFragment : Fragment() {
                 "http://192.168.178.46",
                 false,
                 Command("toggle", "", "", "", 0)
+            )
+        )
+        deviceList.add(
+            Device(
+                4,
+                "Fernseher",
+                "Wohnzimmer",
+                R.drawable.ic_monitor,
+                "http://192.168.178.43",
+                false,
+                Command("","","","",0)
             )
         )
 

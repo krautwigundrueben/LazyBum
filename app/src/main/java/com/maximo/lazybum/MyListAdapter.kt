@@ -154,6 +154,30 @@ class MyListAdapter(var mCtx: Context, var resources: Int, var items: MutableLis
                             }
                         }
                     }
+                    else -> {
+                        val response: Response<StringBuffer>
+
+                        try {
+                            response = api.sendCommand(command.action).awaitResponse()
+
+                            if (response.isSuccessful) {
+                                val data = response.body()
+                                println(data)
+                            } else {
+                                Log.d(TAG, response.body().toString())
+                                Log.d(TAG, response.code().toString())
+                            }
+
+                            withContext(Dispatchers.Main) {
+
+                            }
+
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                //Toast.makeText(mCtx, "Something went wrong", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                    }
                 }
 
                 withContext(Dispatchers.Main) {

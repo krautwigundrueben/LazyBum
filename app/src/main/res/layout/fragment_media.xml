@@ -1,12 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <ListView
+        android:id="@+id/media_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/media_list">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        tools:listitem="@layout/row">
 
     </ListView>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <com.sdsmdg.harjot.crollerTest.Croller
+            android:id="@+id/croller"
+            android:layout_width="match_parent"
+            android:layout_height="260dp"
+            android:layout_gravity="bottom"
+            android:layout_centerInParent="true"
+            app:back_circle_color="#CDCDCD"
+            app:indicator_color="@color/colorPrimary"
+            app:indicator_width="14"
+            app:is_continuous="false"
+            app:label_color="#000000"
+            app:label=""
+            app:main_circle_color="#FFFFFF"
+            app:max="120"
+            app:progress_primary_circle_size="10"
+            app:progress_primary_color="@color/colorPrimary"
+            app:progress_secondary_circle_size="10"
+            app:progress_secondary_color="#DDDDDD"
+            app:start_offset="45" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/textSeekbar"
+            tools:visibility="visible" />
+
+    </RelativeLayout>
 </RelativeLayout>
