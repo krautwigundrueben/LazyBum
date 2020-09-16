@@ -1,15 +1,24 @@
 package com.maximo.lazybum
 
+import android.content.Context
+import android.content.SharedPreferences
+import android.graphics.PorterDuff
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
+import com.google.gson.Gson
+import com.google.gson.JsonObject
+import com.maximo.lazybum.Devices.arduinoApi.*
 import com.sdsmdg.harjot.crollerTest.Croller
 import com.sdsmdg.harjot.crollerTest.OnCrollerChangeListener
 import kotlinx.android.synthetic.main.fragment_media.view.*
+import kotlinx.android.synthetic.main.row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -21,90 +30,69 @@ import retrofit2.Retrofit
 import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MediaFragment : Fragment() {
+const val arduinoBaseUrl = "http://192.168.178.108"
 
-    val TAG = "MediaFragment"
+class MediaFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val arduino = Device(
-            108,
-            "Arduino",
-            "Wohnzimmer",
-            R.drawable.ic_monitor,
-            "http://192.168.178.108",
-            false,
-            Command("", "", "", "", 0)
-        )
+        val arduino = Arduino(AvRec(false, 1, "aus"), SkyRec(false))
 
         val deviceList = mutableListOf<Device>()
-
-        deviceList.add(
-            Device(
-                5,
-                "Sky fernsehen",
-                "Wohnzimmer",
-                R.drawable.ic_monitor,
-                arduino.base_url,
-                false,
-                Command("TV", "", "", "", 0)
-            )
-        )
-        deviceList.add(
-            Device(
-                6,
-                "Bose Soundtouch",
-                "Wohnzimmer",
-                R.drawable.ic_monitor,
-                arduino.base_url,
-                false,
-                Command("Bose", "", "", "", 0)
-            )
-        )
-        deviceList.add(
-            Device(
-                99,
-                "Alles ausschalten",
-                "Wohnzimmer",
-                R.drawable.ic_coffee,
-                arduino.base_url,
-                false,
-                Command("DvcsOff", "", "", "", 0)
-            )
-        )
+        deviceList.addAll(listOf(skyReceiver, boseSoundtouch, chromecast, allOff))
 
         val view = inflater.inflate(R.layout.fragment_media, container, false)
         val listView = view.media_list
         listView.adapter = MyListAdapter(requireContext(), R.layout.row, deviceList)
 
+        listView.setOnItemClickListener { parent, v, position, id ->
+            execute(arduino, deviceList[position].command.action, listView)
+        }
+
         val croller: Croller = view.croller
 
         val obj = object : OnCrollerChangeListener {
+            override fun onProgressChanged(croller: Croller?, progress: Int) {
+                if (arduino.AvRec.isOn) {
+                    view!!.textView.text = (progress + 40).toString()
+                }
+            }
 
-            override fun onProgressChanged(croller: Croller?, progress: Int) { }
             override fun onStartTrackingTouch(croller: Croller?) { }
 
             override fun onStopTrackingTouch(croller: Croller?) {
-
                 /*
                 volume of AV Receiver has to be calculated according the boundary values:
                 value in dB | description   | receiver annotation   | progress of seekbar
                 -60dB       | silent        | 040VL                 | 0
                 0dB         | loud!         | 160VL                 | 120
                 */
-
                 val seekbarProgress = croller?.progress!!
                 val volInRecAnnotation = (seekbarProgress + 40).toString().padStart(3, '0') + "VL"
 
-                execute(arduino, Command(volInRecAnnotation, "", "", "", 0))
+                execute(arduino, volInRecAnnotation, listView)
             }
         }
         croller.setOnCrollerChangeListener(obj)
 
+        // get status and set status colors anew
+        execute(arduino, "getStatus", listView)
+
+        // respond to Lisas phone settings
+        val sharedPreferences: SharedPreferences = requireContext().getSharedPreferences("app",
+            Context.MODE_PRIVATE)
+        if (sharedPreferences.getBoolean("isLargeAppearance", true)) {
+            view.croller.layoutParams.height = 840
+        }
+
         return view
     }
 
-    private fun execute(device: Device, command: Command) {
+    private fun execute(arduino: Arduino, cmd: String, listView: ListView) {
+
+        // reset colors to off
+        for (itemView in listView) itemView.imageView.setColorFilter(ContextCompat.getColor(
+            requireContext(), R.color.colorOff), PorterDuff.Mode.SRC_IN)
 
         val client = OkHttpClient().newBuilder()
             .addInterceptor(HttpLoggingInterceptor().apply {
@@ -113,7 +101,7 @@ class MediaFragment : Fragment() {
             .build()
 
         val api = Retrofit.Builder()
-            .baseUrl(device.base_url)
+            .baseUrl(arduinoBaseUrl)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
@@ -121,59 +109,59 @@ class MediaFragment : Fragment() {
 
         GlobalScope.launch(Dispatchers.IO) {
 
-            val response: Response<StringBuffer>
+            val response: Response<JsonObject>
 
             try {
-                response = api.sendCommand(command.action).awaitResponse()
+                response = api.sendCommand(cmd).awaitResponse()
 
                 if (response.isSuccessful) {
                     val data = response.body()
-                    println(data)
-                } else {
-                    Log.d(TAG, response.body().toString())
-                    Log.d(TAG, response.code().toString())
+                    arduino.AvRec = Gson().fromJson(data, Arduino::class.java).AvRec
+                    arduino.SkyRec = Gson().fromJson(data, Arduino::class.java).SkyRec
                 }
 
                 withContext(Dispatchers.Main) {
+                    if (arduino.AvRec.isOn) {
+                        view!!.croller.indicatorColor = resources.getColor(R.color.colorAccent, context?.theme)
 
+                        when (arduino.AvRec.mode) {
+                            // AvRec Modes: 1 = Sky, 3 = Chromecast, 4 = Bose
+                            1 -> listView.getChildAt(0).imageView.setColorFilter(ContextCompat.getColor(
+                                requireContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN)
+                            2 -> listView.getChildAt(2).imageView.setColorFilter(ContextCompat.getColor(
+                                requireContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN)
+                            4 -> listView.getChildAt(1).imageView.setColorFilter(ContextCompat.getColor(
+                                requireContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN)
+                        }
+                        view!!.textView.text = arduino.AvRec.vol.trimStart('0')
+                        view!!.croller.progress = arduino.AvRec.vol.toInt() - 40
+                    }
+                    else {
+                        view!!.textView.text = resources.getString(R.string.textSeekbar)
+                        view!!.croller.progress = 0
+                        view!!.croller.indicatorColor = View.GONE
+                    }
                 }
-
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    //Toast.makeText(mCtx, "Something went wrong", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
-}
 
-/*
-BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()));
-            while ((state = bufferedReader.readLine()) != null && !state.isEmpty()) {
-                // states werden ';'-getrennt, z. B. Beamer_On=true;AVRec_On=false;...
-                decodedResponse = decodedResponse + state + ";";
-            }
-        } catch (Exception e) {
-        }
+    companion object {
 
-        return decodedResponse;
+        private val skyReceiver = Device(0,"Sky Receiver","Wohnzimmer", R.drawable.ic_monitor,
+            arduinoBaseUrl,false, Command("TV", "", "", "", 0))
+
+        private val boseSoundtouch = Device(1,"Bose Soundtouch","Wohnzimmer", R.drawable.ic_music,
+            arduinoBaseUrl,false, Command("Bose", "", "", "", 0))
+
+        private val chromecast = Device(2,"Chromecast","Wohnzimmer", R.drawable.ic_film,
+            arduinoBaseUrl,false, Command("CCaudio", "", "", "", 0))
+
+        private val allOff = Device(3,"Alles ausschalten","Wohnzimmer", R.drawable.ic_power_off,
+            arduinoBaseUrl,false, Command("DvcsOff", "", "", "", 0))
     }
-
-    protected void onPostExecute(String result) {
-
-        // jede Response enthält aktuelle states (';'-getrennt), welche
-        // als Boolean an App-Variablen übergeben werden
-        String[] states = result.split(";");
-        Boolean[] statesBool = new Boolean[states.length];
-
-        for (int i = 0; i < states.length; i++) {
-            if (states[i].contains("false")) statesBool[i] = false;
-            else statesBool[i] = true;
-        }
-
-        MainActivity.AVRec_On = statesBool[0];
-        MainActivity.SkyRec_On = statesBool[1];
-        MainActivity.Beamer_On = statesBool[2];
-        MainActivity.lDesk_On = statesBool[3];
-        MainActivity.lFloor_On = statesBool[4];
- */
+}

@@ -44,5 +44,5 @@ interface ApiRequest {
     @POST("/")
     fun sendCommand(
         @Query("cmd") command: String
-    ): Call<StringBuffer>
+    ): Call<JsonObject>
 }
