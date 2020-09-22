@@ -7,7 +7,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.maximo.lazybum"
+        applicationId 'de.krautwigundrueben.lazybum'
         minSdkVersion 28
         targetSdkVersion 30
         versionCode 1
@@ -29,6 +29,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            applicationIdSuffix 'lazybum_next'
         }
     }
 }
@@ -54,9 +55,15 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     // retrofit log files
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.8.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
     implementation 'org.jetbrains.kotlin:kotlin-reflect:1.4.10'
 
     // circular seek bar
     implementation 'com.sdsmdg.harjot:croller:1.0.7'
+
+    // color picker
+    implementation 'com.github.QuadFlask:colorpicker:0.0.15'
+
+    // brightness picker
+    implementation 'com.github.Chrisvin:RubberPicker:v1.5'
 }
