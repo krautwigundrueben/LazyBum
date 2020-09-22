@@ -8,11 +8,11 @@
 
     <com.jem.rubberpicker.RubberSeekBar
         android:id="@+id/rubberSeekBar"
-        android:paddingTop="64dp"
+        android:layout_marginVertical="48dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:minValue="0"
-        app:maxValue="100"
+        app:minValue="15"
+        app:maxValue="70"
         app:elasticBehavior="cubic"
         app:dampingRatio="0.3"
         app:stiffness="300"

@@ -171,7 +171,7 @@ class MediaFragment : Fragment() {
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                         view!!.textView.text = resources.getString(R.string.textSeekbar)
                         view!!.croller.progress = 0
                         view!!.croller.indicatorColor = View.GONE

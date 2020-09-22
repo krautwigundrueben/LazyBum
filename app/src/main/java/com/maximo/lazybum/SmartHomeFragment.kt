@@ -47,7 +47,7 @@ private const val baseUrl = "http://192.168.178."
 class SmartHomeFragment : Fragment() {
 
     val deviceList = mutableListOf<Device>()
-    var gridColor = 0xff00ff00.toInt()
+    var gridColor = 0xff0000ff.toInt()
     var spotBrightness = 0
 
     override fun onCreateView(
@@ -104,7 +104,7 @@ class SmartHomeFragment : Fragment() {
                         override fun onStartTrackingTouch(seekBar: RubberSeekBar) {}
 
                         override fun onStopTrackingTouch(seekBar: RubberSeekBar) {
-                            execute(deviceList[2], Command("on", spotBrightness.toString(), "", "", 0), listView)
+                            execute(deviceList[position], Command("on", spotBrightness.toString(), "", "", 0), listView)
                         }
                     })
 
@@ -215,6 +215,7 @@ class SmartHomeFragment : Fragment() {
                                 }
                             }
                             if (device.isOn) spotBrightness = mSpotBrightness
+                            else spotBrightness = 0
                         }
                         3 -> {
                             if (command.action == "getStatus") {
@@ -258,7 +259,7 @@ class SmartHomeFragment : Fragment() {
 
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
