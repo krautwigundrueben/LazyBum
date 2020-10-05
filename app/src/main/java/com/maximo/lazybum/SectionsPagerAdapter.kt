@@ -6,8 +6,9 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 
 private val TAB_TITLES = arrayOf(
-        R.string.tab_smart_home,
-        R.string.tab_media
+    R.string.tab_devices,
+    R.string.tab_av_receiver,
+    R.string.tab_roller
 )
 
 /**
@@ -20,9 +21,10 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
     override fun getItem(position: Int): Fragment {
         // getItem is called to instantiate the fragment for the given page.
         when (position) {
-            0 -> return SmartHomeFragment()
-            1 -> return MediaFragment()
-            else -> return SmartHomeFragment()
+            0 -> return DevicesFragment()
+            1 -> return AvReceiverFragment()
+            2 -> return RollerFragment()
+            else -> return DevicesFragment()
         }
     }
 
@@ -31,7 +33,7 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
     }
 
     override fun getCount(): Int {
-        // Show 2 total pages.
-        return 2
+        // Show 3 total pages.
+        return 3
     }
 }

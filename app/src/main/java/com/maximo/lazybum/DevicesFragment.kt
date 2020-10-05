@@ -22,10 +22,7 @@ import com.maximo.lazybum.Devices.arduinoApi.Command
 import com.maximo.lazybum.Devices.arduinoApi.Device
 import com.maximo.lazybum.myStromApi.D8E3D9494
 import com.maximo.lazybum.myStromApi.Relay
-import com.maximo.lazybum.shellyApi.ShellyLight
-import com.maximo.lazybum.shellyApi.ShellyLightsStatus
-import com.maximo.lazybum.shellyApi.ShellyRelay
-import com.maximo.lazybum.shellyApi.ShellyRelayStatus
+import com.maximo.lazybum.shellyApi.*
 import kotlinx.android.synthetic.main.brightness_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_smart_home.view.*
 import kotlinx.android.synthetic.main.row.view.*
@@ -34,6 +31,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
+import okhttp3.internal.immutableListOf
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -44,32 +42,53 @@ import java.util.concurrent.TimeUnit
 
 private const val baseUrl = "http://192.168.178."
 
-class SmartHomeFragment : Fragment() {
+class DevicesFragment : Fragment() {
 
-    val deviceList = mutableListOf<Device>()
+    val deviceList = mutableListOf<Device>(coffee, diningLight, grid, spots, tv, skyReceiver)
     var gridColor = 0xff0000ff.toInt()
     var spotBrightness = 0
+    val supportedWifiSsids = immutableListOf<String>("\"DasWeltweiteInternetz\"", "\"AndroidWifi\"")
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        deviceList.addAll(listOf(coffee, grid, spots, diningLight, tv, skyReceiver, shutter))
+        val sectionHeaderList = immutableListOf<ListItem>(
+            SectionHeader(title = "Küche"),
+            SectionHeader(title = "Essbereich"),
+            SectionHeader(title = "Wohnzimmer"))
+
+        val btnListView = mutableListOf<ListItem>()
+        val headerPositions = intArrayOf(0, 2, 4)
+        var h = 0
+        var d = 0
+        val lastListItem = deviceList.size + sectionHeaderList.size - 1
+        for (i in 0..lastListItem)
+        {
+            if (i in headerPositions) {
+                btnListView.add(sectionHeaderList[h])
+                h++
+            }
+            else {
+                btnListView.add(deviceList[d])
+                d++
+            }
+        }
 
         val view = inflater.inflate(R.layout.fragment_smart_home, container, false)
         val listView = view.smart_home_list
-        listView.adapter = MyListAdapter(requireContext(), R.layout.row, deviceList)
+        listView.adapter = MyListAdapter(requireContext(), btnListView)
 
         listView.setOnItemClickListener { parent, v, position, id ->
-            execute(deviceList[position], deviceList[position].command, listView)
+            if (position !in headerPositions) {
+                val clickedDevice = btnListView[position] as Device
+                execute(clickedDevice, clickedDevice.command, listView)
+            }
         }
 
         listView.setOnItemLongClickListener { parent, v, position, id ->
-
-            when (position) {
-                1 -> ColorPickerDialogBuilder
+            if (position !in headerPositions) {
+                val clickedDevice = btnListView[position] as Device
+                when (clickedDevice.id) {
+                    5 -> ColorPickerDialogBuilder
                         .with(context)
                         .setTitle("Farbe wählen")
                         .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
@@ -78,36 +97,46 @@ class SmartHomeFragment : Fragment() {
                         .lightnessSliderOnly()
                         .setOnColorSelectedListener { selectedColor ->
                             val color = "00" + Integer.toHexString(selectedColor).takeLast(6)
-                            execute(deviceList[position], Command("on", "", color, "rgb", 0), listView)
+                            execute(deviceList[position],
+                                Command("", "on", "", color, "rgb", 0),
+                                listView)
                         }
                         .setPositiveButton("Ok") { dialog, selectedColor, allColors ->
                             gridColor = selectedColor
                         }
                         .build()
                         .show()
-                2 -> {
-                    val mDialogView = LayoutInflater.from(activity).inflate(R.layout.brightness_dialog, null)
-                    val rubberSeekBar = mDialogView.rubberSeekBar
+                    6 -> {
+                        val mDialogView =
+                            LayoutInflater.from(activity).inflate(R.layout.brightness_dialog, null)
+                        val rubberSeekBar = mDialogView.rubberSeekBar
 
-                    AlertDialog.Builder(activity)
-                        .setView(mDialogView)
-                        .setTitle("Helligkeit wählen")
-                        .setPositiveButton("Ok") { diaglog, selectedBrightness -> }
-                        .show()
+                        AlertDialog.Builder(activity)
+                            .setView(mDialogView)
+                            .setTitle("Helligkeit wählen")
+                            .setPositiveButton("Ok") { diaglog, selectedBrightness -> }
+                            .show()
 
-                    rubberSeekBar.setCurrentValue(spotBrightness)
-                    rubberSeekBar.setOnRubberSeekBarChangeListener(object: RubberSeekBar.OnRubberSeekBarChangeListener {
-                        override fun onProgressChanged(seekBar: RubberSeekBar, value: Int, fromUser: Boolean) {
-                            spotBrightness = value
-                        }
+                        rubberSeekBar.setCurrentValue(spotBrightness)
+                        rubberSeekBar.setOnRubberSeekBarChangeListener(object :
+                            RubberSeekBar.OnRubberSeekBarChangeListener {
+                            override fun onProgressChanged(
+                                seekBar: RubberSeekBar,
+                                value: Int,
+                                fromUser: Boolean
+                            ) {
+                                spotBrightness = value
+                            }
 
-                        override fun onStartTrackingTouch(seekBar: RubberSeekBar) {}
+                            override fun onStartTrackingTouch(seekBar: RubberSeekBar) {}
 
-                        override fun onStopTrackingTouch(seekBar: RubberSeekBar) {
-                            execute(deviceList[position], Command("on", spotBrightness.toString(), "", "", 0), listView)
-                        }
-                    })
-
+                            override fun onStopTrackingTouch(seekBar: RubberSeekBar) {
+                                execute(deviceList[position],
+                                    Command("", "on", spotBrightness.toString(), "", "", 0),
+                                    listView)
+                            }
+                        })
+                    }
                 }
             }
 
@@ -120,17 +149,18 @@ class SmartHomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        val listView = requireView().smart_home_list
 
+        val listView = requireView().smart_home_list
+        /*
         if (deviceList.isEmpty()) {
             deviceList.addAll(listOf(coffee, grid, spots, diningLight, tv, skyReceiver))
         }
-
+        */
         // get status and set status colors anew
         val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (connMgr.connectionInfo.ssid == "\"DasWeltweiteInternetz\"") {
+        if (connMgr.connectionInfo.ssid == supportedWifiSsids[0] || connMgr.connectionInfo.ssid == supportedWifiSsids[1]) {
             for (device in deviceList) {
-                execute(device, Command("getStatus", "", "", "", 0), listView)
+                execute(device, Command("", "getStatus", "", "", "", 0), listView)
             }
         } else {
             Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
@@ -140,7 +170,7 @@ class SmartHomeFragment : Fragment() {
     private fun execute(device: Device, command: Command, listView: ListView) {
 
         val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (connMgr.connectionInfo.ssid == "\"DasWeltweiteInternetz\"") {
+        if (connMgr.connectionInfo.ssid == supportedWifiSsids[0] || connMgr.connectionInfo.ssid == supportedWifiSsids[1]) {
 
             val client = OkHttpClient().newBuilder()
                 .addInterceptor(HttpLoggingInterceptor().apply {
@@ -159,11 +189,10 @@ class SmartHomeFragment : Fragment() {
             GlobalScope.launch(Dispatchers.IO) {
 
                 val response: Response<JsonObject>
-                val isOn: Boolean
 
                 try {
                     when (device.id) {
-                        0, 4 -> {
+                        1, 7 -> {
                             if (command.action == "getStatus") {
                                 response = api.getReport().awaitResponse()
                             } else {
@@ -174,7 +203,7 @@ class SmartHomeFragment : Fragment() {
                                 device.isOn = Gson().fromJson(data, Relay::class.java).relay
                             }
                         }
-                        1 -> {
+                        5 -> {
                             if (command.action == "getStatus") {
                                 response = api.getInfo().awaitResponse()
                             } else {
@@ -193,7 +222,7 @@ class SmartHomeFragment : Fragment() {
                                         D8E3D9494::class.java).on
                             }
                         }
-                        2 -> {
+                        6 -> {
                             var mSpotBrightness: Int = 0
                             if (command.action == "getStatus") {
                                 response = api.getStatus().awaitResponse()
@@ -234,7 +263,7 @@ class SmartHomeFragment : Fragment() {
                                 }
                             }
                         }
-                        5 -> {
+                        8 -> {
                             response = api.sendCommand(command.action).awaitResponse()
                             if (response.isSuccessful) {
                                 val data = response.body()
@@ -269,25 +298,22 @@ class SmartHomeFragment : Fragment() {
     }
 
     companion object{
-        val coffee = Device(0, "Kaffeemaschine", "Küche", R.drawable.ic_coffee,
-            baseUrl + "47", false, Command("", "", "", "", 0))
+        val coffee = Device(1, "Kaffeemaschine", R.drawable.ic_coffee,
+            baseUrl + "47", false, Command("wechselnd an | aus","", "", "", "", 0))
 
-        val grid = Device(1, "LED Grid", "Wohnzimmer", R.drawable.ic_led_grid,
-            baseUrl + "32", false, Command("toggle", "", "33000000", "rgb", 2000))
+        val grid = Device(5, "LED Grid", R.drawable.ic_led_grid,
+            baseUrl + "32", false, Command("wechselnd an | aus - lang drücken für mehr", "toggle", "", "33000000", "rgb", 2000))
 
-        val spots = Device(2, "Strahler", "Wohnzimmer", R.drawable.ic_spots,
-            baseUrl + "45", false, Command("toggle", "40", "", "", 0))
+        val spots = Device(6, "Strahler", R.drawable.ic_spots,
+            baseUrl + "45", false, Command("wechselnd an | aus - lang drücken für mehr","toggle", "40", "", "", 0))
 
-        val diningLight = Device(3, "Esstischlampe", "Essbereich", R.drawable.ic_dining,
-            baseUrl + "46", false, Command("toggle", "", "", "", 0))
+        val diningLight = Device(3, "Esstischlampe",  R.drawable.ic_dining,
+            baseUrl + "46", false, Command("wechselnd an | aus", "toggle", "", "", "", 0))
 
-        val tv = Device(4, "Fernseher", "Wohnzimmer", R.drawable.ic_monitor,
-            baseUrl + "43", false, Command("", "", "", "", 0))
+        val tv = Device(7, "Fernseher", R.drawable.ic_monitor,
+            baseUrl + "43", false, Command("wechselnd an | aus", "", "", "", "", 0))
 
-        val skyReceiver = Device(5, "Sky Receiver", "Wohnzimmer", R.drawable.ic_sky,
-            arduinoBaseUrl, false, Command("toggleSky", "", "", "", 0))
-
-        val shutter = Device(6, "Rollo", "Lisas Arbeitszimmer", R.drawable.ic_shutter,
-            baseUrl + "49", false, Command("toggle", "", "", "", 0))
+        val skyReceiver = Device(8, "TV Receiver",  R.drawable.ic_sky,
+            arduinoBaseUrl, false, Command("wechselnd an | aus", "toggleSky", "", "", "", 0))
     }
 }

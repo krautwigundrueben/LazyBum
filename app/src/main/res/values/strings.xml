@@ -1,9 +1,11 @@
 <resources>
     <string name="app_name">LazyBum</string>
-    <string name="tab_smart_home">Geräte</string>
-    <string name="tab_media">AV Receiver</string>
+    <string name="tab_devices">Geräte</string>
+    <string name="tab_av_receiver">AV Receiver</string>
     <string name="device_icon_image">Device Icon Image</string>
     <string name="device_list_title">Main Title</string>
     <string name="device_list_sub_title">Sub Title</string>
     <string name="textSeekbar">Aus</string>
+    <string name="device_list_section_header">Section Header</string>
+    <string name="tab_roller">Rollos</string>
 </resources>

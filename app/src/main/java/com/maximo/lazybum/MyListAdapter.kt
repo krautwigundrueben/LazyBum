@@ -7,27 +7,48 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.RecyclerView
 import com.maximo.lazybum.Devices.arduinoApi.Device
 
-class MyListAdapter(var mCtx: Context, var resources: Int, var items: MutableList<Device>):ArrayAdapter<Device>(mCtx, resources, items) {
+class MyListAdapter(var mCtx: Context, var items: MutableList<ListItem>) : BaseAdapter() {
+    override fun getCount(): Int {
+        return items.size
+    }
 
-    private var TAG = "ListAdapter"
+    override fun getItem(position: Int): Any {
+        return items[position]
+    }
+
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+
         val layoutInflater:LayoutInflater = LayoutInflater.from(mCtx)
-        val view:View = layoutInflater.inflate(resources, null)
+        val mItem: ListItem = items[position]
+        val view: View
+        val titleTextView:TextView
 
-        val imageView:ImageView = view.findViewById(R.id.imageView)
-        val titleTextView:TextView = view.findViewById(R.id.textTitle)
-        val locationTextView:TextView = view.findViewById(R.id.textLocation)
+        if (!mItem.isSectionHeader) {
+            view = layoutInflater.inflate(R.layout.row, null)
 
-        val mItem: Device = items[position]
-        imageView.setImageDrawable(ContextCompat.getDrawable(mCtx, mItem.img))
-        imageView.setColorFilter(ContextCompat.getColor(context, R.color.colorOff), PorterDuff.Mode.SRC_IN)
-        titleTextView.text = mItem.title
-        locationTextView.text = mItem.location
+            val imageView:ImageView = view.findViewById(R.id.imageView)
+            titleTextView = view.findViewById(R.id.textTitle)
+            val locationTextView:TextView = view.findViewById(R.id.textLocation)
 
+            mItem as Device
+            imageView.setImageDrawable(ContextCompat.getDrawable(mCtx, mItem.img))
+            imageView.setColorFilter(ContextCompat.getColor(mCtx, R.color.colorOff),
+                PorterDuff.Mode.SRC_IN)
+            titleTextView.text = mItem.title
+            locationTextView.text = mItem.command.description
+        } else {
+            view = layoutInflater.inflate(R.layout.section_header, null)
+
+            mItem as SectionHeader
+            titleTextView = view.findViewById(R.id.textSectionHeader)
+            titleTextView.text = mItem.title
+        }
         return view
     }
 }

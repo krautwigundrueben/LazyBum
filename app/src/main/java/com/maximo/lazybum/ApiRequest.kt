@@ -40,6 +40,14 @@ interface ApiRequest {
         @Query("turn") turn: String
     ): Call<JsonObject>
 
+    @POST("/roller/0")
+    fun go(
+        @Query("go") go: String
+    ): Call<JsonObject>
+
+    @GET("/roller/0")
+    fun getShutterStatus(): Call<JsonObject>
+
     // my Arduino Mega
     @POST("/")
     fun sendCommand(
