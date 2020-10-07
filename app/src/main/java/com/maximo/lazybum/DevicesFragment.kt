@@ -68,13 +68,11 @@ class DevicesFragment : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
-        val btnListView: MutableList<ListItem> = deviceList.union(sectionHeaderList).sortedBy { it.id }.toMutableList()
-
         val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
 
         val view = inflater.inflate(R.layout.fragment_smart_home, container, false)
         val listView = view.smart_home_list
+        val btnListView: MutableList<ListItem> = deviceList.union(sectionHeaderList).sortedBy { it.id }.toMutableList()
         listView.adapter = MyListAdapter(requireContext(), btnListView)
         listView.setOnItemClickListener { parent, v, position, id ->
             if (!btnListView[position].isSectionHeader) {
