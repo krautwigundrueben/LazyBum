@@ -44,42 +44,32 @@ private const val baseUrl = "http://192.168.178."
 
 class RollerFragment : Fragment() {
 
-    val deviceList = mutableListOf<Device>(shutter)
-    var nextGo = "close"
-    val supportedWifiSsids = immutableListOf<String>("\"DasWeltweiteInternetz\"", "\"AndroidWifi\"")
+    companion object{
+
+        val deviceList = mutableListOf<Device>(
+            Device(id = 6, title = "linke Seite", img = R.drawable.ic_shutter,
+                url = baseUrl + "51", command = Command("wechselnd runter | stop | hoch", "", "", "", "", 0)))
+        var nextGo = "close"
+        val sectionHeaderList = mutableListOf<ListItem>(
+            SectionHeader(id = 0, title = "Kinderzimmer"))
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-
-
-        val sectionHeaderList = immutableListOf<ListItem>(
-            SectionHeader(title = "Kinderzimmer"))
-
-        val btnListView = mutableListOf<ListItem>()
-        val headerPositions = intArrayOf(0)
-        var h = 0
-        var d = 0
-        val lastListItem = deviceList.size + sectionHeaderList.size - 1
-        for (i in 0..lastListItem)
-        {
-            if (i in headerPositions) {
-                btnListView.add(sectionHeaderList[h])
-                h++
-            }
-            else {
-                btnListView.add(deviceList[d])
-                d++
-            }
-        }
+        val btnListView: MutableList<ListItem> = deviceList.union(sectionHeaderList).sortedBy { it.id }.toMutableList()
 
         val view = inflater.inflate(R.layout.fragment_smart_home, container, false)
         val listView = view.smart_home_list
         listView.adapter = MyListAdapter(requireContext(), btnListView)
-
         listView.setOnItemClickListener { parent, v, position, id ->
-            if (position !in headerPositions) {
-                val clickedDevice = btnListView[position] as Device
-                execute(clickedDevice, clickedDevice.command, listView)
+            val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
+            if (!btnListView[position].isSectionHeader) {
+                if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
+                    val clickedDevice = btnListView[position] as Device
+                    execute(clickedDevice, clickedDevice.command, listView)
+                } else {
+                    Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -89,15 +79,9 @@ class RollerFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        val listView = requireView().smart_home_list
-/*
-        if (deviceList.isEmpty()) {
-            deviceList.addAll(listOf(coffee, grid, spots, diningLight, tv, skyReceiver))
-        }
-*/
-        // get status and set status colors anew
         val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (connMgr.connectionInfo.ssid == supportedWifiSsids[0] || connMgr.connectionInfo.ssid == supportedWifiSsids[1]) {
+        if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
+            val listView = requireView().smart_home_list
             for (device in deviceList) {
                 execute(device, Command("", "getStatus", "", "", "", 0), listView)
             }
@@ -107,73 +91,54 @@ class RollerFragment : Fragment() {
     }
 
     private fun execute(device: Device, command: Command, listView: ListView) {
+        val client = OkHttpClient().newBuilder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .build()
 
-        val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (connMgr.connectionInfo.ssid == supportedWifiSsids[0] || connMgr.connectionInfo.ssid == supportedWifiSsids[1]) {
+        val api = Retrofit.Builder()
+            .baseUrl(device.url)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+            .create(ApiRequest::class.java)
 
-            val client = OkHttpClient().newBuilder()
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                })
-                .connectTimeout(3, TimeUnit.SECONDS)
-                .build()
+        GlobalScope.launch(Dispatchers.IO) {
 
-            val api = Retrofit.Builder()
-                .baseUrl(device.url)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build()
-                .create(ApiRequest::class.java)
+            val response: Response<JsonObject>
 
-            GlobalScope.launch(Dispatchers.IO) {
+            try {
+                when (device.id.toInt()) {
+                    6 -> {
+                        if (command.action == "getStatus") {
+                            response = api.getShutterStatus().awaitResponse()
+                        } else {
+                            response = api.go(nextGo).awaitResponse()
+                        }
+                        if (response.isSuccessful) {
+                            val data = response.body()
+                            val shutter = Gson().fromJson(data, ShellyShutter::class.java)
 
-                val response: Response<JsonObject>
-
-                try {
-                    when (device.id) {
-                        6 -> {
-                            if (command.action == "getStatus") {
-                                response = api.getShutterStatus().awaitResponse()
-                            } else {
-                                response = api.go(nextGo).awaitResponse()
-                            }
-                            if (response.isSuccessful) {
-                                val data = response.body()
-                                val shutter = Gson().fromJson(data, ShellyShutter::class.java)
-
-                                if (shutter.state == "stop") {
-                                    if (shutter.last_direction == "close") {
-                                        nextGo = "open"
-                                    } else {
-                                        nextGo = "close"
-                                    }
+                            if (shutter.state == "stop") {
+                                if (shutter.last_direction == "close") {
+                                    nextGo = "open"
                                 } else {
-                                    nextGo = "stop"
+                                    nextGo = "close"
                                 }
+                            } else {
+                                nextGo = "stop"
                             }
                         }
-                        else -> {
-                        }
                     }
-
-                    withContext(Dispatchers.Main) {
-
-                    }
-
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
-                    }
+                    else -> { }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
                 }
             }
-        } else {
-            Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    companion object{
-
-        val shutter = Device(6, "linke Seite", R.drawable.ic_shutter,
-            baseUrl + "51", false, Command("wechselnd runter | stop | hoch", "", "", "", "", 0))
     }
 }

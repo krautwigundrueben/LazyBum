@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 import com.maximo.lazybum.Devices.arduinoApi.Device
 
 class MyListAdapter(var mCtx: Context, var items: MutableList<ListItem>) : BaseAdapter() {
+
     override fun getCount(): Int {
         return items.size
     }
@@ -38,17 +39,27 @@ class MyListAdapter(var mCtx: Context, var items: MutableList<ListItem>) : BaseA
 
             mItem as Device
             imageView.setImageDrawable(ContextCompat.getDrawable(mCtx, mItem.img))
-            imageView.setColorFilter(ContextCompat.getColor(mCtx, R.color.colorOff),
-                PorterDuff.Mode.SRC_IN)
+            if (mItem.isOn) {
+                imageView.setColorFilter(ContextCompat.getColor(mCtx, R.color.colorAccent),
+                    PorterDuff.Mode.SRC_IN)
+            }
+            else {
+                imageView.setColorFilter(ContextCompat.getColor(mCtx, R.color.colorOff),
+                    PorterDuff.Mode.SRC_IN)
+            }
             titleTextView.text = mItem.title
             locationTextView.text = mItem.command.description
-        } else {
+        }
+        else {
             view = layoutInflater.inflate(R.layout.section_header, null)
 
             mItem as SectionHeader
             titleTextView = view.findViewById(R.id.textSectionHeader)
             titleTextView.text = mItem.title
         }
+
+        notifyDataSetChanged()
+
         return view
     }
 }

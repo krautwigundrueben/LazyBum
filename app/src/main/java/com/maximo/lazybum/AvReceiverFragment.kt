@@ -3,7 +3,6 @@ package com.maximo.lazybum
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.PorterDuff
-import android.net.ConnectivityManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -26,7 +24,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
-import okhttp3.internal.immutableListOf
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -35,22 +32,38 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 const val arduinoBaseUrl = "http://192.168.178.108"
-val supportedWifiSsids = immutableListOf<String>("\"DasWeltweiteInternetz\"", "\"AndroidWifi\"")
 
 class AvReceiverFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    companion object {
 
-        val deviceList = mutableListOf<ListItem>()
-        deviceList.addAll(listOf(skyReceiver, boseSoundtouch, chromecast, allOff))
+        val deviceList = mutableListOf<ListItem>(
+            Device(id = 0, title = "Fernsehen", img = R.drawable.ic_football,
+                url = arduinoBaseUrl, command = Command("Quelle Sky Receiver", "TV", "", "", "", 0)),
+            Device(id = 1, title = "Musik über Bose System", img = R.drawable.ic_music,
+                url = arduinoBaseUrl, command = Command("Quelle Bose Soundtouch", "Bose", "", "", "", 0)),
+            Device(id = 2, title = "Musik oder Video über Chromecast", img = R.drawable.ic_film,
+                url = arduinoBaseUrl, command = Command("Quelle Chromecast", "CCaudio", "", "", "", 0)),
+            Device(id = 3, title = "Ausschalten", img = R.drawable.ic_power_off,
+                url = arduinoBaseUrl, command = Command("schaltet AV Receiver aus", "DvcsOff", "", "", "", 0))
+        )
+        val arduino = Arduino(AvRec(false, 1, "aus"), SkyRec(false))
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
 
         val view = inflater.inflate(R.layout.fragment_media, container, false)
         val listView = view.media_list
         listView.adapter = MyListAdapter(requireContext(), deviceList)
-
         listView.setOnItemClickListener { parent, v, position, id ->
-            val clickedDevice = deviceList[position] as Device
-            execute(clickedDevice.command.action, listView)
+            if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
+                val clickedDevice = deviceList[position] as Device
+                execute(clickedDevice.command.action, listView)
+            }
+            else {
+                Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
+            }
         }
 
         val croller: Croller = view.croller
@@ -75,11 +88,14 @@ class AvReceiverFragment : Fragment() {
                 val volInRecAnnotation = (seekbarProgress + 40).toString().padStart(3, '0') + "VL"
 
                 if (arduino.AvRec.isOn) {
-                    execute(volInRecAnnotation, listView)
+                    if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
+                        execute(volInRecAnnotation, listView)
+                    }
                 } else {
                     view.textView.text = resources.getString(R.string.textSeekbar)
                     view.croller.progress = 0
                     view.croller.indicatorColor = View.GONE
+                    Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -98,108 +114,77 @@ class AvReceiverFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-        val listView = requireView().media_list
-
-        val conManager: ConnectivityManager = requireActivity().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val result = conManager.activeNetwork
-        val connection = conManager.allNetworks
-        val prop = conManager.getLinkProperties(result)
-
-        // get status and set color filters anew
         val connMgr = requireContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (connMgr.connectionInfo.ssid == supportedWifiSsids[0] || connMgr.connectionInfo.ssid == supportedWifiSsids[1]) {
-           execute("getStatus", listView)
+        if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
+            val listView = requireView().media_list
+            execute("getStatus", listView)
         } else {
             Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun execute(cmd: String, listView: ListView) {
+        val client = OkHttpClient().newBuilder()
+            .addInterceptor(HttpLoggingInterceptor().apply {
+                level = HttpLoggingInterceptor.Level.BODY
+            })
+            .connectTimeout(2, TimeUnit.SECONDS)
+            .build()
 
-        val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (connMgr.connectionInfo.ssid == supportedWifiSsids[0] || connMgr.connectionInfo.ssid == supportedWifiSsids[1]) {
+        val api = Retrofit.Builder()
+            .baseUrl(arduinoBaseUrl)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+            .create(ApiRequest::class.java)
 
-            // reset colors to off
-            for (itemView in listView) itemView.imageView.setColorFilter(ContextCompat.getColor(
-                requireContext(), R.color.colorOff), PorterDuff.Mode.SRC_IN)
+        GlobalScope.launch(Dispatchers.IO) {
 
-            val client = OkHttpClient().newBuilder()
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
-                })
-                .connectTimeout(2, TimeUnit.SECONDS)
-                .build()
+            val response: Response<JsonObject>
 
-            val api = Retrofit.Builder()
-                .baseUrl(arduinoBaseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .client(client)
-                .build()
-                .create(ApiRequest::class.java)
+            try {
+                response = api.sendCommand(cmd).awaitResponse()
 
-            GlobalScope.launch(Dispatchers.IO) {
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    arduino.AvRec = Gson().fromJson(data, Arduino::class.java).AvRec
+                    arduino.SkyRec = Gson().fromJson(data, Arduino::class.java).SkyRec
+                }
 
-                val response: Response<JsonObject>
-
-                try {
-                    response = api.sendCommand(cmd).awaitResponse()
-
-                    if (response.isSuccessful) {
-                        val data = response.body()
-                        arduino.AvRec = Gson().fromJson(data, Arduino::class.java).AvRec
-                        arduino.SkyRec = Gson().fromJson(data, Arduino::class.java).SkyRec
+                withContext(Dispatchers.Main) {
+                    for (device in deviceList) {
+                        (device as Device).isOn = false
                     }
 
-                    withContext(Dispatchers.Main) {
-                        if (arduino.AvRec.isOn) {
-                            view!!.croller.indicatorColor =
-                                resources.getColor(R.color.colorAccent, context?.theme)
+                    if (arduino.AvRec.isOn) {
+                        view!!.croller.indicatorColor =
+                            resources.getColor(R.color.colorAccent, context?.theme)
 
-                            when (arduino.AvRec.mode) {
-                                // AvRec Modes: 1 = Sky, 3 = Chromecast, 4 = Bose
-                                1 -> listView.getChildAt(0).imageView.setColorFilter(ContextCompat.getColor(
-                                    requireContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN)
-                                2 -> listView.getChildAt(2).imageView.setColorFilter(ContextCompat.getColor(
-                                    requireContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN)
-                                4 -> listView.getChildAt(1).imageView.setColorFilter(ContextCompat.getColor(
-                                    requireContext(), R.color.colorAccent), PorterDuff.Mode.SRC_IN)
-                            }
-                            view!!.textView.text = arduino.AvRec.vol.trimStart('0')
-                            view!!.croller.progress = arduino.AvRec.vol.toInt() - 40
-                        } else {
-                            view!!.textView.text = resources.getString(R.string.textSeekbar)
-                            view!!.croller.progress = 0
-                            view!!.croller.indicatorColor = View.GONE
+                        when (arduino.AvRec.mode) {
+                            // AvRec Modes: 1 = Sky, 2 = Chromecast, 4 = Bose
+                            1 -> (deviceList[0] as Device).isOn = true
+                            2 -> (deviceList[2] as Device).isOn = true
+                            4 -> (deviceList[1] as Device).isOn = true
                         }
-                    }
-                } catch (e: Exception) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+
+                        view!!.textView.text = arduino.AvRec.vol.trimStart('0')
+                        view!!.croller.progress = arduino.AvRec.vol.toInt() - 40
+                    } else {
                         view!!.textView.text = resources.getString(R.string.textSeekbar)
                         view!!.croller.progress = 0
                         view!!.croller.indicatorColor = View.GONE
                     }
+
+                    (listView.adapter as MyListAdapter).notifyDataSetChanged()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                    view!!.textView.text = resources.getString(R.string.textSeekbar)
+                    view!!.croller.progress = 0
+                    view!!.croller.indicatorColor = View.GONE
                 }
             }
-        } else {
-            Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    companion object {
-
-        private val arduino = Arduino(AvRec(false, 1, "aus"), SkyRec(false))
-
-        private val skyReceiver = Device(0,"Fernsehen", R.drawable.ic_football,
-            arduinoBaseUrl,false, Command("Quelle Sky Receiver", "TV", "", "", "", 0))
-
-        private val boseSoundtouch = Device(1,"Musik über Bose System", R.drawable.ic_music,
-            arduinoBaseUrl,false, Command("Quelle Bose Soundtouch", "Bose", "", "", "", 0))
-
-        private val chromecast = Device(2,"Musik oder Video über Chromecast",R.drawable.ic_film,
-            arduinoBaseUrl,false, Command("Quelle Chromecast", "CCaudio", "", "", "", 0))
-
-        private val allOff = Device(3,"Ausschalten",R.drawable.ic_power_off,
-            arduinoBaseUrl,false, Command("schaltet AV Receiver aus", "DvcsOff", "", "", "", 0))
     }
 }

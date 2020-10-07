@@ -3,13 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingLeft="16dp">
+    android:paddingStart="16dp"
+    android:background="#bbb">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/device_list_section_header"
-        android:textColor="#a9a9a9"
+        android:textColor="#fff"
         android:textStyle="bold"
         android:layout_margin="5dp"
         android:textSize="15sp"
