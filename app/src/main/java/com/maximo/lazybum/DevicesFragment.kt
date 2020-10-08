@@ -2,17 +2,13 @@ package com.maximo.lazybum
 
 import android.app.AlertDialog
 import android.content.Context
-import android.graphics.PorterDuff
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.BaseAdapter
 import android.widget.ListView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
@@ -24,16 +20,17 @@ import com.maximo.lazybum.Devices.arduinoApi.Command
 import com.maximo.lazybum.Devices.arduinoApi.Device
 import com.maximo.lazybum.myStromApi.D8E3D9494
 import com.maximo.lazybum.myStromApi.Relay
-import com.maximo.lazybum.shellyApi.*
+import com.maximo.lazybum.shellyApi.ShellyLight
+import com.maximo.lazybum.shellyApi.ShellyLightsStatus
+import com.maximo.lazybum.shellyApi.ShellyRelay
+import com.maximo.lazybum.shellyApi.ShellyRelayStatus
 import kotlinx.android.synthetic.main.brightness_dialog.view.*
 import kotlinx.android.synthetic.main.fragment_smart_home.view.*
-import kotlinx.android.synthetic.main.row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
-import okhttp3.internal.immutableListOf
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -96,9 +93,11 @@ class DevicesFragment : Fragment() {
                         .initialColor(gridColor)
                         .density(12)
                         .lightnessSliderOnly()
-                        .setOnColorSelectedListener { selectedColor ->
+                        .setOnColorChangedListener { selectedColor ->
                             if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-                                val color = "00" + Integer.toHexString(selectedColor).takeLast(6)
+                                var color = "00" + Integer.toHexString(selectedColor).takeLast(6)
+                                if (color.regionMatches(2, color, 4, 2))
+                                    color = color.substring(2, 4) + "000000"
                                 execute(btnListView[position] as Device,
                                     Command("", "on", "", color, "rgb", 0),
                                     listView)
