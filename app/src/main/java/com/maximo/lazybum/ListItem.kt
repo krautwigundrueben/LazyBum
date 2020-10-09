@@ -1,7 +1,7 @@
 package com.maximo.lazybum
 
-interface ListItem {
-    val isSectionHeader: Boolean
-    val id: Long
-    val title: String
+interface ListItem: ListRow {
+    val img: Int
+    val description: String
+    var isOn: Boolean
 }

@@ -25,24 +25,29 @@ import retrofit2.awaitResponse
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
-
 private const val baseUrl = "http://192.168.178."
 
-class RollerFragment : Fragment() {
+class ScenesFragment : Fragment() {
 
     companion object{
 
-        val sectionHeaderList = mutableListOf(
-            ListSectionHeader(id = 0, text = "Kinderzimmer"))
-        val deviceList = mutableListOf(
-            ListAction(id = 6, text = "linke Seite", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
-                url = baseUrl + "51", cmd = Cmd("")))
+        val sectionHeaderList = mutableListOf<ListRow>(
+            ListSectionHeader(id = 0, text = "Bewegtbild"),
+            ListSectionHeader(id = 3, text = "Auf die Ohren"),
+            ListSectionHeader(id = 6, text = "Licht und Schatten"))
+        val sceneList = mutableListOf(
+            ListScene(id = 1, text = "Fernsehen", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""),
+            ListScene(id = 2, text = "Großleinwand", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""),
+            ListScene(id = 4, text = "Spotify", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""),
+            ListScene(id = 5, text = "Bose Soundtouch", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""),
+            ListScene(id = 7, text = "Soirée", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""),
+            ListScene(id = 8, text = "Heißer Tag", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""))
         var nextGo = "close"
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
-        val btnListView: MutableList<ListRow> = deviceList.union(sectionHeaderList).sortedBy { it.id }.toMutableList()
+        val btnListView: MutableList<ListRow> = sceneList.union(sectionHeaderList).sortedBy { it.id }.toMutableList()
 
         val view = inflater.inflate(R.layout.list, container, false)
         val listView = view.list
@@ -68,8 +73,8 @@ class RollerFragment : Fragment() {
         val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
         if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
             val listView = requireView().list
-            for (device in deviceList) {
-                execute(device, Cmd("getStatus"), listView)
+            for (scene in sceneList) {
+                //execute(scene as ListAction, CmdInterface("", "getStatus", "", "", "", 0), listView)
             }
         } else {
             Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()

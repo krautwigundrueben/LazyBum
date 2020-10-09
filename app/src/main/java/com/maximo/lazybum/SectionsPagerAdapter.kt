@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_devices,
+    R.string.tab_scenes,
     R.string.tab_av_receiver,
     R.string.tab_roller
 )
@@ -22,8 +23,9 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
         // getItem is called to instantiate the fragment for the given page.
         when (position) {
             0 -> return DevicesFragment()
-            1 -> return AvReceiverFragment()
-            2 -> return RollerFragment()
+            1 -> return ScenesFragment()
+            2 -> return AvReceiverFragment()
+            3 -> return RollerFragment()
             else -> return DevicesFragment()
         }
     }
@@ -33,7 +35,6 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
     }
 
     override fun getCount(): Int {
-        // Show 3 total pages.
-        return 3
+        return 4
     }
 }

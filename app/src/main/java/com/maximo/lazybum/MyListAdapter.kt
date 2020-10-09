@@ -5,18 +5,19 @@ import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.BaseAdapter
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
-import com.maximo.lazybum.Devices.arduinoApi.Device
 
-class MyListAdapter(var mCtx: Context, var items: MutableList<ListItem>) : BaseAdapter() {
+class MyListAdapter(var mCtx: Context, var rows: MutableList<ListRow>) : BaseAdapter() {
 
     override fun getCount(): Int {
-        return items.size
+        return rows.size
     }
 
     override fun getItem(position: Int): Any {
-        return items[position]
+        return rows[position]
     }
 
     override fun getItemId(position: Int): Long {
@@ -26,18 +27,18 @@ class MyListAdapter(var mCtx: Context, var items: MutableList<ListItem>) : BaseA
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
         val layoutInflater:LayoutInflater = LayoutInflater.from(mCtx)
-        val mItem: ListItem = items[position]
+        val mItem: ListRow = rows[position]
         val view: View
         val titleTextView:TextView
 
-        if (!mItem.isSectionHeader) {
-            view = layoutInflater.inflate(R.layout.row, null)
+        if (!mItem.isHeader) {
+            view = layoutInflater.inflate(R.layout.list_item, null)
 
             val imageView:ImageView = view.findViewById(R.id.imageView)
             titleTextView = view.findViewById(R.id.textTitle)
             val locationTextView:TextView = view.findViewById(R.id.textLocation)
 
-            mItem as Device
+            mItem as ListItem
             imageView.setImageDrawable(ContextCompat.getDrawable(mCtx, mItem.img))
             if (mItem.isOn) {
                 imageView.setColorFilter(ContextCompat.getColor(mCtx, R.color.colorAccent),
@@ -47,18 +48,16 @@ class MyListAdapter(var mCtx: Context, var items: MutableList<ListItem>) : BaseA
                 imageView.setColorFilter(ContextCompat.getColor(mCtx, R.color.colorOff),
                     PorterDuff.Mode.SRC_IN)
             }
-            titleTextView.text = mItem.title
-            locationTextView.text = mItem.command.description
+            titleTextView.text = mItem.text
+            locationTextView.text = mItem.description
         }
         else {
-            view = layoutInflater.inflate(R.layout.section_header, null)
+            view = layoutInflater.inflate(R.layout.list_section_header, null)
 
-            mItem as SectionHeader
+            mItem as ListSectionHeader
             titleTextView = view.findViewById(R.id.textSectionHeader)
-            titleTextView.text = mItem.title
+            titleTextView.text = mItem.text
         }
-
-        notifyDataSetChanged()
 
         return view
     }

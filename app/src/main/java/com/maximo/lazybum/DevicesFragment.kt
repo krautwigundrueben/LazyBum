@@ -16,8 +16,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.jem.rubberpicker.RubberSeekBar
 import com.maximo.lazybum.Devices.arduinoApi.Arduino
-import com.maximo.lazybum.Devices.arduinoApi.Command
-import com.maximo.lazybum.Devices.arduinoApi.Device
 import com.maximo.lazybum.myStromApi.D8E3D9494
 import com.maximo.lazybum.myStromApi.Relay
 import com.maximo.lazybum.shellyApi.ShellyLight
@@ -25,7 +23,7 @@ import com.maximo.lazybum.shellyApi.ShellyLightsStatus
 import com.maximo.lazybum.shellyApi.ShellyRelay
 import com.maximo.lazybum.shellyApi.ShellyRelayStatus
 import kotlinx.android.synthetic.main.brightness_dialog.view.*
-import kotlinx.android.synthetic.main.fragment_smart_home.view.*
+import kotlinx.android.synthetic.main.list.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -43,39 +41,39 @@ private const val baseUrl = "http://192.168.178."
 class DevicesFragment : Fragment() {
 
     companion object{
-        val deviceList = mutableListOf<Device>(
-            Device(id = 1, title = "Kaffeemaschine", img = R.drawable.ic_coffee,
-                url = baseUrl + "47", command = Command(description = "wechselnd an | aus","", "", "", "", 0)),
-            Device(id = 3, title = "Esstischlampe", img = R.drawable.ic_dining,
-                url = baseUrl + "46", command = Command("wechselnd an | aus", "toggle", "", "", "", 0)),
-            Device(id = 5, title = "LED Grid", img = R.drawable.ic_led_grid,
-                url = baseUrl + "32", command = Command("wechselnd an | aus - lang drücken für mehr", "toggle", "", "33000000", "rgb", 2000)),
-            Device(id = 6, title = "Strahler", img = R.drawable.ic_spots,
-                url = baseUrl + "45", command = Command("wechselnd an | aus - lang drücken für mehr","toggle", "40", "", "", 0)),
-            Device(id = 7, title = "Fernseher", img = R.drawable.ic_monitor,
-                url = baseUrl + "43", command = Command("wechselnd an | aus", "", "", "", "", 0)),
-            Device(id = 8, title = "TV Receiver", img = R.drawable.ic_sky,
-                url = arduinoBaseUrl, command = Command("wechselnd an | aus", "toggleSky", "", "", "", 0)))
+        val sectionHeaderList = mutableListOf(
+            ListSectionHeader(id = 0, text = "Küche"),
+            ListSectionHeader(id = 2, text = "Essbereich"),
+            ListSectionHeader(id = 4, text = "Wohnzimmer"))
+        val deviceList = mutableListOf(
+            ListAction(id = 1, text = "Kaffeemaschine", img = R.drawable.ic_coffee, description = "wechselnd an | aus",
+                url = baseUrl + "47", cmd = Cmd("")),
+            ListAction(id = 3, text = "Esstischlampe", img = R.drawable.ic_dining, description = "wechselnd an | aus",
+                url = baseUrl + "46", cmd = Cmd("toggle")),
+            ListAction(id = 5, text = "LED Grid", img = R.drawable.ic_led_grid, description = "wechselnd an | aus - lang drücken für mehr",
+                url = baseUrl + "32", cmd = LedGridCmd("toggle", "33000000", "rgb", 2000)),
+            ListAction(id = 6, text = "Strahler", img = R.drawable.ic_spots, description = "wechselnd an | aus - lang drücken für mehr",
+                url = baseUrl + "45", cmd = SpotsCmd("toggle", "40")),
+            ListAction(id = 7, text = "Fernseher", img = R.drawable.ic_monitor, description = "wechselnd an | aus",
+                url = baseUrl + "43", cmd = Cmd("")),
+            ListAction(id = 8, text = "TV Receiver", img = R.drawable.ic_sky, description = "wechselnd an | aus",
+                url = arduinoBaseUrl, cmd = Cmd("toggleSky")))
         var gridColor = 0xff0000ff.toInt()
         var spotBrightness = 0
-        val sectionHeaderList = mutableListOf<ListItem>(
-            SectionHeader(id = 0, title = "Küche"),
-            SectionHeader(id = 2, title = "Essbereich"),
-            SectionHeader(id = 4, title = "Wohnzimmer"))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
 
-        val view = inflater.inflate(R.layout.fragment_smart_home, container, false)
-        val listView = view.smart_home_list
-        val btnListView: MutableList<ListItem> = deviceList.union(sectionHeaderList).sortedBy { it.id }.toMutableList()
+        val view = inflater.inflate(R.layout.list, container, false)
+        val listView = view.list
+        val btnListView: MutableList<ListRow> = deviceList.union(sectionHeaderList).sortedBy { it.id }.toMutableList()
         listView.adapter = MyListAdapter(requireContext(), btnListView)
         listView.setOnItemClickListener { parent, v, position, id ->
-            if (!btnListView[position].isSectionHeader) {
+            if (!btnListView[position].isHeader) {
                 if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-                    val clickedDevice = btnListView[position] as Device
-                    execute(clickedDevice, clickedDevice.command, listView)
+                    val clickedDevice = btnListView[position] as ListAction
+                    execute(clickedDevice, clickedDevice.cmd, listView)
                 } else {
                     Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
                 }
@@ -83,23 +81,23 @@ class DevicesFragment : Fragment() {
         }
 
         listView.setOnItemLongClickListener { parent, v, position, id ->
-            if (!btnListView[position].isSectionHeader) {
-                val clickedDevice = btnListView[position] as Device
+            if (!btnListView[position].isHeader) {
+                val clickedDevice = btnListView[position] as ListAction
                 when (clickedDevice.id.toInt()) {
                     5 -> ColorPickerDialogBuilder
                         .with(context)
                         .setTitle("Farbe wählen")
                         .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
                         .initialColor(gridColor)
-                        .density(12)
+                        .density(6)
                         .lightnessSliderOnly()
                         .setOnColorChangedListener { selectedColor ->
                             if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
                                 var color = "00" + Integer.toHexString(selectedColor).takeLast(6)
                                 if (color.regionMatches(2, color, 4, 2))
                                     color = color.substring(2, 4) + "000000"
-                                execute(btnListView[position] as Device,
-                                    Command("", "on", "", color, "rgb", 0),
+                                execute(btnListView[position] as ListAction,
+                                    LedGridCmd("on", color, "rgb", 0),
                                     listView)
                             }
                             else {
@@ -137,8 +135,8 @@ class DevicesFragment : Fragment() {
 
                             override fun onStopTrackingTouch(seekBar: RubberSeekBar) {
                                 if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-                                    execute(btnListView[position] as Device,
-                                        Command("", "on", spotBrightness.toString(), "", "", 0),
+                                    execute(btnListView[position] as ListAction,
+                                        SpotsCmd("on", spotBrightness.toString()),
                                         listView)
                                 }
                                 else {
@@ -161,16 +159,16 @@ class DevicesFragment : Fragment() {
 
         val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
         if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-            val listView = requireView().smart_home_list
+            val listView = requireView().list
             for (device in deviceList) {
-                execute(device, Command("", "getStatus", "", "", "", 0), listView)
+                execute(device, Cmd("getStatus"), listView)
             }
         } else {
             Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun execute(device: Device, command: Command, listView: ListView) {
+    private fun execute(listAction: ListAction, cmd: CmdInterface, listView: ListView) {
         val client = OkHttpClient().newBuilder()
             .addInterceptor(HttpLoggingInterceptor().apply {
                 level = HttpLoggingInterceptor.Level.BODY
@@ -179,7 +177,7 @@ class DevicesFragment : Fragment() {
             .build()
 
         val api = Retrofit.Builder()
-            .baseUrl(device.url)
+            .baseUrl(listAction.url)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
@@ -190,83 +188,85 @@ class DevicesFragment : Fragment() {
             val response: Response<JsonObject>
 
             try {
-                when (device.id.toInt()) {
+                when (listAction.id.toInt()) {
                     1, 7 -> {
-                        if (command.action == "getStatus") {
+                        if (cmd.action == "getStatus") {
                             response = api.getReport().awaitResponse()
                         } else {
                             response = api.toggle().awaitResponse()
                         }
                         if (response.isSuccessful) {
                             val data = response.body()
-                            device.isOn = Gson().fromJson(data, Relay::class.java).relay
+                            listAction.isOn = Gson().fromJson(data, Relay::class.java).relay
                         }
                     }
                     5 -> {
-                        if (command.action == "getStatus") {
+                        if (cmd.action == "getStatus") {
                             response = api.getInfo().awaitResponse()
                         } else {
+                            cmd as LedGridCmd
                             response =
-                                api.set(command.color,
-                                    command.mode,
-                                    command.action,
-                                    command.ramp)
+                                api.set(cmd.color,
+                                    cmd.mode,
+                                    cmd.action,
+                                    cmd.ramp)
                                     .awaitResponse()
                         }
                         if (response.isSuccessful) {
                             val data = response.body()
                             val deviceObject = data?.getAsJsonObject("840D8E3D9494")
-                            device.isOn =
+                            listAction.isOn =
                                 Gson().fromJson<D8E3D9494>(deviceObject,
                                     D8E3D9494::class.java).on
                         }
                     }
                     6 -> {
                         var mSpotBrightness: Int = 0
-                        if (command.action == "getStatus") {
+                        if (cmd.action == "getStatus") {
                             response = api.getStatus().awaitResponse()
                             if (response.isSuccessful) {
                                 val data = response.body()
                                 val light = Gson().fromJson(data,
                                     ShellyLightsStatus::class.java).lights[0]
-                                device.isOn = light.ison
+                                listAction.isOn = light.ison
                                 mSpotBrightness = light.brightness
                             }
                         } else {
-                            response = api.set(command.action, command.value).awaitResponse()
+                            cmd as SpotsCmd
+                            response = api.set(cmd.action, cmd.value).awaitResponse()
                             if (response.isSuccessful) {
                                 val data = response.body()
                                 val light = Gson().fromJson(data,
                                     ShellyLight::class.java)
-                                device.isOn = light.ison
+                                listAction.isOn = light.ison
                                 mSpotBrightness = light.brightness
                             }
                         }
-                        if (device.isOn) spotBrightness = mSpotBrightness
+                        if (listAction.isOn) spotBrightness = mSpotBrightness
                         else spotBrightness = 0
                     }
                     3 -> {
-                        if (command.action == "getStatus") {
+                        if (cmd.action == "getStatus") {
                             response = api.getStatus().awaitResponse()
                             if (response.isSuccessful) {
                                 val data = response.body()
-                                device.isOn = Gson().fromJson(data,
+                                listAction.isOn = Gson().fromJson(data,
                                     ShellyRelayStatus::class.java).relays[0].ison
                             }
                         } else {
-                            response = api.set(command.action).awaitResponse()
+                            response = api.set(cmd.action).awaitResponse()
                             if (response.isSuccessful) {
                                 val data = response.body()
-                                device.isOn =
+                                listAction.isOn =
                                     Gson().fromJson(data, ShellyRelay::class.java).ison
                             }
                         }
                     }
                     8 -> {
-                        response = api.sendCommand(command.action).awaitResponse()
+                        response = api.sendCommand(cmd.action).awaitResponse()
                         if (response.isSuccessful) {
                             val data = response.body()
-                            device.isOn = Gson().fromJson(data, Arduino::class.java).SkyRec.isOn
+                            listAction.isOn = Gson().fromJson(data, Arduino::class.java).SkyRec.isOn
                         }
                     }
                     else -> { }

@@ -2,7 +2,6 @@ package com.maximo.lazybum
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.graphics.PorterDuff
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,15 +9,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.maximo.lazybum.Devices.arduinoApi.*
+import com.maximo.lazybum.Devices.arduinoApi.Arduino
+import com.maximo.lazybum.Devices.arduinoApi.AvRec
+import com.maximo.lazybum.Devices.arduinoApi.SkyRec
 import com.sdsmdg.harjot.crollerTest.Croller
 import com.sdsmdg.harjot.crollerTest.OnCrollerChangeListener
 import kotlinx.android.synthetic.main.fragment_media.view.*
-import kotlinx.android.synthetic.main.row.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -37,15 +36,15 @@ class AvReceiverFragment : Fragment() {
 
     companion object {
 
-        val deviceList = mutableListOf<ListItem>(
-            Device(id = 0, title = "Fernsehen", img = R.drawable.ic_football,
-                url = arduinoBaseUrl, command = Command("Quelle Sky Receiver", "TV", "", "", "", 0)),
-            Device(id = 1, title = "Musik über Bose System", img = R.drawable.ic_music,
-                url = arduinoBaseUrl, command = Command("Quelle Bose Soundtouch", "Bose", "", "", "", 0)),
-            Device(id = 2, title = "Musik oder Video über Chromecast", img = R.drawable.ic_film,
-                url = arduinoBaseUrl, command = Command("Quelle Chromecast", "CCaudio", "", "", "", 0)),
-            Device(id = 3, title = "Ausschalten", img = R.drawable.ic_power_off,
-                url = arduinoBaseUrl, command = Command("schaltet AV Receiver aus", "DvcsOff", "", "", "", 0))
+        val deviceList = mutableListOf<ListRow>(
+            ListAction(id = 0, text = "Fernsehen", img = R.drawable.ic_football, description = "Quelle Sky Receiver",
+                url = arduinoBaseUrl, cmd = Cmd("TV")),
+            ListAction(id = 1, text = "Musik über Bose System", img = R.drawable.ic_music, description = "Quelle Bose Adapter",
+                url = arduinoBaseUrl, cmd = Cmd("Bose")),
+            ListAction(id = 2, text = "Musik oder Video über Chromecast", img = R.drawable.ic_film, description = "Quelle Chromecast",
+                url = arduinoBaseUrl, cmd = Cmd("CCaudio")),
+            ListAction(id = 3, text = "Ausschalten", img = R.drawable.ic_power_off, description = "schaltet AV Receiver aus",
+                url = arduinoBaseUrl, cmd = Cmd("DvcsOff"))
         )
         val arduino = Arduino(AvRec(false, 1, "aus"), SkyRec(false))
     }
@@ -58,8 +57,8 @@ class AvReceiverFragment : Fragment() {
         listView.adapter = MyListAdapter(requireContext(), deviceList)
         listView.setOnItemClickListener { parent, v, position, id ->
             if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-                val clickedDevice = deviceList[position] as Device
-                execute(clickedDevice.command.action, listView)
+                val clickedDevice = deviceList[position] as ListAction
+                execute(clickedDevice.cmd.action, listView)
             }
             else {
                 Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
@@ -153,7 +152,7 @@ class AvReceiverFragment : Fragment() {
 
                 withContext(Dispatchers.Main) {
                     for (device in deviceList) {
-                        (device as Device).isOn = false
+                        (device as ListAction).isOn = false
                     }
 
                     if (arduino.AvRec.isOn) {
@@ -162,9 +161,9 @@ class AvReceiverFragment : Fragment() {
 
                         when (arduino.AvRec.mode) {
                             // AvRec Modes: 1 = Sky, 2 = Chromecast, 4 = Bose
-                            1 -> (deviceList[0] as Device).isOn = true
-                            2 -> (deviceList[2] as Device).isOn = true
-                            4 -> (deviceList[1] as Device).isOn = true
+                            1 -> (deviceList[0] as ListAction).isOn = true
+                            2 -> (deviceList[2] as ListAction).isOn = true
+                            4 -> (deviceList[1] as ListAction).isOn = true
                         }
 
                         view!!.textView.text = arduino.AvRec.vol.trimStart('0')

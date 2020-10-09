@@ -4,13 +4,14 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:paddingStart="16dp"
-    android:background="#bbb">
+    android:paddingEnd="16dp"
+    android:background="@color/colorSecondary">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/device_list_section_header"
-        android:textColor="#fff"
+        android:textColor="@color/colorSecodaryContrast"
         android:textStyle="bold"
         android:layout_margin="5dp"
         android:textSize="15sp"
