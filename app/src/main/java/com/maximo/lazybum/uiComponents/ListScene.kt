@@ -1,4 +1,4 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.uiComponents
 
 data class ListScene(
     override val isHeader: Boolean = false,

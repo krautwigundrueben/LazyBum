@@ -1,4 +1,4 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.uiComponents
 
 import android.content.Context
 import android.graphics.PorterDuff
@@ -9,6 +9,7 @@ import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.maximo.lazybum.R
 
 class MyListAdapter(var mCtx: Context, var rows: MutableList<ListRow>) : BaseAdapter() {
 

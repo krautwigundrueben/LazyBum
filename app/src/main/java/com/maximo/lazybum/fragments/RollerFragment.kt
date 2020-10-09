@@ -1,4 +1,4 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.fragments
 
 import android.content.Context
 import android.net.wifi.WifiManager
@@ -11,7 +11,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.maximo.lazybum.ApiRequest
+import com.maximo.lazybum.Globals
+import com.maximo.lazybum.R
+import com.maximo.lazybum.commands.Cmd
+import com.maximo.lazybum.commands.CmdInterface
 import com.maximo.lazybum.shellyApi.ShellyShutter
+import com.maximo.lazybum.uiComponents.ListAction
+import com.maximo.lazybum.uiComponents.ListRow
+import com.maximo.lazybum.uiComponents.ListSectionHeader
+import com.maximo.lazybum.uiComponents.MyListAdapter
 import kotlinx.android.synthetic.main.list.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

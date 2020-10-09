@@ -1,4 +1,6 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.uiComponents
+
+import com.maximo.lazybum.commands.CmdInterface
 
 data class ListAction (
     override val isHeader: Boolean = false,

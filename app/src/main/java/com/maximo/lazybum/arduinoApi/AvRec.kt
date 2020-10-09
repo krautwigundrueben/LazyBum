@@ -1,4 +1,4 @@
-package com.maximo.lazybum.Devices.arduinoApi
+package com.maximo.lazybum.arduinoApi
 
 data class AvRec(
     var isOn: Boolean,

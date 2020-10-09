@@ -1,4 +1,4 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.fragments
 
 import android.app.AlertDialog
 import android.content.Context
@@ -15,13 +15,24 @@ import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.jem.rubberpicker.RubberSeekBar
-import com.maximo.lazybum.Devices.arduinoApi.Arduino
+import com.maximo.lazybum.ApiRequest
+import com.maximo.lazybum.Globals
+import com.maximo.lazybum.R
+import com.maximo.lazybum.arduinoApi.Arduino
+import com.maximo.lazybum.commands.Cmd
+import com.maximo.lazybum.commands.CmdInterface
+import com.maximo.lazybum.commands.LedGridCmd
+import com.maximo.lazybum.commands.SpotsCmd
 import com.maximo.lazybum.myStromApi.D8E3D9494
 import com.maximo.lazybum.myStromApi.Relay
 import com.maximo.lazybum.shellyApi.ShellyLight
 import com.maximo.lazybum.shellyApi.ShellyLightsStatus
 import com.maximo.lazybum.shellyApi.ShellyRelay
 import com.maximo.lazybum.shellyApi.ShellyRelayStatus
+import com.maximo.lazybum.uiComponents.ListAction
+import com.maximo.lazybum.uiComponents.ListRow
+import com.maximo.lazybum.uiComponents.ListSectionHeader
+import com.maximo.lazybum.uiComponents.MyListAdapter
 import kotlinx.android.synthetic.main.brightness_dialog.view.*
 import kotlinx.android.synthetic.main.list.view.*
 import kotlinx.coroutines.Dispatchers

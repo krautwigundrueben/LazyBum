@@ -1,4 +1,4 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.uiComponents
 
 interface ListRow {
     val isHeader: Boolean

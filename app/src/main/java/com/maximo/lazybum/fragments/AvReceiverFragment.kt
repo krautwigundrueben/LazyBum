@@ -1,4 +1,4 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.fragments
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -12,9 +12,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.maximo.lazybum.Devices.arduinoApi.Arduino
-import com.maximo.lazybum.Devices.arduinoApi.AvRec
-import com.maximo.lazybum.Devices.arduinoApi.SkyRec
+import com.maximo.lazybum.ApiRequest
+import com.maximo.lazybum.Globals
+import com.maximo.lazybum.R
+import com.maximo.lazybum.arduinoApi.Arduino
+import com.maximo.lazybum.arduinoApi.AvRec
+import com.maximo.lazybum.arduinoApi.SkyRec
+import com.maximo.lazybum.commands.Cmd
+import com.maximo.lazybum.uiComponents.ListAction
+import com.maximo.lazybum.uiComponents.ListRow
+import com.maximo.lazybum.uiComponents.MyListAdapter
 import com.sdsmdg.harjot.crollerTest.Croller
 import com.sdsmdg.harjot.crollerTest.OnCrollerChangeListener
 import kotlinx.android.synthetic.main.fragment_media.view.*

@@ -1,4 +1,4 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.commands
 
 data class LedGridCmd(
     override val action: String,

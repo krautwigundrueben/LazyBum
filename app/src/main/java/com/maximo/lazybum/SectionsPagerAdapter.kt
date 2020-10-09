@@ -4,6 +4,10 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import com.maximo.lazybum.fragments.AvReceiverFragment
+import com.maximo.lazybum.fragments.DevicesFragment
+import com.maximo.lazybum.fragments.RollerFragment
+import com.maximo.lazybum.fragments.ScenesFragment
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_devices,

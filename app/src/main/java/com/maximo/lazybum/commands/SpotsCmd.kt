@@ -1,4 +1,4 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.commands
 
 data class SpotsCmd(
     override val action: String,

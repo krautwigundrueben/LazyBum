@@ -1,4 +1,4 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.uiComponents
 
 data class ListSectionHeader(
     override val isHeader: Boolean = true,
