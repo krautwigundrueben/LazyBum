@@ -2,6 +2,7 @@ package com.maximo.lazybum.fragments
 
 import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -105,7 +106,7 @@ class DevicesFragment : Fragment() {
                         .setOnColorChangedListener { selectedColor ->
                             if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
                                 var color = "00" + Integer.toHexString(selectedColor).takeLast(6)
-                                if (color.regionMatches(2, color, 4, 2))
+                                if (color.regionMatches(2, color, 4, 2) && color.regionMatches(2, color, 6, 2))
                                     color = color.substring(2, 4) + "000000"
                                 execute(btnListView[position] as ListAction,
                                     LedGridCmd("on", color, "rgb", 0),
@@ -225,10 +226,19 @@ class DevicesFragment : Fragment() {
                         }
                         if (response.isSuccessful) {
                             val data = response.body()
-                            val deviceObject = data?.getAsJsonObject("840D8E3D9494")
-                            listAction.isOn =
-                                Gson().fromJson<D8E3D9494>(deviceObject,
-                                    D8E3D9494::class.java).on
+                            val dataJson = data?.getAsJsonObject("840D8E3D9494")
+                            val deviceData = Gson().fromJson<D8E3D9494>(dataJson, D8E3D9494::class.java)
+                            listAction.isOn = deviceData.on
+                            
+                            val rgb = deviceData.color.substring(2, 8)
+                            val ww = deviceData.color.substring(0, 2)
+                            if (listAction.isOn) {
+                                if (rgb != "000000") {
+                                    gridColor = Color.parseColor("#" + rgb)
+                                } else {
+                                    gridColor = Color.parseColor("#" + ww + ww + ww)
+                                }
+                            }
                         }
                     }
                     6 -> {
