@@ -8,3 +8,7 @@ _LazyBum_ is a highly customized home automation app that can serve as an inspir
 - 🌅 **scenes** (WIP) can control several devices at once
 - 📺 **av receiver** for controlling the video / audio source and volume
 - 🏠 **rollers** alternates between up, stop and down
+
+## Screenshots
+
+<img alt="screenshot-1" src="screenshots/screenshot-1.jpg" width="128px">
