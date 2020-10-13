@@ -14,3 +14,20 @@ _LazyBum_ is a highly customized home automation app that can serve as an inspir
    Single Devices    |         AV Receiver      |
 :-------------------------:|:-------------------------:
 ![](screenshots/screenshot-1.jpg)  |  ![](screenshots/screenshot-2.jpg)
+
+## Credits
+
+### Icons
+
+The icons used are downloaded from flaticons.com - thanks to
+- <div><a href="https://www.flaticon.com/de/kostenloses-icon/kaffeemaschine_3234299?term=kaffeemaschine&page=1&position=7" title="xnimrodx">xnimrodx</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
+- <div><a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
+- <div><a href="https://www.flaticon.com/de/autoren/smalllikeart" title="smalllikeart">smalllikeart</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
+- <div><a href="https://www.flaticon.com/de/autoren/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
+
+### Dependencies
+
+I implemented some awesome UI elements, special thanks to
+- [Croller](<https://github.com/harjot-oberai/Croller>)
+- [Colorpicker](<https://github.com/QuadFlask/colorpicker>)
+- [RubberPicker](<https://github.com/Chrisvin/RubberPicker>)
