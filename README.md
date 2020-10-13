@@ -4,7 +4,7 @@ _LazyBum_ is a highly customized home automation app that can serve as an inspir
 
 ## Tabs
 
-- 📦 **modular devices** can be switched on and off - some devices offer more features on an alert dialog on long press
+- 📦 **modular devices** can be switched on and off - some devices offer more features via alert dialog on long press
 - 🌅 **scenes** (WIP) can control several devices at once
 - 📺 **av receiver** for controlling the receiver's source and volume
 - 🏠 **rollers** alternates between up, stop and down
