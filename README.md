@@ -11,4 +11,6 @@ _LazyBum_ is a highly customized home automation app that can serve as an inspir
 
 ## Screenshots
 
-<img alt="screenshot-1" src="screenshots/screenshot-1.jpg" width="128px">
+<img alt="screenshot-1" src="screenshots/screenshot-1.jpg" width="200px">
+<img alt="screenshot-2" src="screenshots/screenshot-2.jpg" width="200px">
+<img alt="screenshot-3" src="screenshots/screenshot-3.jpg" width="200px">
