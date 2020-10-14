@@ -30,10 +30,7 @@ import com.maximo.lazybum.shellyApi.ShellyLight
 import com.maximo.lazybum.shellyApi.ShellyLightsStatus
 import com.maximo.lazybum.shellyApi.ShellyRelay
 import com.maximo.lazybum.shellyApi.ShellyRelayStatus
-import com.maximo.lazybum.uiComponents.ListAction
-import com.maximo.lazybum.uiComponents.ListRow
-import com.maximo.lazybum.uiComponents.ListSectionHeader
-import com.maximo.lazybum.uiComponents.MyListAdapter
+import com.maximo.lazybum.uiComponents.*
 import kotlinx.android.synthetic.main.brightness_dialog.view.*
 import kotlinx.android.synthetic.main.list.view.*
 import kotlinx.coroutines.Dispatchers
@@ -59,17 +56,17 @@ class DevicesFragment : Fragment() {
             ListSectionHeader(id = 4, text = "Wohnzimmer"))
         val deviceList = mutableListOf(
             ListAction(id = 1, text = "Kaffeemaschine", img = R.drawable.ic_coffee, description = "wechselnd an | aus",
-                url = baseUrl + "47", cmd = Cmd("")),
+                action = Action(deviceId = 47, url = baseUrl + "47", cmd = Cmd(""))),
             ListAction(id = 3, text = "Esstischlampe", img = R.drawable.ic_dining, description = "wechselnd an | aus",
-                url = baseUrl + "46", cmd = Cmd("toggle")),
+                action = Action(deviceId = 46, url = baseUrl + "46", cmd = Cmd("toggle"))),
             ListAction(id = 5, text = "LED Grid", img = R.drawable.ic_led_grid, description = "wechselnd an | aus - lang drücken für mehr",
-                url = baseUrl + "32", cmd = LedGridCmd("toggle", "33000000", "rgb", 2000)),
+                action = Action(deviceId = 32, url = baseUrl + "32", cmd = LedGridCmd("toggle", "33000000", "rgb", 2000))),
             ListAction(id = 6, text = "Strahler", img = R.drawable.ic_spots, description = "wechselnd an | aus - lang drücken für mehr",
-                url = baseUrl + "45", cmd = SpotsCmd("toggle", "40")),
+                action = Action(deviceId = 45, url = baseUrl + "45", cmd = SpotsCmd("toggle", "40"))),
             ListAction(id = 7, text = "Fernseher", img = R.drawable.ic_monitor, description = "wechselnd an | aus",
-                url = baseUrl + "43", cmd = Cmd("")),
+                action = Action(deviceId = 43, url = baseUrl + "43", cmd = Cmd(""))),
             ListAction(id = 8, text = "TV Receiver", img = R.drawable.ic_sky, description = "wechselnd an | aus",
-                url = arduinoBaseUrl, cmd = Cmd("toggleSky")))
+                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("toggleSky"))))
         var gridColor = 0xff0000ff.toInt()
         var spotBrightness = 0
     }
@@ -85,7 +82,7 @@ class DevicesFragment : Fragment() {
             if (!btnListView[position].isHeader) {
                 if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
                     val clickedDevice = btnListView[position] as ListAction
-                    execute(clickedDevice, clickedDevice.cmd, listView)
+                    execute(clickedDevice, clickedDevice.action.cmd, listView)
                 } else {
                     Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
                 }
@@ -189,7 +186,7 @@ class DevicesFragment : Fragment() {
             .build()
 
         val api = Retrofit.Builder()
-            .baseUrl(listAction.url)
+            .baseUrl(listAction.action.url)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()
@@ -229,7 +226,7 @@ class DevicesFragment : Fragment() {
                             val dataJson = data?.getAsJsonObject("840D8E3D9494")
                             val deviceData = Gson().fromJson<D8E3D9494>(dataJson, D8E3D9494::class.java)
                             listAction.isOn = deviceData.on
-                            
+
                             val rgb = deviceData.color.substring(2, 8)
                             val ww = deviceData.color.substring(0, 2)
                             if (listAction.isOn) {

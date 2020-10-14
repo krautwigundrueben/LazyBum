@@ -16,6 +16,11 @@ interface ApiRequest {
     @GET("/api/v1/device")
     fun getInfo(): Call<JsonObject>
 
+    @GET("/relay")
+    fun switch(
+        @Query("state") state: Int
+    ): Call<Void>
+
     @FormUrlEncoded
     @POST("/api/v1/device/840D8E3D9494")
     fun set(

@@ -19,11 +19,11 @@ _LazyBum_ is a highly customized home automation app that can serve as an inspir
 
 ### Icons
 
-The icons used are downloaded from flaticons.com - thanks to
-- <div><a href="https://www.flaticon.com/de/kostenloses-icon/kaffeemaschine_3234299?term=kaffeemaschine&page=1&position=7" title="xnimrodx">xnimrodx</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
-- <div><a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
-- <div><a href="https://www.flaticon.com/de/autoren/smalllikeart" title="smalllikeart">smalllikeart</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
-- <div><a href="https://www.flaticon.com/de/autoren/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a></div>
+The icons used are downloaded from <a href="https://www.flaticon.com/de/" title="Flaticon">www.flaticon.com</a> - thanks to
+- <a href="https://www.flaticon.com/de/kostenloses-icon/kaffeemaschine_3234299?term=kaffeemaschine&page=1&position=7" title="xnimrodx">xnimrodx</a>
+- <a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a>
+- <a href="https://www.flaticon.com/de/autoren/smalllikeart" title="smalllikeart">smalllikeart</a>
+- <a href="https://www.flaticon.com/de/autoren/freepik" title="Freepik">Freepik</a>
 
 ### Dependencies
 

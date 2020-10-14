@@ -19,6 +19,7 @@ import com.maximo.lazybum.arduinoApi.Arduino
 import com.maximo.lazybum.arduinoApi.AvRec
 import com.maximo.lazybum.arduinoApi.SkyRec
 import com.maximo.lazybum.commands.Cmd
+import com.maximo.lazybum.uiComponents.Action
 import com.maximo.lazybum.uiComponents.ListAction
 import com.maximo.lazybum.uiComponents.ListRow
 import com.maximo.lazybum.uiComponents.MyListAdapter
@@ -45,13 +46,13 @@ class AvReceiverFragment : Fragment() {
 
         val deviceList = mutableListOf<ListRow>(
             ListAction(id = 0, text = "Fernsehen", img = R.drawable.ic_football, description = "Quelle Sky Receiver",
-                url = arduinoBaseUrl, cmd = Cmd("TV")),
+                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("TV"))),
             ListAction(id = 1, text = "Musik über Bose System", img = R.drawable.ic_music, description = "Quelle Bose Adapter",
-                url = arduinoBaseUrl, cmd = Cmd("Bose")),
+                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("Bose"))),
             ListAction(id = 2, text = "Musik oder Video über Chromecast", img = R.drawable.ic_film, description = "Quelle Chromecast",
-                url = arduinoBaseUrl, cmd = Cmd("CCaudio")),
+                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("CCaudio"))),
             ListAction(id = 3, text = "Ausschalten", img = R.drawable.ic_power_off, description = "schaltet AV Receiver aus",
-                url = arduinoBaseUrl, cmd = Cmd("DvcsOff"))
+                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("DvcsOff")))
         )
         val arduino = Arduino(AvRec(false, 1, "aus"), SkyRec(false))
     }
@@ -65,7 +66,7 @@ class AvReceiverFragment : Fragment() {
         listView.setOnItemClickListener { parent, v, position, id ->
             if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
                 val clickedDevice = deviceList[position] as ListAction
-                execute(clickedDevice.cmd.action, listView)
+                execute(clickedDevice.action.cmd.action, listView)
             }
             else {
                 Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()

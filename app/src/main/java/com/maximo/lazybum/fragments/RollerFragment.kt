@@ -17,10 +17,7 @@ import com.maximo.lazybum.R
 import com.maximo.lazybum.commands.Cmd
 import com.maximo.lazybum.commands.CmdInterface
 import com.maximo.lazybum.shellyApi.ShellyShutter
-import com.maximo.lazybum.uiComponents.ListAction
-import com.maximo.lazybum.uiComponents.ListRow
-import com.maximo.lazybum.uiComponents.ListSectionHeader
-import com.maximo.lazybum.uiComponents.MyListAdapter
+import com.maximo.lazybum.uiComponents.*
 import kotlinx.android.synthetic.main.list.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -45,7 +42,7 @@ class RollerFragment : Fragment() {
             ListSectionHeader(id = 0, text = "Kinderzimmer"))
         val deviceList = mutableListOf(
             ListAction(id = 6, text = "linke Seite", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
-                url = baseUrl + "51", cmd = Cmd("")))
+                action = Action(deviceId = 51, url = baseUrl + "51", cmd = Cmd(""))))
         var nextGo = "close"
     }
 
@@ -61,7 +58,7 @@ class RollerFragment : Fragment() {
             if (!btnListView[position].isHeader) {
                 if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
                     val clickedDevice = btnListView[position] as ListAction
-                    execute(clickedDevice, clickedDevice.cmd, listView)
+                    execute(clickedDevice, clickedDevice.action.cmd, listView)
                 } else {
                     Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
                 }
@@ -94,7 +91,7 @@ class RollerFragment : Fragment() {
             .build()
 
         val api = Retrofit.Builder()
-            .baseUrl(listAction.url)
+            .baseUrl(listAction.action.url)
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

@@ -7,5 +7,5 @@ data class ListScene(
     override val img: Int,
     override val description: String,
     override var isOn: Boolean = false,
-    val actionList: MutableList<ListAction>
+    val actionList: MutableList<Action>
 ): ListItem

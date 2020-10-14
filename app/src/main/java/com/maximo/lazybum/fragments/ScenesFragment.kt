@@ -14,8 +14,11 @@ import com.google.gson.JsonObject
 import com.maximo.lazybum.ApiRequest
 import com.maximo.lazybum.Globals
 import com.maximo.lazybum.R
-import com.maximo.lazybum.commands.CmdInterface
-import com.maximo.lazybum.shellyApi.ShellyShutter
+import com.maximo.lazybum.commands.Cmd
+import com.maximo.lazybum.commands.LedGridCmd
+import com.maximo.lazybum.commands.SpotsCmd
+import com.maximo.lazybum.myStromApi.D8E3D9494
+import com.maximo.lazybum.shellyApi.ShellyLight
 import com.maximo.lazybum.uiComponents.*
 import kotlinx.android.synthetic.main.list.view.*
 import kotlinx.coroutines.Dispatchers
@@ -41,12 +44,38 @@ class ScenesFragment : Fragment() {
             ListSectionHeader(id = 3, text = "Auf die Ohren"),
             ListSectionHeader(id = 6, text = "Licht und Schatten"))
         val sceneList = mutableListOf(
-            ListScene(id = 1, text = "Fernsehen", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""),
-            ListScene(id = 2, text = "Großleinwand", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""),
-            ListScene(id = 4, text = "Spotify", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""),
-            ListScene(id = 5, text = "Bose Soundtouch", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""),
-            ListScene(id = 7, text = "Soirée", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""),
-            ListScene(id = 8, text = "Heißer Tag", img = R.drawable.ic_football, actionList = mutableListOf(), description = ""))
+            ListScene(id = 1, text = "Fernsehen", img = R.drawable.ic_monitor, description = "LED Grid gedimmt - Spots aus - TV an",
+                actionList = mutableListOf(
+                    Action(deviceId = 32, url = baseUrl + "32", cmd = LedGridCmd("on", "33000000", "rgb", 2000)),
+                    Action(deviceId = 45, url = baseUrl + "45", cmd = SpotsCmd("off", "40")),
+                    Action(deviceId = 43, url = baseUrl + "43", cmd = Cmd("on")),
+                    Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("toggleSky")), //implement Arduino explicit on with TV request
+                    Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("TV"))
+                )),
+            ListScene(id = 2, text = "Großleinwand", img = R.drawable.ic_football, description = "LED Grid aus - Spots aus - Receiver an",
+                actionList = mutableListOf(
+                    Action(deviceId = 32, url = baseUrl + "32", cmd = LedGridCmd("off", "33000000", "rgb", 2000)),
+                    Action(deviceId = 45, url = baseUrl + "45", cmd = SpotsCmd("off", "40")),
+                    Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("toggleSky")), //implement Arduino explicit on with TV request
+                    Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("TV"))
+                )),
+            ListScene(id = 4, text = "Spotify", img = R.drawable.ic_music, description = "work in progress",
+                actionList = mutableListOf(
+
+                )),
+            ListScene(id = 5, text = "Bose Soundtouch", img = R.drawable.ic_music, description = "work in progress",
+                actionList = mutableListOf(
+
+                )),
+            ListScene(id = 7, text = "Soirée", img = R.drawable.ic_dining, description = "",
+                actionList = mutableListOf(
+                    Action(deviceId = 32, url = baseUrl + "32", cmd = LedGridCmd("on", "99000000", "rgb", 2000)),
+                    Action(deviceId = 45, url = baseUrl + "45", cmd = SpotsCmd("on", "20")),
+                )),
+            ListScene(id = 8, text = "Heißer Tag", img = R.drawable.ic_shutter, description = "work in progress",
+                actionList = mutableListOf(
+
+                )))
         var nextGo = "close"
     }
 
@@ -61,8 +90,8 @@ class ScenesFragment : Fragment() {
             val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
             if (!btnListView[position].isHeader) {
                 if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-                    val clickedDevice = btnListView[position] as ListAction
-                    execute(clickedDevice, clickedDevice.cmd, listView)
+                    val scene = btnListView[position] as ListScene
+                    execute(scene.actionList, listView)
                 } else {
                     Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
                 }
@@ -72,67 +101,77 @@ class ScenesFragment : Fragment() {
         return view
     }
 
-    override fun onResume() {
-        super.onResume()
+    private fun execute(actionList: MutableList<Action>, listView: ListView) {
 
-        val connMgr = requireActivity().getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-            val listView = requireView().list
-            for (scene in sceneList) {
-                //execute(scene as ListAction, CmdInterface("", "getStatus", "", "", "", 0), listView)
-            }
-        } else {
-            Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
-        }
-    }
+        for (action in actionList) {
 
-    private fun execute(listAction: ListAction, cmd: CmdInterface, listView: ListView) {
-        val client = OkHttpClient().newBuilder()
-            .addInterceptor(HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
-            })
-            .connectTimeout(3, TimeUnit.SECONDS)
-            .build()
+            val client = OkHttpClient().newBuilder()
+                .addInterceptor(HttpLoggingInterceptor().apply {
+                    level = HttpLoggingInterceptor.Level.BODY
+                })
+                .connectTimeout(3, TimeUnit.SECONDS)
+                .build()
 
-        val api = Retrofit.Builder()
-            .baseUrl(listAction.url)
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
-            .create(ApiRequest::class.java)
+            val api = Retrofit.Builder()
+                .baseUrl(action.url)
+                .addConverterFactory(GsonConverterFactory.create())
+                .client(client)
+                .build()
+                .create(ApiRequest::class.java)
 
-        GlobalScope.launch(Dispatchers.IO) {
+            GlobalScope.launch(Dispatchers.IO) {
 
-            val response: Response<JsonObject>
+                val response: Response<JsonObject>
 
-            try {
-                when (listAction.id.toInt()) {
-                    6 -> {
-                        if (cmd.action == "getStatus") {
-                            response = api.getShutterStatus().awaitResponse()
-                        } else {
-                            response = api.go(nextGo).awaitResponse()
-                        }
-                        if (response.isSuccessful) {
-                            val data = response.body()
-                            val shutter = Gson().fromJson(data, ShellyShutter::class.java)
-
-                            if (shutter.state == "stop") {
-                                if (shutter.last_direction == "close") {
-                                    nextGo = "open"
-                                } else {
-                                    nextGo = "close"
-                                }
-                            } else {
-                                nextGo = "stop"
+                try {
+                    when (action.deviceId.toInt()) {
+                        43 -> {
+                            val r: Response<Void>
+                            r = api.switch(1).awaitResponse()
+                            if (r.isSuccessful) {
+                                //val data = response.body()
+                                //listAction.isOn = Gson().fromJson(data, Relay::class.java).relay
                             }
                         }
+                        32 -> {
+                            action.cmd as LedGridCmd
+                            response =
+                                api.set(action.cmd.color,
+                                    action.cmd.mode,
+                                    action.cmd.action,
+                                    action.cmd.ramp)
+                                    .awaitResponse()
+                            if (response.isSuccessful) {
+                                val data = response.body()
+                                val dataJson = data?.getAsJsonObject("840D8E3D9494")
+                                val deviceData =
+                                    Gson().fromJson<D8E3D9494>(dataJson, D8E3D9494::class.java)
+                            }
+                        }
+                        45 -> {
+                            var mSpotBrightness: Int = 0
+                            action.cmd as SpotsCmd
+                            response = api.set(action.cmd.action, action.cmd.value).awaitResponse()
+                            if (response.isSuccessful) {
+                                val data = response.body()
+                                val light = Gson().fromJson(data,
+                                    ShellyLight::class.java)
+                                mSpotBrightness = light.brightness
+                            }
+                        }
+                        99 -> {
+                            response = api.sendCommand(action.cmd.action).awaitResponse()
+                            if (response.isSuccessful) {
+                                val data = response.body()
+                            }
+                        }
+                        else -> {
+                        }
                     }
-                    else -> { }
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
