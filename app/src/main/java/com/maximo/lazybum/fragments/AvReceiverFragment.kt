@@ -46,13 +46,13 @@ class AvReceiverFragment : Fragment() {
 
         val deviceList = mutableListOf<ListRow>(
             ListAction(id = 0, text = "Fernsehen", img = R.drawable.ic_football, description = "Quelle Sky Receiver",
-                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("TV"))),
+                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("TV"), nextCmd = "")),
             ListAction(id = 1, text = "Musik über Bose System", img = R.drawable.ic_music, description = "Quelle Bose Adapter",
-                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("Bose"))),
+                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("Bose"), nextCmd = "")),
             ListAction(id = 2, text = "Musik oder Video über Chromecast", img = R.drawable.ic_film, description = "Quelle Chromecast",
-                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("CCaudio"))),
+                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("CCaudio"), nextCmd = "")),
             ListAction(id = 3, text = "Ausschalten", img = R.drawable.ic_power_off, description = "schaltet AV Receiver aus",
-                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("DvcsOff")))
+                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("DvcsOff"), nextCmd = ""))
         )
         val arduino = Arduino(AvRec(false, 1, "aus"), SkyRec(false))
     }

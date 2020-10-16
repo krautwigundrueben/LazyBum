@@ -39,11 +39,20 @@ class RollerFragment : Fragment() {
     companion object{
 
         val sectionHeaderList = mutableListOf(
-            ListSectionHeader(id = 0, text = "Kinderzimmer"))
+            ListSectionHeader(id = 0, text = "Elternzimmer"),
+            ListSectionHeader(id = 3, text = "Arbeitszimmer"),
+            ListSectionHeader(id = 5, text = "Kinderzimmer"))
         val deviceList = mutableListOf(
-            ListAction(id = 6, text = "linke Seite", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
-                action = Action(deviceId = 51, url = baseUrl + "51", cmd = Cmd(""))))
-        var nextGo = "close"
+            ListAction(id = 1, text = "Schlafzimmer", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
+                action = Action(deviceId = 55, url = baseUrl + "55", cmd = Cmd(""), nextCmd = "close")),
+            ListAction(id = 2, text = "Bad", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
+                action = Action(deviceId = 54, url = baseUrl + "54", cmd = Cmd(""), nextCmd = "close")),
+            ListAction(id = 4, text = "es gibt nur eins", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
+                action = Action(deviceId = 57, url = baseUrl + "57", cmd = Cmd(""), nextCmd = "close")),
+            ListAction(id = 6, text = "links", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
+                action = Action(deviceId = 51, url = baseUrl + "51", cmd = Cmd(""), nextCmd = "close")),
+            ListAction(id = 7, text = "rechts", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
+                action = Action(deviceId = 56, url = baseUrl + "56", cmd = Cmd(""), nextCmd = "close")))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -102,29 +111,24 @@ class RollerFragment : Fragment() {
             val response: Response<JsonObject>
 
             try {
-                when (listAction.id.toInt()) {
-                    6 -> {
-                        if (cmd.action == "getStatus") {
-                            response = api.getShutterStatus().awaitResponse()
-                        } else {
-                            response = api.go(nextGo).awaitResponse()
-                        }
-                        if (response.isSuccessful) {
-                            val data = response.body()
-                            val shutter = Gson().fromJson(data, ShellyShutter::class.java)
+                if (cmd.action == "getStatus") {
+                    response = api.getShutterStatus().awaitResponse()
+                } else {
+                    response = api.go(listAction.action.nextCmd).awaitResponse()
+                }
+                if (response.isSuccessful) {
+                    val data = response.body()
+                    val shutter = Gson().fromJson(data, ShellyShutter::class.java)
 
-                            if (shutter.state == "stop") {
-                                if (shutter.last_direction == "close") {
-                                    nextGo = "open"
-                                } else {
-                                    nextGo = "close"
-                                }
-                            } else {
-                                nextGo = "stop"
-                            }
+                    if (shutter.state == "stop") {
+                        if (shutter.last_direction == "close") {
+                            listAction.action.nextCmd = "open"
+                        } else {
+                            listAction.action.nextCmd = "close"
                         }
+                    } else {
+                        listAction.action.nextCmd = "stop"
                     }
-                    else -> { }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {

@@ -1,6 +1,7 @@
 package com.maximo.lazybum.fragments
 
 import android.content.Context
+import android.graphics.Color
 import android.net.wifi.WifiManager
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,6 +15,7 @@ import com.google.gson.JsonObject
 import com.maximo.lazybum.ApiRequest
 import com.maximo.lazybum.Globals
 import com.maximo.lazybum.R
+import com.maximo.lazybum.arduinoApi.Arduino
 import com.maximo.lazybum.commands.Cmd
 import com.maximo.lazybum.commands.LedGridCmd
 import com.maximo.lazybum.commands.SpotsCmd
@@ -46,37 +48,41 @@ class ScenesFragment : Fragment() {
         val sceneList = mutableListOf(
             ListScene(id = 1, text = "Fernsehen", img = R.drawable.ic_monitor, description = "LED Grid gedimmt - Spots aus - TV an",
                 actionList = mutableListOf(
-                    Action(deviceId = 32, url = baseUrl + "32", cmd = LedGridCmd("on", "33000000", "rgb", 2000)),
-                    Action(deviceId = 45, url = baseUrl + "45", cmd = SpotsCmd("off", "40")),
-                    Action(deviceId = 43, url = baseUrl + "43", cmd = Cmd("on")),
-                    Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("toggleSky")), //implement Arduino explicit on with TV request
-                    Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("TV"))
+                    DevicesFragment.deviceList.find{it.action.deviceId == 32.toLong()}?.action!!.copy(cmd = LedGridCmd("on", "33000000", "rgb", 2000)),
+                    DevicesFragment.deviceList.find{it.action.deviceId == 45.toLong()}?.action!!.copy(cmd = SpotsCmd("off", "40")),
+                    DevicesFragment.deviceList.find{it.action.deviceId == 43.toLong()}?.action!!.copy(cmd = Cmd("on")),
+                    DevicesFragment.deviceList.find{it.action.deviceId == 99.toLong()}?.action!!.copy(),
+                    (AvReceiverFragment.deviceList.find{it.id == 0.toLong()} as ListAction).action.copy()
                 )),
             ListScene(id = 2, text = "Großleinwand", img = R.drawable.ic_football, description = "LED Grid aus - Spots aus - Receiver an",
                 actionList = mutableListOf(
-                    Action(deviceId = 32, url = baseUrl + "32", cmd = LedGridCmd("off", "33000000", "rgb", 2000)),
-                    Action(deviceId = 45, url = baseUrl + "45", cmd = SpotsCmd("off", "40")),
-                    Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("toggleSky")), //implement Arduino explicit on with TV request
-                    Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("TV"))
+                    DevicesFragment.deviceList.find{it.action.deviceId == 32.toLong()}?.action!!.copy(cmd = LedGridCmd("off", "33000000", "rgb", 2000)),
+                    DevicesFragment.deviceList.find{it.action.deviceId == 45.toLong()}?.action!!.copy(cmd = SpotsCmd("off", "40")),
+                    DevicesFragment.deviceList.find{it.action.deviceId == 99.toLong()}?.action!!.copy(),
+                    (AvReceiverFragment.deviceList.find{it.id == 0.toLong()} as ListAction).action.copy()
                 )),
-            ListScene(id = 4, text = "Spotify", img = R.drawable.ic_music, description = "work in progress",
+            ListScene(id = 4, text = "Spotify", img = R.drawable.ic_music, description = "Quelle Bose Adapter",
                 actionList = mutableListOf(
-
+                    (AvReceiverFragment.deviceList.find{it.id == 1.toLong()} as ListAction).action.copy()
                 )),
-            ListScene(id = 5, text = "Bose Soundtouch", img = R.drawable.ic_music, description = "work in progress",
+            ListScene(id = 5, text = "Bose Soundtouch", img = R.drawable.ic_music, description = "Quelle Bose Adapter",
                 actionList = mutableListOf(
-
+                    (AvReceiverFragment.deviceList.find{it.id == 1.toLong()} as ListAction).action.copy()
                 )),
-            ListScene(id = 7, text = "Soirée", img = R.drawable.ic_dining, description = "",
+            ListScene(id = 7, text = "Soirée", img = R.drawable.ic_dining, description = "gedimmtes Licht im Wohnzimmer",
                 actionList = mutableListOf(
-                    Action(deviceId = 32, url = baseUrl + "32", cmd = LedGridCmd("on", "99000000", "rgb", 2000)),
-                    Action(deviceId = 45, url = baseUrl + "45", cmd = SpotsCmd("on", "20")),
+                    DevicesFragment.deviceList.find{it.action.deviceId == 32.toLong()}?.action!!.copy(cmd = LedGridCmd("on", "99000000", "rgb", 2000)),
+                    DevicesFragment.deviceList.find{it.action.deviceId == 45.toLong()}?.action!!.copy(cmd = SpotsCmd("on", "20")),
                 )),
-            ListScene(id = 8, text = "Heißer Tag", img = R.drawable.ic_shutter, description = "work in progress",
+            ListScene(id = 8, text = "Heißer Tag", img = R.drawable.ic_shutter, description = "alle Rollos zu",
                 actionList = mutableListOf(
-
-                )))
-        var nextGo = "close"
+                    RollerFragment.deviceList.find { it.action.deviceId == 51.toLong() }?.action!!.copy(nextCmd = "close"),
+                    RollerFragment.deviceList.find { it.action.deviceId == 54.toLong() }?.action!!.copy(nextCmd = "close"),
+                    RollerFragment.deviceList.find { it.action.deviceId == 55.toLong() }?.action!!.copy(nextCmd = "close"),
+                    RollerFragment.deviceList.find { it.action.deviceId == 56.toLong() }?.action!!.copy(nextCmd = "close"),
+                    RollerFragment.deviceList.find { it.action.deviceId == 57.toLong() }?.action!!.copy(nextCmd = "close"),
+                ))
+        )
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -129,44 +135,76 @@ class ScenesFragment : Fragment() {
                             val r: Response<Void>
                             r = api.switch(1).awaitResponse()
                             if (r.isSuccessful) {
-                                //val data = response.body()
-                                //listAction.isOn = Gson().fromJson(data, Relay::class.java).relay
+                                DevicesFragment.deviceList.find{it.action.deviceId == 43.toLong()}?.isOn = true
                             }
                         }
                         32 -> {
-                            action.cmd as LedGridCmd
                             response =
-                                api.set(action.cmd.color,
-                                    action.cmd.mode,
+                                api.set((action.cmd as LedGridCmd).color,
+                                    (action.cmd as LedGridCmd).mode,
                                     action.cmd.action,
-                                    action.cmd.ramp)
+                                    (action.cmd as LedGridCmd).ramp)
                                     .awaitResponse()
                             if (response.isSuccessful) {
                                 val data = response.body()
                                 val dataJson = data?.getAsJsonObject("840D8E3D9494")
-                                val deviceData =
-                                    Gson().fromJson<D8E3D9494>(dataJson, D8E3D9494::class.java)
+                                val deviceData = Gson().fromJson<D8E3D9494>(dataJson, D8E3D9494::class.java)
+                                DevicesFragment.deviceList.find{it.action.deviceId == 32.toLong()}?.apply { isOn = true }
+
+                                val rgb = deviceData.color.substring(2, 8)
+                                val ww = deviceData.color.substring(0, 2)
+                                if (DevicesFragment.deviceList.find{it.action.deviceId == 32.toLong()}?.isOn!!) {
+                                    if (rgb != "000000") {
+                                        DevicesFragment.gridColor = Color.parseColor("#" + rgb)
+                                    } else {
+                                        DevicesFragment.gridColor = Color.parseColor("#" + ww + ww + ww)
+                                    }
+                                }
                             }
                         }
                         45 -> {
                             var mSpotBrightness: Int = 0
                             action.cmd as SpotsCmd
-                            response = api.set(action.cmd.action, action.cmd.value).awaitResponse()
+                            response = api.set(action.cmd.action, (action.cmd as SpotsCmd).value).awaitResponse()
                             if (response.isSuccessful) {
                                 val data = response.body()
                                 val light = Gson().fromJson(data,
                                     ShellyLight::class.java)
+                                DevicesFragment.deviceList.find{it.action.deviceId == 45.toLong()}?.apply { isOn = true }
                                 mSpotBrightness = light.brightness
                             }
+                            if (DevicesFragment.deviceList.find{it.action.deviceId == 45.toLong()}?.isOn!!)
+                                DevicesFragment.spotBrightness = mSpotBrightness
+                            else DevicesFragment.spotBrightness = 0
                         }
                         99 -> {
                             response = api.sendCommand(action.cmd.action).awaitResponse()
                             if (response.isSuccessful) {
                                 val data = response.body()
+                                AvReceiverFragment.arduino.AvRec = Gson().fromJson(data, Arduino::class.java).AvRec
+                                AvReceiverFragment.arduino.SkyRec = Gson().fromJson(data, Arduino::class.java).SkyRec
+
+                                for (device in AvReceiverFragment.deviceList) {
+                                    (device as ListAction).isOn = false
+                                }
+
+                                if (AvReceiverFragment.arduino.AvRec.isOn) {
+                                    when (AvReceiverFragment.arduino.AvRec.mode) {
+                                        // AvRec Modes: 1 = Sky, 2 = Chromecast, 4 = Bose
+                                        1 -> (AvReceiverFragment.deviceList[0] as ListAction).isOn = true
+                                        2 -> (AvReceiverFragment.deviceList[2] as ListAction).isOn = true
+                                        4 -> (AvReceiverFragment.deviceList[1] as ListAction).isOn = true
+                                    }
+                                }
+
+                                DevicesFragment.deviceList.find { it.id == 8.toLong() }?.isOn = AvReceiverFragment.arduino.SkyRec.isOn
                             }
                         }
                         else -> {
                         }
+                    }
+                    withContext(Dispatchers.Main) {
+                        (listView.adapter as MyListAdapter).notifyDataSetChanged()
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {

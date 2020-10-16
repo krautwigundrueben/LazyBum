@@ -56,17 +56,17 @@ class DevicesFragment : Fragment() {
             ListSectionHeader(id = 4, text = "Wohnzimmer"))
         val deviceList = mutableListOf(
             ListAction(id = 1, text = "Kaffeemaschine", img = R.drawable.ic_coffee, description = "wechselnd an | aus",
-                action = Action(deviceId = 47, url = baseUrl + "47", cmd = Cmd(""))),
+                action = Action(deviceId = 47, url = baseUrl + "47", cmd = Cmd(""), nextCmd = "")),
             ListAction(id = 3, text = "Esstischlampe", img = R.drawable.ic_dining, description = "wechselnd an | aus",
-                action = Action(deviceId = 46, url = baseUrl + "46", cmd = Cmd("toggle"))),
+                action = Action(deviceId = 46, url = baseUrl + "46", cmd = Cmd("toggle"), nextCmd = "")),
             ListAction(id = 5, text = "LED Grid", img = R.drawable.ic_led_grid, description = "wechselnd an | aus - lang drücken für mehr",
-                action = Action(deviceId = 32, url = baseUrl + "32", cmd = LedGridCmd("toggle", "33000000", "rgb", 2000))),
+                action = Action(deviceId = 32, url = baseUrl + "32", cmd = LedGridCmd("toggle", "33000000", "rgb", 2000), nextCmd = "")),
             ListAction(id = 6, text = "Strahler", img = R.drawable.ic_spots, description = "wechselnd an | aus - lang drücken für mehr",
-                action = Action(deviceId = 45, url = baseUrl + "45", cmd = SpotsCmd("toggle", "40"))),
+                action = Action(deviceId = 45, url = baseUrl + "45", cmd = SpotsCmd("toggle", "40"), nextCmd = "")),
             ListAction(id = 7, text = "Fernseher", img = R.drawable.ic_monitor, description = "wechselnd an | aus",
-                action = Action(deviceId = 43, url = baseUrl + "43", cmd = Cmd(""))),
+                action = Action(deviceId = 43, url = baseUrl + "43", cmd = Cmd(""), nextCmd = "")),
             ListAction(id = 8, text = "TV Receiver", img = R.drawable.ic_sky, description = "wechselnd an | aus",
-                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("toggleSky"))))
+                action = Action(deviceId = 99, url = arduinoBaseUrl, cmd = Cmd("toggleSky"), nextCmd = "")))
         var gridColor = 0xff0000ff.toInt()
         var spotBrightness = 0
     }
