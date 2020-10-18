@@ -21,6 +21,7 @@ import com.maximo.lazybum.commands.LedGridCmd
 import com.maximo.lazybum.commands.SpotsCmd
 import com.maximo.lazybum.myStromApi.D8E3D9494
 import com.maximo.lazybum.shellyApi.ShellyLight
+import com.maximo.lazybum.shellyApi.ShellyShutter
 import com.maximo.lazybum.uiComponents.*
 import kotlinx.android.synthetic.main.list.view.*
 import kotlinx.coroutines.Dispatchers
@@ -81,6 +82,10 @@ class ScenesFragment : Fragment() {
                     RollerFragment.deviceList.find { it.action.deviceId == 55.toLong() }?.action!!.copy(nextCmd = "close"),
                     RollerFragment.deviceList.find { it.action.deviceId == 56.toLong() }?.action!!.copy(nextCmd = "close"),
                     RollerFragment.deviceList.find { it.action.deviceId == 57.toLong() }?.action!!.copy(nextCmd = "close"),
+                    RollerFragment.deviceList.find { it.action.deviceId == 58.toLong() }?.action!!.copy(nextCmd = "close"),
+                    RollerFragment.deviceList.find { it.action.deviceId == 59.toLong() }?.action!!.copy(nextCmd = "close"),
+                    RollerFragment.deviceList.find { it.action.deviceId == 60.toLong() }?.action!!.copy(nextCmd = "close"),
+                    RollerFragment.deviceList.find { it.action.deviceId == 61.toLong() }?.action!!.copy(nextCmd = "close"),
                 ))
         )
     }
@@ -196,11 +201,26 @@ class ScenesFragment : Fragment() {
                                         4 -> (AvReceiverFragment.deviceList[1] as ListAction).isOn = true
                                     }
                                 }
-
                                 DevicesFragment.deviceList.find { it.id == 8.toLong() }?.isOn = AvReceiverFragment.arduino.SkyRec.isOn
                             }
                         }
                         else -> {
+                            response = api.go(action.nextCmd).awaitResponse()
+
+                            if (response.isSuccessful) {
+                                val data = response.body()
+                                val shutter = Gson().fromJson(data, ShellyShutter::class.java)
+
+                                if (shutter.state == "stop") {
+                                    if (shutter.last_direction == "close") {
+                                        action.nextCmd = "open"
+                                    } else {
+                                        action.nextCmd = "close"
+                                    }
+                                } else {
+                                    action.nextCmd = "stop"
+                                }
+                            }
                         }
                     }
                     withContext(Dispatchers.Main) {

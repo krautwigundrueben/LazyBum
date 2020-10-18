@@ -27,10 +27,10 @@ class MyListAdapter(var mCtx: Context, var rows: MutableList<ListRow>) : BaseAda
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
-        val layoutInflater:LayoutInflater = LayoutInflater.from(mCtx)
+        val layoutInflater: LayoutInflater = LayoutInflater.from(mCtx)
         val mItem: ListRow = rows[position]
         val view: View
-        val titleTextView:TextView
+        val titleTextView: TextView
 
         if (!mItem.isHeader) {
             view = layoutInflater.inflate(R.layout.list_item, null)

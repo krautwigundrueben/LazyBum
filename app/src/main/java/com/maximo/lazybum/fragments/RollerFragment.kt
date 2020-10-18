@@ -41,7 +41,8 @@ class RollerFragment : Fragment() {
         val sectionHeaderList = mutableListOf(
             ListSectionHeader(id = 0, text = "Elternzimmer"),
             ListSectionHeader(id = 3, text = "Arbeitszimmer"),
-            ListSectionHeader(id = 5, text = "Kinderzimmer"))
+            ListSectionHeader(id = 5, text = "Kinderzimmer"),
+            ListSectionHeader(id = 8, text = "Wohnzimmer"))
         val deviceList = mutableListOf(
             ListAction(id = 1, text = "Schlafzimmer", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
                 action = Action(deviceId = 55, url = baseUrl + "55", cmd = Cmd(""), nextCmd = "close")),
@@ -52,7 +53,15 @@ class RollerFragment : Fragment() {
             ListAction(id = 6, text = "links", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
                 action = Action(deviceId = 51, url = baseUrl + "51", cmd = Cmd(""), nextCmd = "close")),
             ListAction(id = 7, text = "rechts", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
-                action = Action(deviceId = 56, url = baseUrl + "56", cmd = Cmd(""), nextCmd = "close")))
+                action = Action(deviceId = 56, url = baseUrl + "56", cmd = Cmd(""), nextCmd = "close")),
+            ListAction(id = 9, text = "zur Pergola", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
+                action = Action(deviceId = 58, url = baseUrl + "58", cmd = Cmd(""), nextCmd = "close")),
+            ListAction(id = 10, text = "hinterm Sofa", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
+                action = Action(deviceId = 59, url = baseUrl + "59", cmd = Cmd(""), nextCmd = "close")),
+            ListAction(id = 11, text = "zur Terassentür", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
+                action = Action(deviceId = 60, url = baseUrl + "60", cmd = Cmd(""), nextCmd = "close")),
+            ListAction(id = 12, text = "zur Kräuterschnecke", img = R.drawable.ic_shutter, description = "wechselnd runter | stop | hoch",
+                action = Action(deviceId = 61, url = baseUrl + "61", cmd = Cmd(""), nextCmd = "close")))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
