@@ -30,7 +30,7 @@
             android:textStyle="bold"
             android:layout_margin="5dp"
             android:textSize="20sp"
-            android:id="@+id/textTitle"
+            android:id="@+id/titleText"
             />
 
         <TextView
@@ -41,7 +41,7 @@
             android:textStyle="bold"
             android:layout_margin="5dp"
             android:textSize="15sp"
-            android:id="@+id/textLocation"
+            android:id="@+id/subText"
             />
 
     </LinearLayout>

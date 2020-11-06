@@ -5,8 +5,9 @@
     <string name="device_icon_image">Device Icon Image</string>
     <string name="device_list_title">Main Title</string>
     <string name="device_list_sub_title">Sub Title</string>
-    <string name="textSeekbar">Aus</string>
+    <string name="text_croller">Aus</string>
     <string name="device_list_section_header">Section Header</string>
-    <string name="tab_roller">Rollos</string>
+    <string name="tab_shutter">Rollos</string>
     <string name="tab_scenes">Szenen</string>
+    <string name="avReceiverDeviceName">arduinoAvReceiver</string>
 </resources>

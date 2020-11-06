@@ -1,7 +1,6 @@
 package com.maximo.lazybum
 
 import android.Manifest
-import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
@@ -14,6 +13,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.maximo.lazybum.Globals.globalDeviceManager
+import com.maximo.lazybum.deviceComponents.DeviceManager
+import com.maximo.lazybum.deviceComponents.dataClasses.DeviceClass
+import com.maximo.lazybum.layoutComponents.Tab
+import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,6 +37,24 @@ class MainActivity : AppCompatActivity() {
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
 
+        // TODO: StreamReader optimieren? siehe: https://bezkoder.com/kotlin-android-read-json-file-assets-gson/ oder https://www.spigotmc.org/threads/json-configuration-files.212794/
+
+        val deviceConfigFile = resources.openRawResource(R.raw.devices_config)
+        val listDeviceType = object : TypeToken<List<DeviceClass>>() {}.type
+        val initialDeviceList: List<DeviceClass> =
+            Gson().fromJson(InputStreamReader(deviceConfigFile), listDeviceType)
+        globalDeviceManager = DeviceManager(initialDeviceList)
+
+        val layoutConfigFile = resources.openRawResource(R.raw.layout_config)
+        val type = object: TypeToken<List<Tab>>() {}.type
+        val tabsList: List<Tab> = Gson().fromJson(InputStreamReader(layoutConfigFile), type)
+
+        // TODO: find list for tab_name and substitute magic number, see https://stackoverflow.com/questions/47882/what-is-a-magic-number-and-why-is-it-bad
+        Globals.devicesFragmentGroups = tabsList[0].groups
+        Globals.scenesFragmentGroups = tabsList[1].groups
+        Globals.avReceiverFragmentGroups = tabsList[2].groups
+        Globals.shutterFragmentGroups = tabsList[3].groups
+
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)
         val isLargeAppearance = when (displayMetrics.scaledDensity.toInt()) {
@@ -38,7 +62,8 @@ class MainActivity : AppCompatActivity() {
             else -> false
         }
 
-        sharedPreferences = getSharedPreferences("app", Context.MODE_PRIVATE)
+        // TODO: braucht's das?
+        sharedPreferences = getSharedPreferences("app", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         editor.putBoolean("isLargeAppearance", isLargeAppearance)
         editor.apply()
