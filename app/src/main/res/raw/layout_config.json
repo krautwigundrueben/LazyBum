@@ -1,0 +1,457 @@
+[
+  {
+    "tab_name": "DevicesFragment",
+    "groups": [
+      {
+        "group_name": "Küche",
+        "items": [
+          {
+            "text": "Kaffeemaschine",
+            "subText": "wechselnd an | aus",
+            "icon": "ic_coffee",
+            "actions": [
+              {
+                "deviceName": "coffeeSwitch",
+                "commandName": "toggle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group_name": "Essbereich",
+        "items": [
+          {
+            "text": "Esstischlampe",
+            "subText": "wechselnd an | aus",
+            "icon": "ic_dining",
+            "actions": [
+              {
+                "deviceName": "diningLight",
+                "commandName": "toggle"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group_name": "Wohnzimmer",
+        "items": [
+          {
+            "text": "LED Grid",
+            "subText": "wechselnd an | aus - lang drücken für mehr",
+            "icon": "ic_led_grid",
+            "actions": [
+              {
+                "deviceName": "ledGridSwitch",
+                "commandName": "toggle"
+              }
+            ]
+          },
+          {
+            "text": "Strahler",
+            "subText": "wechselnd an | aus - lang drücken für mehr",
+            "icon": "ic_spots",
+            "actions": [
+              {
+                "deviceName": "spotLight",
+                "commandName": "{\"turn\":\"toggle\",\"brightness\":\"40\"}"
+              }
+            ]
+          },
+          {
+            "text": "Fernseher",
+            "subText": "wechselnd an | aus",
+            "icon": "ic_monitor",
+            "actions": [
+              {
+                "deviceName": "tvSwitch",
+                "commandName": "toggle"
+              }
+            ]
+          },
+          {
+            "text": "TV Receiver",
+            "subText": "wechselnd an | aus",
+            "icon": "ic_sky",
+            "actions": [
+              {
+                "deviceName": "arduinoSkyReceiver",
+                "commandName": "{\"turn\":\"toggleSky\"}"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tab_name": "ScenesFragement",
+    "groups": [
+      {
+        "group_name": "Bewegtbild",
+        "items": [
+          {
+            "text": "Fernsehen",
+            "subText": "LED Grid gedimmt - Spots aus - TV an",
+            "icon": "ic_monitor",
+            "actions": [
+              {
+                "deviceName": "ledGridSwitch",
+                "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"
+              },
+              {
+                "deviceName": "spotLight",
+                "commandName": "{\"turn\":\"off\",\"brightness\":\"40\"}"
+              },
+              {
+                "deviceName": "tvSwitch",
+                "commandName": "{\"turn\":\"on\"}"
+              },
+              {
+                "deviceName": "arduinoSkyReceiver",
+                "commandName": "{\"turn\":\"toggleSky\"}"
+              },
+              {
+                "deviceName": "arduinoAvReceiver",
+                "commandName": "{\"turn\":\"TV\"}"
+              }
+            ]
+          },
+          {
+            "text": "Großleinwand",
+            "subText": "LED Grid aus - Spots aus - Receiver an",
+            "icon": "ic_football",
+            "actions": [
+              {
+                "deviceName": "ledGridSwitch",
+                "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"off\",\"ramp\":\"2000\"}"
+              },
+              {
+                "deviceName": "spotLight",
+                "commandName": "{\"turn\":\"off\",\"brightness\":\"40\"}"
+              },
+              {
+                "deviceName": "tvSwitch",
+                "commandName": "{\"turn\":\"off\"}"
+              },
+              {
+                "deviceName": "arduinoSkyReceiver",
+                "commandName": "{\"turn\":\"toggleSky\"}"
+              },
+              {
+                "deviceName": "arduinoAvReceiver",
+                "commandName": "{\"turn\":\"TV\"}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group_name": "Auf die Ohren",
+        "items": [
+          {
+            "text": "Spotify",
+            "subText": "Quelle Bose Adapter",
+            "icon": "ic_music",
+            "actions": [
+              {
+                "deviceName": "arduinoAvReceiver",
+                "commandName": "{\"turn\":\"Bose\"}"
+              }
+            ]
+          },
+          {
+            "text": "Bose Soundtouch",
+            "subText": "Quelle Bose Adapter",
+            "icon": "ic_music",
+            "actions": [
+              {
+                "deviceName": "arduinoAvReceiver",
+                "commandName": "{\"turn\":\"Bose\"}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group_name": "Licht und Schatten",
+        "items": [
+          {
+            "text": "Soirée",
+            "subText": "gedimmtes Licht im Wohnzimmer",
+            "icon": "ic_dining",
+            "actions": [
+              {
+                "deviceName": "ledGridSwitch",
+                "commandName": "{\"color\":\"99000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"
+              },
+              {
+                "deviceName": "spotLight",
+                "commandName": "{\"turn\":\"on\",\"brightness\":\"20\"}"
+              }
+            ]
+          },
+          {
+            "text": "Heißer Tag",
+            "subText": "alle Rollos runter",
+            "icon": "ic_shutter",
+            "actions": [
+              {
+                "deviceName": "shutterParents",
+                "commandName": "close"
+              },
+              {
+                "deviceName": "shutterBathroom",
+                "commandName": "close"
+              },
+              {
+                "deviceName": "shutterWork",
+                "commandName": "close"
+              },
+              {
+                "deviceName": "shutterChildLeft",
+                "commandName": "close"
+              },
+              {
+                "deviceName": "shutterChildRight",
+                "commandName": "close"
+              },
+              {
+                "deviceName": "shutterLivingPergola",
+                "commandName": "close"
+              },
+              {
+                "deviceName": "shutterLivingSofa",
+                "commandName": "close"
+              },
+              {
+                "deviceName": "shutterLivingDoor",
+                "commandName": "close"
+              },
+              {
+                "deviceName": "shutterLivingSpices",
+                "commandName": "close"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group_name": "Sonstiges",
+        "items": [
+          {
+            "text": "Alles ausschalten",
+            "subText": "schaltet alles aus",
+            "icon": "ic_power_off",
+            "actions": [
+              {
+                "deviceName": "ledGridSwitch",
+                "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"off\",\"ramp\":\"2000\"}"
+              },
+              {
+                "deviceName": "spotLight",
+                "commandName": "{\"turn\":\"off\",\"brightness\":\"40\"}"
+              },
+              {
+                "deviceName": "tvSwitch",
+                "commandName": "{\"turn\":\"off\"}"
+              },
+              {
+                "deviceName": "arduinoSkyReceiver",
+                "commandName": "{\"turn\":\"toggleSky\"}"
+              },
+              {
+                "deviceName": "arduinoAvReceiver",
+                "commandName": "{\"turn\":\"DvcsOff\"}"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tab_name": "AvReceiverFragment",
+    "groups": [
+      {
+        "group_name": "Modus einstellen",
+        "items": [
+          {
+            "text": "Fernsehen",
+            "subText": "Quelle Sky Receiver",
+            "icon": "ic_football",
+            "actions": [
+              {
+                "deviceName": "arduinoAvReceiver",
+                "commandName": "{\"turn\":\"TV\"}"
+              }
+            ]
+          },
+          {
+            "text": "Musik über Bose System",
+            "subText": "Quelle Bose Adapter",
+            "icon": "ic_music",
+            "actions": [
+              {
+                "deviceName": "arduinoAvReceiver",
+                "commandName": "{\"turn\":\"Bose\"}"
+              }
+            ]
+          },
+          {
+            "text": "Musik oder Video über Chromecast",
+            "subText": "Quelle Chromecast",
+            "icon": "ic_film",
+            "actions": [
+              {
+                "deviceName": "arduinoAvReceiver",
+                "commandName": "{\"turn\":\"CCaudio\"}"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group_name": "Sonstige",
+        "items": [
+          {
+            "text": "Ausschalten",
+            "subText": "schaltet AV Receiver aus",
+            "icon": "ic_power_off",
+            "actions": [
+              {
+                "deviceName": "arduinoAvReceiver",
+                "commandName": "{\"turn\":\"DvcsOff\"}"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "tab_name": "ShutterFragment",
+    "groups": [
+      {
+        "group_name": "Elternzimmer",
+        "items": [
+          {
+            "text": "Schlafzimmer",
+            "subText": "wechselnd runter | stop | hoch",
+            "icon": "ic_shutter",
+            "actions": [
+              {
+                "deviceName": "shutterParents",
+                "commandName": "next"
+              }
+            ]
+          },
+          {
+            "text": "Bad",
+            "subText": "wechselnd runter | stop | hoch",
+            "icon": "ic_shutter",
+            "actions": [
+              {
+                "deviceName": "shutterBathroom",
+                "commandName": "next"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group_name": "Arbeitszimmer",
+        "items": [
+          {
+            "text": "es gibt nur eins",
+            "subText": "wechselnd runter | stop | hoch",
+            "icon": "ic_shutter",
+            "actions": [
+              {
+                "deviceName": "shutterWork",
+                "commandName": "next"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group_name": "Kinderzimmer",
+        "items": [
+          {
+            "text": "links",
+            "subText": "wechselnd runter | stop | hoch",
+            "icon": "ic_shutter",
+            "actions": [
+              {
+                "deviceName": "shutterChildLeft",
+                "commandName": "next"
+              }
+            ]
+          },
+          {
+            "text": "rechts",
+            "subText": "wechselnd runter | stop | hoch",
+            "icon": "ic_shutter",
+            "actions": [
+              {
+                "deviceName": "shutterChildRight",
+                "commandName": "next"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "group_name": "Wohnzimmer",
+        "items": [
+          {
+            "text": "zur Pergola",
+            "subText": "wechselnd runter | stop | hoch",
+            "icon": "ic_shutter",
+            "actions": [
+              {
+                "deviceName": "shutterLivingPergola",
+                "commandName": "next"
+              }
+            ]
+          },
+          {
+            "text": "hinterm Sofa",
+            "subText": "wechselnd runter | stop | hoch",
+            "icon": "ic_shutter",
+            "actions": [
+              {
+                "deviceName": "shutterLivingSofa",
+                "commandName": "next"
+              }
+            ]
+          },
+          {
+            "text": "zur Terassentür",
+            "subText": "wechselnd runter | stop | hoch",
+            "icon": "ic_shutter",
+            "actions": [
+              {
+                "deviceName": "shutterLivingDoor",
+                "commandName": "next"
+              }
+            ]
+          },
+          {
+            "text": "zur Kräuterschnecke",
+            "subText": "wechselnd runter | stop | hoch",
+            "icon": "ic_shutter",
+            "actions": [
+              {
+                "deviceName": "shutterLivingSpices",
+                "commandName": "next"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

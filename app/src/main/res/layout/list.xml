@@ -9,7 +9,6 @@
             android:id="@+id/list"
             android:divider="@color/colorSecondary"
             android:dividerHeight="1dp">
-
         </ListView>
 
 </RelativeLayout>

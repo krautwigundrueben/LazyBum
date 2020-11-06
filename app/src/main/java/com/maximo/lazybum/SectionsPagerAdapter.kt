@@ -4,16 +4,20 @@ import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
+import com.maximo.lazybum.Globals.AVREC_TAB_POS
+import com.maximo.lazybum.Globals.DEVICES_TAB_POS
+import com.maximo.lazybum.Globals.SCENES_TAB_POS
+import com.maximo.lazybum.Globals.SHUTTER_TAB_POS
 import com.maximo.lazybum.fragments.AvReceiverFragment
 import com.maximo.lazybum.fragments.DevicesFragment
-import com.maximo.lazybum.fragments.RollerFragment
 import com.maximo.lazybum.fragments.ScenesFragment
+import com.maximo.lazybum.fragments.ShutterFragment
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_devices,
     R.string.tab_scenes,
     R.string.tab_av_receiver,
-    R.string.tab_roller
+    R.string.tab_shutter
 )
 
 /**
@@ -26,10 +30,10 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
     override fun getItem(position: Int): Fragment {
         // getItem is called to instantiate the fragment for the given page.
         when (position) {
-            0 -> return DevicesFragment()
-            1 -> return ScenesFragment()
-            2 -> return AvReceiverFragment()
-            3 -> return RollerFragment()
+            DEVICES_TAB_POS -> return DevicesFragment()
+            SCENES_TAB_POS -> return ScenesFragment()
+            AVREC_TAB_POS -> return AvReceiverFragment()
+            SHUTTER_TAB_POS -> return ShutterFragment()
             else -> return DevicesFragment()
         }
     }
