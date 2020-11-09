@@ -62,7 +62,13 @@ data class MyStromSwitch(override val dUrl: String, override val dName: String):
                 override fun onFailure(call: Call<Void>, t: Throwable) { }
 
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                    continuation.resume(SwitchStatus(true))
+
+                    val newStatus: Status = if (jCmd.turn == "on") {
+                        SwitchStatus(true)
+                    } else {
+                        SwitchStatus(false)
+                    }
+                    continuation.resume(newStatus)
                 }
             })
         }

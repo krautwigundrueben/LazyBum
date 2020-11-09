@@ -178,10 +178,12 @@ data class Item (
     }
 
     private fun setOnLongClickListener(view: View, mCtx: Context) {
-        with (actions[0].deviceName) {
-            when {
-                contains("ledGrid") -> setOnLongClickListenerGrid(view, mCtx, actions[0])
-                contains("spotLight") -> setOnLongClickListenerSpots(view, mCtx, actions[0])
+        if (actions.size == 1 ) {
+            with(actions[0].deviceName) {
+                when {
+                    contains("ledGrid") -> setOnLongClickListenerGrid(view, mCtx, actions[0])
+                    contains("spotLight") -> setOnLongClickListenerSpots(view, mCtx, actions[0])
+                }
             }
         }
     }
@@ -219,9 +221,7 @@ data class Item (
                         Action("{\"color\":\"$color\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"0\"}", action.deviceName)
                     )
 
-                    GlobalScope.launch {
-                        callDeviceActions(actns, mCtx)
-                    }
+                    GlobalScope.launch { callDeviceActions(actns, mCtx) }
                 }
                 .setPositiveButton("Ok") { dialog, selectedColor, allColors ->
                     gridColor = selectedColor
@@ -267,9 +267,7 @@ data class Item (
                         Action("{\"turn\":\"on\",\"brightness\":\"${spotsBrightness.toString()}\"}", action.deviceName)
                     )
 
-                    GlobalScope.launch {
-                        callDeviceActions(actns, mCtx)
-                    }
+                    GlobalScope.launch { callDeviceActions(actns, mCtx) }
                 }
             })
             true
