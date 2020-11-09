@@ -17,7 +17,9 @@ class ScenesFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list, container, false)
         val listView = view.list
-        listView.adapter = MyListAdapter(requireContext(), Globals.scenesFragmentGroups)
+        listView.adapter = MyListAdapter(requireContext(),
+            Globals.scenesFragmentGroups,
+            this)
 
         if (!myListAdapters.containsKey(Globals.SCENES_TAB_POS))
             myListAdapters.put(Globals.SCENES_TAB_POS, listView.adapter as MyListAdapter)

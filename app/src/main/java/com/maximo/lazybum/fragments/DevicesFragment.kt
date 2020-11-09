@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.maximo.lazybum.Globals
+import com.maximo.lazybum.Globals.DEVICES_TAB_POS
 import com.maximo.lazybum.Globals.devicesFragmentGroups
 import com.maximo.lazybum.Globals.myListAdapters
 import com.maximo.lazybum.R
@@ -19,11 +19,11 @@ class DevicesFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list, container, false)
         val listView = view.list
-        listView.adapter = MyListAdapter(requireContext(), devicesFragmentGroups)
+        listView.adapter = MyListAdapter(requireContext(), devicesFragmentGroups, this)
 
-        if (!myListAdapters.containsKey(Globals.DEVICES_TAB_POS))
-            myListAdapters.put(Globals.DEVICES_TAB_POS, listView.adapter as MyListAdapter)
-        else myListAdapters.replace(Globals.DEVICES_TAB_POS, listView.adapter as MyListAdapter)
+        if (!myListAdapters.containsKey(DEVICES_TAB_POS))
+            myListAdapters.put(DEVICES_TAB_POS, listView.adapter as MyListAdapter)
+        else myListAdapters.replace(DEVICES_TAB_POS, listView.adapter as MyListAdapter)
 
         return view
     }

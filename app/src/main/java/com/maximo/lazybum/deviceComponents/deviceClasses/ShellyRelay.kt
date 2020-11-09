@@ -7,7 +7,8 @@ import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.deviceComponents.dataClasses.shellyDataClasses.Relay
-import com.maximo.lazybum.deviceComponents.dataClasses.shellyDataClasses.ShellyRelayStatus
+import com.maximo.lazybum.deviceComponents.statusClasses.Status
+import com.maximo.lazybum.deviceComponents.statusClasses.SwitchStatus
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,10 +20,9 @@ import kotlin.coroutines.suspendCoroutine
 
 data class ShellyRelay(override val dUrl: String, override val dName: String): Device {
 
-    private val TAG = this.javaClass.toString()
-    var deviceStatus: Relay? = null
+    lateinit var responseObj: Relay
 
-    suspend fun status(pseudoParam: String): String {
+    suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyRelayApi::class.java)
 
@@ -30,23 +30,13 @@ data class ShellyRelay(override val dUrl: String, override val dName: String): D
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    val data = response.body()
-                    val status = Gson().fromJson(data, ShellyRelayStatus::class.java)
-
-                    deviceStatus = status.relays[0]
-
-                    val newStatus: String
-                    when (status.relays[0].ison) {
-                        true -> newStatus = "on"
-                        else -> newStatus = "off"
-                    }
-                    continuation.resume(newStatus)
+                    continuation.resume(processResponse(response))
                 }
             })
         }
     }
 
-    suspend fun toggle(pseudoParam: String): String {
+    suspend fun toggle(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyRelayApi::class.java)
 
@@ -60,16 +50,13 @@ data class ShellyRelay(override val dUrl: String, override val dName: String): D
         }
     }
 
-    private fun processResponse(response: Response<JsonObject>): String {
-        val data = response.body()
-        deviceStatus = Gson().fromJson(data, Relay::class.java)
-
-        if (!deviceStatus?.ison!!) return "off"
-        else return "on"
+    private fun processResponse(response: Response<JsonObject>): Status {
+        responseObj = Gson().fromJson(response.body(), Relay::class.java)
+        return SwitchStatus(responseObj.ison)
     }
 
-    override fun getType(): Int {
-        return DeviceManager.DeviceType.shellyRelay.ordinal
+    override fun getType(): DeviceManager.DeviceType {
+        return DeviceManager.DeviceType.SWITCH
     }
 
     override fun getCommands(): Array<Command> {
@@ -81,7 +68,7 @@ data class ShellyRelay(override val dUrl: String, override val dName: String): D
 }
 
 interface ShellyRelayApi {
-    @GET("/status")
+    @GET("/relay/0")
     fun getStatus(): Call<JsonObject>
 
     @POST("/relay/0")

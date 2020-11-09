@@ -1,5 +1,5 @@
 package com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses
 
-data class SkyRec(
+data class SkyReceiverJson(
     var isOn: Boolean
 )

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.maximo.lazybum.R
 import com.maximo.lazybum.layoutAdapter.MyListAdapter
 
@@ -13,7 +14,8 @@ data class Header(
 
     override fun getView(
         convertView: View?,
-        mCtx: Context
+        mCtx: Context,
+        fragment: Fragment
     ): View {
 
         val layoutInflater: LayoutInflater = LayoutInflater.from(mCtx)

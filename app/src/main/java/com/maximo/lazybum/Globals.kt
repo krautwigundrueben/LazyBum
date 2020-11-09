@@ -8,7 +8,6 @@ object Globals {
     val supportedWifiSsids: List<String> = listOf("AndroidWifi", "DasWeltweiteInternetz", "DasWeltweiteInternetz5GHz")
 
     lateinit var globalDeviceManager: DeviceManager
-    // lateinit var viewModel: ViewModel
 
     lateinit var devicesFragmentGroups: List<Group>
     lateinit var scenesFragmentGroups: List<Group>

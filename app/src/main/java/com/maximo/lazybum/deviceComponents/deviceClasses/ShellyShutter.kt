@@ -7,6 +7,8 @@ import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.deviceComponents.dataClasses.shellyDataClasses.ShellyShutter
+import com.maximo.lazybum.deviceComponents.statusClasses.ShutterStatus
+import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,12 +20,10 @@ import kotlin.coroutines.suspendCoroutine
 
 data class ShellyShutter(override val dUrl: String, override val dName: String): Device {
 
-    private val TAG = this.javaClass.toString()
-    var deviceStatus: ShellyShutter? = null
-
+    lateinit var responseObj: ShellyShutter
     private var nextGo: String = "close"
 
-    suspend fun status(pseudoParam: String): String {
+    suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
 
@@ -37,7 +37,7 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun next(pseudoParam: String): String {
+    suspend fun next(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
 
@@ -51,7 +51,7 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun default(sCmd: String): String {
+    suspend fun default(sCmd: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
 
@@ -77,17 +77,14 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
         }
     }
 
-    private fun processResponse(response: Response<JsonObject>): String {
-        val data = response.body()
-        deviceStatus = Gson().fromJson(data, ShellyShutter::class.java)
-
-        determineNextGo(deviceStatus?.state, deviceStatus?.last_direction)
-
-        return nextGo
+    private fun processResponse(response: Response<JsonObject>): Status {
+        responseObj = Gson().fromJson(response.body(), ShellyShutter::class.java)
+        determineNextGo(responseObj.state, responseObj.last_direction)
+        return ShutterStatus(false, responseObj.last_direction)
     }
 
-    override fun getType(): Int {
-        return DeviceManager.DeviceType.shellyShutter.ordinal
+    override fun getType(): DeviceManager.DeviceType {
+        return DeviceManager.DeviceType.SHUTTER
     }
 
     override fun getCommands(): Array<Command> {

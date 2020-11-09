@@ -1,6 +1,5 @@
 package com.maximo.lazybum.deviceComponents.deviceClasses
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.maximo.lazybum.RequestBuilder
@@ -9,6 +8,8 @@ import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.deviceComponents.dataClasses.myStromDimmerDataClasses.D8E3D9494
+import com.maximo.lazybum.deviceComponents.statusClasses.DimmerStatus
+import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,15 +22,12 @@ import kotlin.coroutines.suspendCoroutine
 
 data class MyStromDimmer(override val dUrl: String, override val dName: String): Device {
 
-    private val TAG = this.javaClass.toString()
-    var deviceStatus: D8E3D9494? = null
+    lateinit var responseObj: D8E3D9494
 
-    init {
-        deviceStatus?.on = false
-        deviceStatus?.color = 0xff0000ff.toString()
-    }
+    val initColor = 0xff0000ff.toString()
+    val toggleCommand = MyStromDimmerCommand("33000000", "rgb", "toggle", 2000)
 
-    suspend fun status(pseudoParam: String): String {
+    suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromDimmerApi::class.java)
 
@@ -43,11 +41,11 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun toggle(pseudoParam: String): String {
+    suspend fun toggle(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromDimmerApi::class.java)
 
-            request.set("33000000","rgb","toggle", 2000).enqueue(object : Callback<JsonObject> {
+            request.set(toggleCommand.color, toggleCommand.mode, toggleCommand.action, toggleCommand.ramp).enqueue(object : Callback<JsonObject> {
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -57,7 +55,7 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun default(sCmd: String): String {
+    suspend fun default(sCmd: String): Status {
         try {
             val jCmd = Gson().fromJson(sCmd, MyStromDimmerCommand::class.java)
 
@@ -74,22 +72,18 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
             }
         }
         catch (exception: Exception) {
-            Log.e(TAG, exception.toString())
-            return "error"
+            return DimmerStatus(false, initColor)
         }
     }
 
-    private fun processResponse(response: Response<JsonObject>): String {
-        val data = response.body()
-        val dataJson = data?.getAsJsonObject("840D8E3D9494")
-        deviceStatus = Gson().fromJson(dataJson, D8E3D9494::class.java)
-
-        if (!deviceStatus?.on!!) return "off"
-        else return deviceStatus?.color.toString()
+    private fun processResponse(response: Response<JsonObject>): Status {
+        val dataJson = response.body()?.getAsJsonObject("840D8E3D9494")
+        responseObj = Gson().fromJson(dataJson, D8E3D9494::class.java)
+        return DimmerStatus(responseObj.on, responseObj.color)
     }
 
-    override fun getType(): Int {
-        return DeviceManager.DeviceType.myStromDimmer.ordinal
+    override fun getType(): DeviceManager.DeviceType {
+        return DeviceManager.DeviceType.DIMMER
     }
 
     override fun getCommands(): Array<Command> {

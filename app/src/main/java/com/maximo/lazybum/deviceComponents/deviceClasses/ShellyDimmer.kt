@@ -1,6 +1,5 @@
 package com.maximo.lazybum.deviceComponents.deviceClasses
 
-import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.maximo.lazybum.RequestBuilder
@@ -9,7 +8,8 @@ import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.deviceComponents.dataClasses.shellyDataClasses.Light
-import com.maximo.lazybum.deviceComponents.dataClasses.shellyDataClasses.ShellyLightsStatus
+import com.maximo.lazybum.deviceComponents.statusClasses.DimmerStatus
+import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -21,10 +21,9 @@ import kotlin.coroutines.suspendCoroutine
 
 data class ShellyDimmer(override val dUrl: String, override val dName: String): Device {
 
-    private val TAG = this.javaClass.toString()
-    var deviceStatus: Light? = null
+    lateinit var responseObj: Light
 
-    suspend fun status(pseudoParam: String): String {
+    suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyDimmerApi::class.java)
 
@@ -32,22 +31,13 @@ data class ShellyDimmer(override val dUrl: String, override val dName: String): 
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    val data = response.body()
-                    val status = Gson().fromJson(data, ShellyLightsStatus::class.java)
-
-                    deviceStatus = status.lights[0]
-
-                    val newStatus: String
-                    if (!deviceStatus?.ison!!) newStatus = "off"
-                    else newStatus = deviceStatus?.brightness.toString()
-
-                    continuation.resume(newStatus)
+                    continuation.resume(processResponse(response))
                 }
             })
         }
     }
 
-    suspend fun default(sCmd: String): String {
+    suspend fun default(sCmd: String): Status {
         try {
             val jCmd = Gson().fromJson(sCmd, ShellyDimmerCommand::class.java)
 
@@ -64,21 +54,17 @@ data class ShellyDimmer(override val dUrl: String, override val dName: String): 
             }
         }
         catch (exception: Exception) {
-            Log.e(TAG, exception.toString())
-            return "error"
+            return DimmerStatus(false, "0")
         }
     }
 
-    private fun processResponse(response: Response<JsonObject>): String {
-        val data = response.body()
-        deviceStatus = Gson().fromJson(data, Light::class.java)
-
-        if (!deviceStatus?.ison!!) return "off"
-        else return deviceStatus?.brightness.toString()
+    private fun processResponse(response: Response<JsonObject>): Status {
+        responseObj = Gson().fromJson(response.body(), Light::class.java)
+        return DimmerStatus(responseObj.ison, responseObj.brightness.toString())
     }
 
-    override fun getType(): Int {
-        return DeviceManager.DeviceType.shellyDimmer.ordinal
+    override fun getType(): DeviceManager.DeviceType {
+        return DeviceManager.DeviceType.SWITCH
     }
 
     override fun getCommands(): Array<Command> {
@@ -90,7 +76,7 @@ data class ShellyDimmer(override val dUrl: String, override val dName: String): 
 }
 
 interface ShellyDimmerApi {
-    @GET("/status")
+    @GET("/light/0")
     fun getStatus(): Call<JsonObject>
 
     @POST("/light/0")

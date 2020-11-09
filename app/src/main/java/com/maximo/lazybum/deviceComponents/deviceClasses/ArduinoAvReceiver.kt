@@ -1,7 +1,5 @@
 package com.maximo.lazybum.deviceComponents.deviceClasses
 
-import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -10,8 +8,10 @@ import com.maximo.lazybum.commandComponents.ArduinoCommand
 import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
-import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.AvRec
+import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.AvReceiverJson
 import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.MyArduino
+import com.maximo.lazybum.deviceComponents.statusClasses.AvReceiverStatus
+import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,17 +23,9 @@ import kotlin.coroutines.suspendCoroutine
 
 data class ArduinoAvReceiver(override val dUrl: String, override val dName: String): Device, ViewModel() {
 
-    private val TAG = this.javaClass.toString()
-    var deviceStatus: AvRec? = null
-    private val modeMap: HashMap<Int, String> = hashMapOf(1 to "TV", 2 to "CCaudio", 4 to "Bose")
+    lateinit var responseObj: AvReceiverJson
 
-    val mode: MutableLiveData<Int> by lazy {
-        MutableLiveData<Int>()
-    }
-
-    // TODO: abhängig von Response Datengrundlage für Adapter anpassen: Croller
-
-    suspend fun status(pseudoParam: String): String {
+    suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ArduinoAvReceiverApi::class.java)
 
@@ -47,7 +39,7 @@ data class ArduinoAvReceiver(override val dUrl: String, override val dName: Stri
         }
     }
 
-    suspend fun default(sCmd: String): String {
+    suspend fun default(sCmd: String): Status {
         try {
             val jCmd = Gson().fromJson(sCmd, ArduinoCommand::class.java)
 
@@ -66,21 +58,17 @@ data class ArduinoAvReceiver(override val dUrl: String, override val dName: Stri
                 })
             }
         } catch (exception: Exception) {
-            Log.e(TAG, exception.toString())
-            return "error"
+            return AvReceiverStatus(false, 1, "0")
         }
     }
 
-    private fun processResponse(response: Response<JsonObject>): String {
-        val data = response.body()
-        deviceStatus = Gson().fromJson(data, MyArduino::class.java).AvRec
-
-        if (!deviceStatus?.isOn!!) return "off"
-        else return modeMap.get(deviceStatus?.mode)!!
+    private fun processResponse(response: Response<JsonObject>): Status {
+        responseObj = Gson().fromJson(response.body(), MyArduino::class.java).AvRec
+        return AvReceiverStatus(responseObj.isOn, responseObj.mode, responseObj.vol)
     }
 
-    override fun getType(): Int {
-        return DeviceManager.DeviceType.arduino.ordinal
+    override fun getType(): DeviceManager.DeviceType {
+        return DeviceManager.DeviceType.AV_RECEIVER
     }
 
     override fun getCommands(): Array<Command> {

@@ -15,7 +15,15 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.maximo.lazybum.Globals.AVREC_TAB_POS
+import com.maximo.lazybum.Globals.DEVICES_TAB_POS
+import com.maximo.lazybum.Globals.SCENES_TAB_POS
+import com.maximo.lazybum.Globals.SHUTTER_TAB_POS
+import com.maximo.lazybum.Globals.avReceiverFragmentGroups
+import com.maximo.lazybum.Globals.devicesFragmentGroups
 import com.maximo.lazybum.Globals.globalDeviceManager
+import com.maximo.lazybum.Globals.scenesFragmentGroups
+import com.maximo.lazybum.Globals.shutterFragmentGroups
 import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.deviceComponents.dataClasses.DeviceClass
 import com.maximo.lazybum.layoutComponents.Tab
@@ -43,17 +51,16 @@ class MainActivity : AppCompatActivity() {
         val listDeviceType = object : TypeToken<List<DeviceClass>>() {}.type
         val initialDeviceList: List<DeviceClass> =
             Gson().fromJson(InputStreamReader(deviceConfigFile), listDeviceType)
-        globalDeviceManager = DeviceManager(initialDeviceList)
+        globalDeviceManager = DeviceManager(this, initialDeviceList)
 
         val layoutConfigFile = resources.openRawResource(R.raw.layout_config)
         val type = object: TypeToken<List<Tab>>() {}.type
         val tabsList: List<Tab> = Gson().fromJson(InputStreamReader(layoutConfigFile), type)
 
-        // TODO: find list for tab_name and substitute magic number, see https://stackoverflow.com/questions/47882/what-is-a-magic-number-and-why-is-it-bad
-        Globals.devicesFragmentGroups = tabsList[0].groups
-        Globals.scenesFragmentGroups = tabsList[1].groups
-        Globals.avReceiverFragmentGroups = tabsList[2].groups
-        Globals.shutterFragmentGroups = tabsList[3].groups
+        devicesFragmentGroups = tabsList[DEVICES_TAB_POS].groups
+        scenesFragmentGroups = tabsList[SCENES_TAB_POS].groups
+        avReceiverFragmentGroups = tabsList[AVREC_TAB_POS].groups
+        shutterFragmentGroups = tabsList[SHUTTER_TAB_POS].groups
 
         val displayMetrics = DisplayMetrics()
         windowManager.defaultDisplay.getRealMetrics(displayMetrics)

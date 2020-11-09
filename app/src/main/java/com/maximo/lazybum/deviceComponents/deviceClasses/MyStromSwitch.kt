@@ -8,6 +8,8 @@ import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.deviceComponents.dataClasses.myStromSwitchDataClasses.Relay
+import com.maximo.lazybum.deviceComponents.statusClasses.Status
+import com.maximo.lazybum.deviceComponents.statusClasses.SwitchStatus
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,11 +20,11 @@ import kotlin.coroutines.suspendCoroutine
 
 data class MyStromSwitch(override val dUrl: String, override val dName: String): Device {
 
-    private val TAG = this.javaClass.toString()
-    var deviceStatus: Relay? = null
+    lateinit var responseObj: Relay
+
     private val switchMap: HashMap<String, Int> = hashMapOf("on" to 1, "off" to 0)
 
-    suspend fun status(pseudoParam: String): String {
+    suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromSwitchApi::class.java)
 
@@ -36,7 +38,7 @@ data class MyStromSwitch(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun toggle(pseudoParam: String): String {
+    suspend fun toggle(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromSwitchApi::class.java)
 
@@ -50,7 +52,7 @@ data class MyStromSwitch(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun switch(sCmd: String): String {
+    suspend fun switch(sCmd: String): Status {
         val jCmd = Gson().fromJson(sCmd, ArduinoCommand::class.java)
 
         return suspendCoroutine { continuation ->
@@ -60,22 +62,19 @@ data class MyStromSwitch(override val dUrl: String, override val dName: String):
                 override fun onFailure(call: Call<Void>, t: Throwable) { }
 
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                    continuation.resume(jCmd.turn)
+                    continuation.resume(SwitchStatus(true))
                 }
             })
         }
     }
 
-    private fun processResponse(response: Response<JsonObject>): String {
-        val data = response.body()
-        deviceStatus = Gson().fromJson(data, Relay::class.java)
-
-        if (!deviceStatus?.relay!!) return "off"
-        else return "on"
+    private fun processResponse(response: Response<JsonObject>): Status {
+        responseObj = Gson().fromJson(response.body(), Relay::class.java)
+        return SwitchStatus(responseObj.relay)
     }
 
-    override fun getType(): Int {
-        return DeviceManager.DeviceType.myStromSwitch.ordinal
+    override fun getType(): DeviceManager.DeviceType {
+        return DeviceManager.DeviceType.SWITCH
     }
 
     override fun getCommands(): Array<Command> {
