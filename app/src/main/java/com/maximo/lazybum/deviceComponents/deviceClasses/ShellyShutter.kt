@@ -20,7 +20,7 @@ import kotlin.coroutines.suspendCoroutine
 
 data class ShellyShutter(override val dUrl: String, override val dName: String): Device {
 
-    lateinit var responseObj: ShellyShutter
+    private lateinit var responseObj: ShellyShutter
     private var nextGo: String = "close"
 
     suspend fun status(pseudoParam: String): Status {
@@ -51,7 +51,7 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun default(sCmd: String): Status {
+    private suspend fun default(sCmd: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
 
@@ -66,14 +66,14 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
     }
 
     private fun determineNextGo(state: String?, lastDirection: String?) {
-        if (state == "stop") {
+        nextGo = if (state == "stop") {
             if (lastDirection == "close") {
-                nextGo = "open"
+                "open"
             } else {
-                nextGo = "close"
+                "close"
             }
         } else {
-            nextGo = "stop"
+            "stop"
         }
     }
 

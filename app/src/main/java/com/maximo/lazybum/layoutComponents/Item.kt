@@ -1,5 +1,6 @@
 package com.maximo.lazybum.layoutComponents
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Color
@@ -14,7 +15,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.jem.rubberpicker.RubberSeekBar
@@ -50,17 +50,18 @@ data class Item (
     }
 
     init {
-        if (actions.size == 1) {
-            itemType = with (actions[0].deviceName) {
+        itemType = if (actions.size == 1) {
+            with (actions[0].deviceName) {
                 when {
                     contains("AvReceiver") -> AV_REC_COMMAND
                     contains("shutter") -> SHUTTER
                     else -> SINGLE
                 }
             }
-        } else itemType = SCENE
+        } else SCENE
     }
 
+    @SuppressLint("InflateParams")
     override fun getView(convertView: View?, mCtx: Context, fragment: Fragment): View {
 
         val layoutInflater: LayoutInflater = LayoutInflater.from(mCtx)
@@ -93,10 +94,10 @@ data class Item (
     private fun initializeItemView(view: View, mCtx: Context) {
 
         val textView: TextView = view.findViewById(R.id.titleText)
-        textView.setText(text)
+        textView.text = text
 
         val subTextView: TextView = view.findViewById(R.id.subText)
-        subTextView.setText(subText)
+        subTextView.text = subText
 
         val imageId =
             mCtx.resources.getIdentifier(icon, "drawable", mCtx.packageName)
@@ -198,10 +199,10 @@ data class Item (
 
             var gridColor: Int
 
-            if (rgb != "000000") {
-                gridColor = Color.parseColor("#" + rgb)
+            gridColor = if (rgb != "000000") {
+                Color.parseColor("#$rgb")
             } else {
-                gridColor = Color.parseColor("#" + ww + ww + ww)
+                Color.parseColor("#$ww$ww$ww")
             }
 
             ColorPickerDialogBuilder
@@ -264,7 +265,7 @@ data class Item (
 
                 override fun onStopTrackingTouch(seekBar: RubberSeekBar) {
                     val actns: MutableList<Action> = mutableListOf(
-                        Action("{\"turn\":\"on\",\"brightness\":\"${spotsBrightness.toString()}\"}", action.deviceName)
+                        Action("{\"turn\":\"on\",\"brightness\":\"${spotsBrightness}\"}", action.deviceName)
                     )
 
                     GlobalScope.launch { callDeviceActions(actns, mCtx) }
@@ -278,12 +279,11 @@ data class Item (
         for (action in actions) {
             val device = deviceManager.getDevice(action.deviceName)
 
-            device?.getStatus()?.observe(fragment, object: Observer<Status> {
-                override fun onChanged(status: Status?) {
+            device?.getStatus()?.observe(fragment,
+                { status ->
                     paintIcon(mCtx)
                     Log.e("Item", "Der neue Status von ${device.dName} ist ${status?.isActive}")
-                }
-            })
+                })
         }
     }
 }

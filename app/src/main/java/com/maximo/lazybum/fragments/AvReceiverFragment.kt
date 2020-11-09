@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import com.maximo.lazybum.Globals
 import com.maximo.lazybum.Globals.avReceiverFragmentGroups
 import com.maximo.lazybum.Globals.deviceManager
@@ -17,7 +16,6 @@ import com.maximo.lazybum.R
 import com.maximo.lazybum.R.string.avReceiverDeviceName
 import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.deviceComponents.statusClasses.AvReceiverStatus
-import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import com.maximo.lazybum.layoutAdapter.MyListAdapter
 import com.maximo.lazybum.layoutComponents.Action
 import com.sdsmdg.harjot.crollerTest.Croller
@@ -108,11 +106,10 @@ class AvReceiverFragment : Fragment() {
     }
 
     private fun addObserver(avReceiver: DeviceManager.DeviceViewModel?) {
-        avReceiver?.getStatus()?.observe(viewLifecycleOwner, object: Observer<Status>{
-            override fun onChanged(t: Status?) {
+        avReceiver?.getStatus()?.observe(viewLifecycleOwner,
+            { t ->
                 setVolumeKnobView(t as AvReceiverStatus)
                 Log.e("AvReceiverFragment", "Der Status hat sich geändert. isActive: ${t.isActive}, mode: ${t.mode}, vol: ${t.vol}")
-            }
-        })
+            })
     }
 }

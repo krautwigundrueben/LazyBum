@@ -18,8 +18,8 @@ import com.maximo.lazybum.deviceComponents.statusClasses.SwitchStatus
 import com.maximo.lazybum.layoutComponents.Action
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.InputStreamReader
 import kotlin.reflect.full.callSuspend
 
@@ -47,7 +47,7 @@ class DeviceManager(mainActivity: MainActivity) {
         }
     }
 
-    fun registerDevice(mainActivity: MainActivity, newDevice: DeviceClass) {
+    private fun registerDevice(mainActivity: MainActivity, newDevice: DeviceClass) {
 
         val kClass =
             Class.forName("com.maximo.lazybum.deviceComponents.deviceClasses." + newDevice.dType).kotlin
@@ -82,27 +82,23 @@ class DeviceManager(mainActivity: MainActivity) {
 
         var response: Status = SwitchStatus(false)
 
-        GlobalScope.async(IO) {
-            if (targetFunction != null) {
-                response = targetFunction.callSuspend(action.commandName)
+        withContext(IO) {
+            response = if (targetFunction != null) {
+                targetFunction.callSuspend(action.commandName)
+            } else { // must be an appropriate Command Json then
+                targetDevice.dCommands.find { it.cName == "default" }?.cFunction?.callSuspend(
+                    action.commandName)!!
             }
-            else { // must be an appropriate Command Json then
-                response = targetDevice.dCommands.find { it.cName == "default" }?.cFunction?.callSuspend(action.commandName)!!
-            }
-        }.await()
+        }
 
         targetDevice.setStatus(response)
     }
 
 
     private fun readDeviceConfigFile(): List<DeviceClass> {
-
         val deviceConfigFile = this::class.java.getResourceAsStream("/res/raw/devices_config.json")
-
         val listDeviceType = object : TypeToken<List<DeviceClass>>() {}.type
-        val initialDeviceList: List<DeviceClass> =
-            Gson().fromJson(InputStreamReader(deviceConfigFile), listDeviceType)
-        return initialDeviceList
+        return Gson().fromJson(InputStreamReader(deviceConfigFile), listDeviceType)
     }
 
 }

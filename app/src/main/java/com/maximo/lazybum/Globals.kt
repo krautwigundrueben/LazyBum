@@ -4,10 +4,10 @@ import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.layoutComponents.Group
 
 object Globals {
-    val DEVICES_TAB_POS = 0
-    val SCENES_TAB_POS = 1
-    val AVREC_TAB_POS = 2
-    val SHUTTER_TAB_POS = 3
+    const val DEVICES_TAB_POS = 0
+    const val SCENES_TAB_POS = 1
+    const val AVREC_TAB_POS = 2
+    const val SHUTTER_TAB_POS = 3
 
     val supportedWifiSSIDs: List<String> = listOf("AndroidWifi", "DasWeltweiteInternetz", "DasWeltweiteInternetz5GHz")
 

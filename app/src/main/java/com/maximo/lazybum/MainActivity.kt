@@ -29,7 +29,7 @@ import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity() {
 
-    private val RECORD_REQUEST_CODE = 101
+    private val recordRequestCode = 101
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,13 +71,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun makeRequest() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), RECORD_REQUEST_CODE)
+        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), recordRequestCode)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            RECORD_REQUEST_CODE -> {
+            recordRequestCode -> {
                 if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     Toast.makeText(this, "You'll regret this.", Toast.LENGTH_SHORT).show()
                 } else {

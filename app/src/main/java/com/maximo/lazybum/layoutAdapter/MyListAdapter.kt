@@ -10,9 +10,9 @@ import com.maximo.lazybum.layoutComponents.Header
 import com.maximo.lazybum.layoutComponents.Item
 import com.maximo.lazybum.layoutComponents.ListElement
 
-class MyListAdapter(var mCtx: Context, groups: List<Group>, val fragment: Fragment) : BaseAdapter() {
+class MyListAdapter(private var context: Context, groups: List<Group>, private val fragment: Fragment) : BaseAdapter() {
 
-    val listItems = mutableListOf<ListElement>()
+    private val listItems = mutableListOf<ListElement>()
 
     init {
         for (group in groups) {
@@ -26,7 +26,7 @@ class MyListAdapter(var mCtx: Context, groups: List<Group>, val fragment: Fragme
         listItems.add(instance)
     }
 
-    fun registerGroupItems(groupItems: List<Item>) {
+    private fun registerGroupItems(groupItems: List<Item>) {
         groupItems.forEach { item ->
             val instance = Item(item.text, item.subText, item.icon, item.actions)
             listItems.add(instance)
@@ -60,7 +60,7 @@ class MyListAdapter(var mCtx: Context, groups: List<Group>, val fragment: Fragme
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
 
         var view = convertView
-        view = listItems[position].getView(view, mCtx, fragment)
+        view = listItems[position].getView(view, context, fragment)
 
         return view
     }

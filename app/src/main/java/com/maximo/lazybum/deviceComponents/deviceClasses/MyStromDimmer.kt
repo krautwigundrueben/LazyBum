@@ -24,8 +24,8 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
 
     lateinit var responseObj: D8E3D9494
 
-    val initColor = 0xff0000ff.toString()
-    val toggleCommand = MyStromDimmerCommand("33000000", "rgb", "toggle", 2000)
+    private val initColor = 0xff0000ff.toString()
+    private val toggleCommand = MyStromDimmerCommand("33000000", "rgb", "toggle", 2000)
 
     suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
@@ -55,7 +55,7 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun default(sCmd: String): Status {
+    private suspend fun default(sCmd: String): Status {
         try {
             val jCmd = Gson().fromJson(sCmd, MyStromDimmerCommand::class.java)
 

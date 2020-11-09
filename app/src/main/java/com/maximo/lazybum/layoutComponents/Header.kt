@@ -1,5 +1,6 @@
 package com.maximo.lazybum.layoutComponents
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +13,7 @@ data class Header(
     override val text: String
 ): ListElement {
 
+    @SuppressLint("InflateParams")
     override fun getView(
         convertView: View?,
         mCtx: Context,
@@ -23,11 +25,11 @@ data class Header(
 
         if (view != null) {
             val textView: TextView = view.findViewById(R.id.groupHeaderText)
-            textView.setText(text)
+            textView.text = text
         } else {
             view = layoutInflater.inflate(R.layout.list_group_header, null)
             val textView: TextView = view.findViewById(R.id.groupHeaderText)
-            textView.setText(text)
+            textView.text = text
         }
         return view as View
     }

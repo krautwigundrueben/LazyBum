@@ -37,7 +37,7 @@ data class ShellyDimmer(override val dUrl: String, override val dName: String): 
         }
     }
 
-    suspend fun default(sCmd: String): Status {
+    private suspend fun default(sCmd: String): Status {
         try {
             val jCmd = Gson().fromJson(sCmd, ShellyDimmerCommand::class.java)
 

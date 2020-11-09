@@ -23,7 +23,7 @@ import kotlin.coroutines.suspendCoroutine
 
 data class ArduinoAvReceiver(override val dUrl: String, override val dName: String): Device, ViewModel() {
 
-    lateinit var responseObj: AvReceiverJson
+    private lateinit var responseObj: AvReceiverJson
 
     suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
@@ -39,7 +39,7 @@ data class ArduinoAvReceiver(override val dUrl: String, override val dName: Stri
         }
     }
 
-    suspend fun default(sCmd: String): Status {
+    private suspend fun default(sCmd: String): Status {
         try {
             val jCmd = Gson().fromJson(sCmd, ArduinoCommand::class.java)
 

@@ -8,8 +8,8 @@ import com.maximo.lazybum.deviceComponents.DeviceManager
 @Suppress("UNCHECKED_CAST")
 class MyDeviceViewModelFactory(
     val dName: String,
-    val dInstance: Any,
-    val dCommands: Array<Command>
+    private val dInstance: Any,
+    private val dCommands: Array<Command>
 ): ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

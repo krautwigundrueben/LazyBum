@@ -20,7 +20,7 @@ import kotlin.coroutines.suspendCoroutine
 
 data class MyStromSwitch(override val dUrl: String, override val dName: String): Device {
 
-    lateinit var responseObj: Relay
+    private lateinit var responseObj: Relay
 
     private val switchMap: HashMap<String, Int> = hashMapOf("on" to 1, "off" to 0)
 
@@ -38,7 +38,7 @@ data class MyStromSwitch(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun toggle(pseudoParam: String): Status {
+    private suspend fun toggle(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromSwitchApi::class.java)
 
@@ -52,13 +52,13 @@ data class MyStromSwitch(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun switch(sCmd: String): Status {
+    private suspend fun switch(sCmd: String): Status {
         val jCmd = Gson().fromJson(sCmd, ArduinoCommand::class.java)
 
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromSwitchApi::class.java)
 
-            request.switch(switchMap.get(jCmd.turn)!!).enqueue(object : Callback<Void> {
+            request.switch(switchMap[jCmd.turn]!!).enqueue(object : Callback<Void> {
                 override fun onFailure(call: Call<Void>, t: Throwable) { }
 
                 override fun onResponse(call: Call<Void>, response: Response<Void>) {

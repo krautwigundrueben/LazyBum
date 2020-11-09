@@ -24,17 +24,18 @@ private val TAB_TITLES = arrayOf(
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
  * one of the sections/tabs/pages.
  */
+@Suppress("DEPRECATION")
 class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
     : FragmentPagerAdapter(fm) {
 
     override fun getItem(position: Int): Fragment {
         // getItem is called to instantiate the fragment for the given page.
-        when (position) {
-            DEVICES_TAB_POS -> return DevicesFragment()
-            SCENES_TAB_POS -> return ScenesFragment()
-            AVREC_TAB_POS -> return AvReceiverFragment()
-            SHUTTER_TAB_POS -> return ShutterFragment()
-            else -> return DevicesFragment()
+        return when (position) {
+            DEVICES_TAB_POS -> DevicesFragment()
+            SCENES_TAB_POS -> ScenesFragment()
+            AVREC_TAB_POS -> AvReceiverFragment()
+            SHUTTER_TAB_POS -> ShutterFragment()
+            else -> DevicesFragment()
         }
     }
 

@@ -20,7 +20,7 @@ import kotlin.coroutines.suspendCoroutine
 
 data class ShellyRelay(override val dUrl: String, override val dName: String): Device {
 
-    lateinit var responseObj: Relay
+    private lateinit var responseObj: Relay
 
     suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
@@ -36,7 +36,7 @@ data class ShellyRelay(override val dUrl: String, override val dName: String): D
         }
     }
 
-    suspend fun toggle(pseudoParam: String): Status {
+    private suspend fun toggle(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyRelayApi::class.java)
 
