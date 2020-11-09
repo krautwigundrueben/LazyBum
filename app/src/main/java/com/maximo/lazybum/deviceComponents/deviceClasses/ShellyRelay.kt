@@ -36,7 +36,7 @@ data class ShellyRelay(override val dUrl: String, override val dName: String): D
         }
     }
 
-    private suspend fun toggle(pseudoParam: String): Status {
+    suspend fun toggle(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyRelayApi::class.java)
 
@@ -50,7 +50,7 @@ data class ShellyRelay(override val dUrl: String, override val dName: String): D
         }
     }
 
-    private fun processResponse(response: Response<JsonObject>): Status {
+    fun processResponse(response: Response<JsonObject>): Status {
         responseObj = Gson().fromJson(response.body(), Relay::class.java)
         return SwitchStatus(responseObj.ison)
     }

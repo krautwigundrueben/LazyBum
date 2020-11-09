@@ -51,7 +51,7 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
         }
     }
 
-    private suspend fun default(sCmd: String): Status {
+    suspend fun default(sCmd: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
 

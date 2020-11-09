@@ -55,7 +55,7 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
         }
     }
 
-    private suspend fun default(sCmd: String): Status {
+    suspend fun default(sCmd: String): Status {
         try {
             val jCmd = Gson().fromJson(sCmd, MyStromDimmerCommand::class.java)
 

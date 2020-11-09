@@ -32,8 +32,11 @@ import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import com.maximo.lazybum.layoutAdapter.MyListAdapter
 import com.maximo.lazybum.layoutComponents.Item.ItemType.*
 import kotlinx.android.synthetic.main.brightness_dialog.view.*
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 data class Item (
     override val text: String,
@@ -159,10 +162,15 @@ data class Item (
         if (supportedWifiSSIDs.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
 
             actionList.forEachIndexed { index, action ->
+
                 try {
-                    deviceManager.executeCommand(actionList[index])
+                    withContext(IO) {
+                        deviceManager.executeCommand(actionList[index])
+                    }
                 } catch (e: Exception) {
-                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                    withContext(Main) {
+                        Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         } else {

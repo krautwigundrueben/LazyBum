@@ -38,7 +38,7 @@ data class ArduinoSkyReceiver(override val dUrl: String, override val dName: Str
         }
     }
 
-    private suspend fun default(sCmd: String): Status {
+    suspend fun default(sCmd: String): Status {
         try {
             val jCmd = Gson().fromJson(sCmd, ArduinoCommand::class.java)
 
