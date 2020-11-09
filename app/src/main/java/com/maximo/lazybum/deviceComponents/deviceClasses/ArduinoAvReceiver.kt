@@ -8,8 +8,8 @@ import com.maximo.lazybum.commandComponents.ArduinoCommand
 import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
+import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.ArduinoResponseJson
 import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.AvReceiverJson
-import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.MyArduino
 import com.maximo.lazybum.deviceComponents.statusClasses.AvReceiverStatus
 import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import retrofit2.Call
@@ -63,7 +63,7 @@ data class ArduinoAvReceiver(override val dUrl: String, override val dName: Stri
     }
 
     private fun processResponse(response: Response<JsonObject>): Status {
-        responseObj = Gson().fromJson(response.body(), MyArduino::class.java).AvRec
+        responseObj = Gson().fromJson(response.body(), ArduinoResponseJson::class.java).AvRec
         return AvReceiverStatus(responseObj.isOn, responseObj.mode, responseObj.vol)
     }
 
@@ -72,14 +72,12 @@ data class ArduinoAvReceiver(override val dUrl: String, override val dName: Stri
     }
 
     override fun getCommands(): Array<Command> {
-
         return arrayOf(
             Command("status", ::status),
             Command("default", ::default)
         )
     }
 }
-
 
 interface ArduinoAvReceiverApi {
     @GET("/")

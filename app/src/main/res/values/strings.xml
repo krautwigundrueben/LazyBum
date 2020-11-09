@@ -10,4 +10,5 @@
     <string name="tab_shutter">Rollos</string>
     <string name="tab_scenes">Szenen</string>
     <string name="avReceiverDeviceName">arduinoAvReceiver</string>
+    <string name="not_at_home">Nicht im Heimnetz</string>
 </resources>

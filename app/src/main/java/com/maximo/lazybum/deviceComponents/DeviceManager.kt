@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.maximo.lazybum.Globals
 import com.maximo.lazybum.MainActivity
 import com.maximo.lazybum.MyDeviceViewModelFactory
@@ -18,9 +20,10 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.io.InputStreamReader
 import kotlin.reflect.full.callSuspend
 
-class DeviceManager(mainActivity: MainActivity, devices: List<DeviceClass>) {
+class DeviceManager(mainActivity: MainActivity) {
 
     class DeviceViewModel(val dName: String, val dInstance: Any, val dCommands: Array<Command>): ViewModel() {
         lateinit var deviceType: DeviceType
@@ -33,7 +36,7 @@ class DeviceManager(mainActivity: MainActivity, devices: List<DeviceClass>) {
     private val myDevices = mutableListOf<DeviceViewModel>()
 
     init {
-        // loadDevices()
+        val devices: List<DeviceClass> = readDeviceConfigFile()
 
         for (device in devices) {
             registerDevice(mainActivity, device)
@@ -44,13 +47,7 @@ class DeviceManager(mainActivity: MainActivity, devices: List<DeviceClass>) {
         }
     }
 
-    fun registerDevice(mainActivity: MainActivity, newDevice: DeviceClass) { //: MutableList<DeviceViewModel>
-        /*
-        val myDevices: MutableList<DeviceViewModel> = mutableListOf()
-
-        for (newDevice in initialDeviceList) {
-
-         */
+    fun registerDevice(mainActivity: MainActivity, newDevice: DeviceClass) {
 
         val kClass =
             Class.forName("com.maximo.lazybum.deviceComponents.deviceClasses." + newDevice.dType).kotlin
@@ -61,8 +58,6 @@ class DeviceManager(mainActivity: MainActivity, devices: List<DeviceClass>) {
         val viewModel = ViewModelProvider(mainActivity, viewModelFactory).get(instance.dName, DeviceViewModel::class.java)
         viewModel.deviceType = instance.getType()
         myDevices.add(viewModel)
-
-        //return myDevices
     }
 
     fun getDevice(deviceName: String): DeviceViewModel? {
@@ -71,7 +66,7 @@ class DeviceManager(mainActivity: MainActivity, devices: List<DeviceClass>) {
 
     private suspend fun getInitialStatus(mainActivity: MainActivity, action: Action) {
         val connMgr = mainActivity.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (Globals.supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
+        if (Globals.supportedWifiSSIDs.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
             try {
                 executeCommand(action)
             } catch (e: Exception) {
@@ -89,27 +84,25 @@ class DeviceManager(mainActivity: MainActivity, devices: List<DeviceClass>) {
 
         GlobalScope.async(IO) {
             if (targetFunction != null) {
-                response = targetFunction.callSuspend(action.commandName) // targetDevice.dStatus =
+                response = targetFunction.callSuspend(action.commandName)
             }
             else { // must be an appropriate Command Json then
-                response = targetDevice.dCommands.find { it.cName == "default" }?.cFunction?.callSuspend(action.commandName)!! // targetDevice.dStatus =
+                response = targetDevice.dCommands.find { it.cName == "default" }?.cFunction?.callSuspend(action.commandName)!!
             }
         }.await()
 
         targetDevice.setStatus(response)
     }
 
-/*
-    private fun loadDevices() {
+
+    private fun readDeviceConfigFile(): List<DeviceClass> {
 
         val deviceConfigFile = this::class.java.getResourceAsStream("/res/raw/devices_config.json")
 
         val listDeviceType = object : TypeToken<List<DeviceClass>>() {}.type
         val initialDeviceList: List<DeviceClass> =
             Gson().fromJson(InputStreamReader(deviceConfigFile), listDeviceType)
-        devices.value = registerDevices(initialDeviceList)
-        //Globals.globalDeviceManager = DeviceManager(initialDeviceList)
-
+        return initialDeviceList
     }
-*/
+
 }

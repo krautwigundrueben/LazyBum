@@ -10,8 +10,6 @@ import com.maximo.lazybum.layoutComponents.Header
 import com.maximo.lazybum.layoutComponents.Item
 import com.maximo.lazybum.layoutComponents.ListElement
 
-// info: https://stackoverflow.com/questions/13590627/android-listview-headers
-
 class MyListAdapter(var mCtx: Context, groups: List<Group>, val fragment: Fragment) : BaseAdapter() {
 
     val listItems = mutableListOf<ListElement>()

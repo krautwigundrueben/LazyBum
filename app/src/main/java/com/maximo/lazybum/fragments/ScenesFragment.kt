@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.maximo.lazybum.Globals
-import com.maximo.lazybum.Globals.myListAdapters
+import com.maximo.lazybum.Globals.scenesFragmentGroups
 import com.maximo.lazybum.R
 import com.maximo.lazybum.layoutAdapter.MyListAdapter
 import kotlinx.android.synthetic.main.list.view.*
@@ -17,13 +16,7 @@ class ScenesFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list, container, false)
         val listView = view.list
-        listView.adapter = MyListAdapter(requireContext(),
-            Globals.scenesFragmentGroups,
-            this)
-
-        if (!myListAdapters.containsKey(Globals.SCENES_TAB_POS))
-            myListAdapters.put(Globals.SCENES_TAB_POS, listView.adapter as MyListAdapter)
-        else myListAdapters.replace(Globals.SCENES_TAB_POS, listView.adapter as MyListAdapter)
+        listView.adapter = MyListAdapter(requireContext(), scenesFragmentGroups,this)
 
         return view
     }

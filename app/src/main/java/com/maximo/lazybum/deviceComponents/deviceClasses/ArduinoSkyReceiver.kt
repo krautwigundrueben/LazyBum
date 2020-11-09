@@ -7,7 +7,7 @@ import com.maximo.lazybum.commandComponents.ArduinoCommand
 import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
-import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.MyArduino
+import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.ArduinoResponseJson
 import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.SkyReceiverJson
 import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import com.maximo.lazybum.deviceComponents.statusClasses.SwitchStatus
@@ -63,7 +63,7 @@ data class ArduinoSkyReceiver(override val dUrl: String, override val dName: Str
     }
 
     private fun processResponse(response: Response<JsonObject>): Status {
-        responseObj = Gson().fromJson(response.body(), MyArduino::class.java).SkyRec
+        responseObj = Gson().fromJson(response.body(), ArduinoResponseJson::class.java).SkyRec
         return SwitchStatus(responseObj.isOn)
     }
 

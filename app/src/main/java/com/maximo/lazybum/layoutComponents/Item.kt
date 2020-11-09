@@ -18,8 +18,8 @@ import androidx.lifecycle.Observer
 import com.flask.colorpicker.ColorPickerView
 import com.flask.colorpicker.builder.ColorPickerDialogBuilder
 import com.jem.rubberpicker.RubberSeekBar
-import com.maximo.lazybum.Globals.globalDeviceManager
-import com.maximo.lazybum.Globals.supportedWifiSsids
+import com.maximo.lazybum.Globals.deviceManager
+import com.maximo.lazybum.Globals.supportedWifiSSIDs
 import com.maximo.lazybum.R
 import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.deviceComponents.DeviceManager.DeviceType.AV_RECEIVER
@@ -32,7 +32,6 @@ import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import com.maximo.lazybum.layoutAdapter.MyListAdapter
 import com.maximo.lazybum.layoutComponents.Item.ItemType.*
 import kotlinx.android.synthetic.main.brightness_dialog.view.*
-import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -68,7 +67,12 @@ data class Item (
         var view = convertView
 
         if (view != null) {
-            view = convertView
+            imageView = view.findViewById(R.id.imageView)
+
+            initializeItemView(view, mCtx)
+            setOnClickListener(view, mCtx)
+            setOnLongClickListener(view, mCtx)
+            addObservers(fragment, mCtx)
         } else {
             view = layoutInflater.inflate(R.layout.list_item, null)
             imageView = view.findViewById(R.id.imageView)
@@ -104,12 +108,10 @@ data class Item (
         val allItemStatuses: MutableList<LiveData<Status>> = mutableListOf()
 
         for (action in actions) {
-            allItemStatuses.add(globalDeviceManager.getDevice(action.deviceName)?.getStatus()!!)
+            allItemStatuses.add(deviceManager.getDevice(action.deviceName)?.getStatus()!!)
         }
 
-        val toBePainted = isItemToBePainted(allItemStatuses)
-
-        if (toBePainted) {
+        if (isItemToBePainted(allItemStatuses)) {
             imageView.setColorFilter(ContextCompat.getColor(mCtx, R.color.colorAccent),
                 PorterDuff.Mode.SRC_IN)
         } else {
@@ -127,14 +129,14 @@ data class Item (
             SCENE -> {
                 try {
                     actions.forEachIndexed { index, action ->
-                        if (action.commandName.contains("toggle") && !globalDeviceManager.getDevice(action.deviceName)
+                        if (action.commandName.contains("toggle") && !deviceManager.getDevice(action.deviceName)
                                 ?.getStatus()?.value?.isActive!! ||
                             action.commandName.contains("on") && !allItemStatuses[index].value?.isActive!! ||
                             action.commandName.contains("off") && allItemStatuses[index].value?.isActive!!
                         ) {
                             return false
                         } else {
-                            when (globalDeviceManager.getDevice(action.deviceName)?.deviceType) {
+                            when (deviceManager.getDevice(action.deviceName)?.deviceType) {
                                 DIMMER -> if (!action.commandName.contains((allItemStatuses[index].value as DimmerStatus).value)) return false
                                 AV_RECEIVER -> if (!action.commandName.contains((allItemStatuses[index].value as AvReceiverStatus).mode)) return false
                                 DeviceManager.DeviceType.SHUTTER -> return false
@@ -150,26 +152,26 @@ data class Item (
         return true
     }
 
-    suspend fun callDeviceActions(actionList: List<Action>, context: Context) {
+    private suspend fun callDeviceActions(actionList: List<Action>, context: Context) {
 
         val connMgr = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (supportedWifiSsids.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
+        if (supportedWifiSSIDs.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
 
             actionList.forEachIndexed { index, action ->
                 try {
-                    globalDeviceManager.executeCommand(actionList[index])
+                    deviceManager.executeCommand(actionList[index])
                 } catch (e: Exception) {
                     Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
                 }
             }
         } else {
-            Toast.makeText(context, "Not at home", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.not_at_home), Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun setOnClickListener(view: View, mCtx: Context) {
         view.setOnClickListener {
-            GlobalScope.launch(Main) {
+            GlobalScope.launch {
                 callDeviceActions(actions, mCtx)
             }
         }
@@ -188,7 +190,7 @@ data class Item (
 
         view?.setOnLongClickListener {
 
-            val ledGrid = globalDeviceManager.getDevice(action.deviceName)?.dInstance as MyStromDimmer
+            val ledGrid = deviceManager.getDevice(action.deviceName)?.dInstance as MyStromDimmer
             val rgb = ledGrid.responseObj.color.substring(2, 8)
             val ww = ledGrid.responseObj.color.substring(0, 2)
 
@@ -217,7 +219,7 @@ data class Item (
                         Action("{\"color\":\"$color\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"0\"}", action.deviceName)
                     )
 
-                    GlobalScope.launch(Main) {
+                    GlobalScope.launch {
                         callDeviceActions(actns, mCtx)
                     }
                 }
@@ -234,7 +236,7 @@ data class Item (
 
         view?.setOnLongClickListener {
 
-            val spots = globalDeviceManager.getDevice(action.deviceName)?.dInstance as ShellyDimmer
+            val spots = deviceManager.getDevice(action.deviceName)?.dInstance as ShellyDimmer
             var spotsBrightness = spots.responseObj.brightness
 
             val mDialogView =
@@ -247,7 +249,7 @@ data class Item (
                 .setPositiveButton("Ok") { diaglog, selectedBrightness -> }
                 .show()
 
-            rubberSeekBar.setCurrentValue(spotsBrightness as Int)
+            rubberSeekBar.setCurrentValue(spotsBrightness)
             rubberSeekBar.setOnRubberSeekBarChangeListener(object :
                 RubberSeekBar.OnRubberSeekBarChangeListener {
                 override fun onProgressChanged(
@@ -265,7 +267,7 @@ data class Item (
                         Action("{\"turn\":\"on\",\"brightness\":\"${spotsBrightness.toString()}\"}", action.deviceName)
                     )
 
-                    GlobalScope.launch(Main) {
+                    GlobalScope.launch {
                         callDeviceActions(actns, mCtx)
                     }
                 }
@@ -276,7 +278,7 @@ data class Item (
 
     private fun addObservers(fragment: Fragment, mCtx: Context) {
         for (action in actions) {
-            val device = globalDeviceManager.getDevice(action.deviceName)
+            val device = deviceManager.getDevice(action.deviceName)
 
             device?.getStatus()?.observe(fragment, object: Observer<Status> {
                 override fun onChanged(status: Status?) {

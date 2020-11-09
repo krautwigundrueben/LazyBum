@@ -1,12 +1,10 @@
 package com.maximo.lazybum
 
 import android.Manifest
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
-import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -20,19 +18,17 @@ import com.maximo.lazybum.Globals.DEVICES_TAB_POS
 import com.maximo.lazybum.Globals.SCENES_TAB_POS
 import com.maximo.lazybum.Globals.SHUTTER_TAB_POS
 import com.maximo.lazybum.Globals.avReceiverFragmentGroups
+import com.maximo.lazybum.Globals.deviceManager
 import com.maximo.lazybum.Globals.devicesFragmentGroups
-import com.maximo.lazybum.Globals.globalDeviceManager
 import com.maximo.lazybum.Globals.scenesFragmentGroups
 import com.maximo.lazybum.Globals.shutterFragmentGroups
 import com.maximo.lazybum.deviceComponents.DeviceManager
-import com.maximo.lazybum.deviceComponents.dataClasses.DeviceClass
 import com.maximo.lazybum.layoutComponents.Tab
+import java.io.IOException
 import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var sharedPreferences: SharedPreferences
-    val TAG = "MainActivity"
     private val RECORD_REQUEST_CODE = 101
 
     @RequiresApi(Build.VERSION_CODES.R)
@@ -45,37 +41,24 @@ class MainActivity : AppCompatActivity() {
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
 
-        // TODO: StreamReader optimieren? siehe: https://bezkoder.com/kotlin-android-read-json-file-assets-gson/ oder https://www.spigotmc.org/threads/json-configuration-files.212794/
+        deviceManager = DeviceManager(this)
+        readLayoutConfigFile()
+        setupPermissions()
+    }
 
-        val deviceConfigFile = resources.openRawResource(R.raw.devices_config)
-        val listDeviceType = object : TypeToken<List<DeviceClass>>() {}.type
-        val initialDeviceList: List<DeviceClass> =
-            Gson().fromJson(InputStreamReader(deviceConfigFile), listDeviceType)
-        globalDeviceManager = DeviceManager(this, initialDeviceList)
-
+    private fun readLayoutConfigFile() {
         val layoutConfigFile = resources.openRawResource(R.raw.layout_config)
         val type = object: TypeToken<List<Tab>>() {}.type
-        val tabsList: List<Tab> = Gson().fromJson(InputStreamReader(layoutConfigFile), type)
+        try {
+            val tabsList: List<Tab> = Gson().fromJson(InputStreamReader(layoutConfigFile), type)
 
-        devicesFragmentGroups = tabsList[DEVICES_TAB_POS].groups
-        scenesFragmentGroups = tabsList[SCENES_TAB_POS].groups
-        avReceiverFragmentGroups = tabsList[AVREC_TAB_POS].groups
-        shutterFragmentGroups = tabsList[SHUTTER_TAB_POS].groups
-
-        val displayMetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getRealMetrics(displayMetrics)
-        val isLargeAppearance = when (displayMetrics.scaledDensity.toInt()) {
-            4 -> true
-            else -> false
+            devicesFragmentGroups = tabsList[DEVICES_TAB_POS].groups
+            scenesFragmentGroups = tabsList[SCENES_TAB_POS].groups
+            avReceiverFragmentGroups = tabsList[AVREC_TAB_POS].groups
+            shutterFragmentGroups = tabsList[SHUTTER_TAB_POS].groups
+        } catch (ioException: IOException) {
+            Toast.makeText(this, "Failed to read layout config file.", Toast.LENGTH_SHORT).show()
         }
-
-        // TODO: braucht's das?
-        sharedPreferences = getSharedPreferences("app", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putBoolean("isLargeAppearance", isLargeAppearance)
-        editor.apply()
-
-        setupPermissions()
     }
 
     private fun setupPermissions() {
@@ -96,9 +79,9 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             RECORD_REQUEST_CODE -> {
                 if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Log.i(TAG, "Permission has been denied by user")
+                    Toast.makeText(this, "You'll regret this.", Toast.LENGTH_SHORT).show()
                 } else {
-                    Log.i(TAG, "Permission has been granted by user")
+                    Toast.makeText(this, "You won't regret this.", Toast.LENGTH_SHORT).show()
                 }
             }
         }

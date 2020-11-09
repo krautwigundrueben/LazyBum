@@ -3,8 +3,6 @@ package com.maximo.lazybum.deviceComponents
 import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import kotlin.reflect.KSuspendFunction1
 
-// TODO: mit DeviceClass zusammenlegen
-
 interface Device {
     val dUrl: String
     val dName: String

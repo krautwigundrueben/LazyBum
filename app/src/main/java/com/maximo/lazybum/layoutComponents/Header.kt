@@ -21,12 +21,13 @@ data class Header(
         val layoutInflater: LayoutInflater = LayoutInflater.from(mCtx)
         var view = convertView
 
-        if (view == null) {
-            view = layoutInflater.inflate(R.layout.list_group_header, null)
+        if (view != null) {
             val textView: TextView = view.findViewById(R.id.groupHeaderText)
             textView.setText(text)
         } else {
-            view = convertView
+            view = layoutInflater.inflate(R.layout.list_group_header, null)
+            val textView: TextView = view.findViewById(R.id.groupHeaderText)
+            textView.setText(text)
         }
         return view as View
     }
