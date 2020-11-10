@@ -22,8 +22,10 @@ import com.sdsmdg.harjot.crollerTest.Croller
 import com.sdsmdg.harjot.crollerTest.OnCrollerChangeListener
 import kotlinx.android.synthetic.main.list_croller.*
 import kotlinx.android.synthetic.main.list_croller.view.*
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AvReceiverFragment : Fragment() {
 
@@ -47,14 +49,17 @@ class AvReceiverFragment : Fragment() {
 
         val connMgr = requireContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
         if (Globals.supportedWifiSSIDs.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-
             try {
                 deviceManager.executeCommand(action)
             } catch (e: Exception) {
-                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                withContext(Main) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
+                }
             }
         } else {
-            Toast.makeText(context, getString(R.string.not_at_home), Toast.LENGTH_SHORT).show()
+            withContext(Main) {
+                Toast.makeText(context, getString(R.string.not_at_home), Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

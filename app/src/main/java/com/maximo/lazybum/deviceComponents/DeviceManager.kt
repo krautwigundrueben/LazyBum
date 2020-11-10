@@ -1,5 +1,6 @@
 package com.maximo.lazybum.deviceComponents
 
+import android.app.Activity
 import android.content.Context
 import android.net.wifi.WifiManager
 import android.util.Log
@@ -40,10 +41,6 @@ class DeviceManager(mainActivity: MainActivity) {
 
         for (device in devices) {
             registerDevice(mainActivity, device)
-
-            GlobalScope.launch {
-                getInitialStatus(mainActivity, Action("status", device.dName))
-            }
         }
     }
 
@@ -64,13 +61,17 @@ class DeviceManager(mainActivity: MainActivity) {
         return myDevices.find { it.dName == deviceName }
     }
 
-    private suspend fun getInitialStatus(mainActivity: MainActivity, action: Action) {
-        val connMgr = mainActivity.getSystemService(Context.WIFI_SERVICE) as WifiManager
+    fun getInitialStatus(activity: Activity) {
+        val connMgr = activity.getSystemService(Context.WIFI_SERVICE) as WifiManager
         if (Globals.supportedWifiSSIDs.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-            try {
-                executeCommand(action)
-            } catch (e: Exception) {
-                Log.e("DeviceManager", e.message.toString())
+            for (device in myDevices) {
+                try {
+                    GlobalScope.launch {
+                        executeCommand(Action("status", device.dName))
+                    }
+                } catch (e: Exception) {
+                    Log.e("DeviceManager", e.message.toString())
+                }
             }
         }
     }
@@ -83,12 +84,10 @@ class DeviceManager(mainActivity: MainActivity) {
         var response: Status = SwitchStatus(false)
 
         withContext(IO) {
-            response = if (targetFunction != null) {
-                targetFunction.callSuspend(action.commandName)
-            } else { // must be an appropriate Command Json then
-                targetDevice.dCommands.find { it.cName == "default" }?.cFunction?.callSuspend(
-                    action.commandName)!!
-            }
+            response = targetFunction?.callSuspend(action.commandName)
+                ?: // must be an appropriate Command Json then
+                        targetDevice.dCommands.find { it.cName == "default" }?.cFunction?.callSuspend(
+                            action.commandName)!!
         }
 
         targetDevice.setStatus(response)

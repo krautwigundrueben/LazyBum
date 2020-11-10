@@ -42,8 +42,14 @@ class MainActivity : AppCompatActivity() {
         tabs.setupWithViewPager(viewPager)
 
         deviceManager = DeviceManager(this)
+        deviceManager.getInitialStatus(this)
         readLayoutConfigFile()
         setupPermissions()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        deviceManager.getInitialStatus(this)
     }
 
     private fun readLayoutConfigFile() {
