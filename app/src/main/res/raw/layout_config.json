@@ -110,7 +110,7 @@
               },
               {
                 "deviceName": "arduinoSkyReceiver",
-                "commandName": "{\"turn\":\"toggleSky\"}"
+                "commandName": "{\"turn\":\"on\"}"
               },
               {
                 "deviceName": "arduinoAvReceiver",
@@ -137,7 +137,7 @@
               },
               {
                 "deviceName": "arduinoSkyReceiver",
-                "commandName": "{\"turn\":\"toggleSky\"}"
+                "commandName": "{\"turn\":\"on\"}"
               },
               {
                 "deviceName": "arduinoAvReceiver",
@@ -259,7 +259,7 @@
               },
               {
                 "deviceName": "arduinoSkyReceiver",
-                "commandName": "{\"turn\":\"toggleSky\"}"
+                "commandName": "{\"turn\":\"off\"}"
               },
               {
                 "deviceName": "arduinoAvReceiver",

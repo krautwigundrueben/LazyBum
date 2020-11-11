@@ -36,11 +36,8 @@ class AvReceiverFragment : Fragment() {
         listView.adapter = MyListAdapter(requireContext(), avReceiverFragmentGroups, this)
 
         val initAction = Action("status", resources.getString(avReceiverDeviceName))
-
         setupVolumeKnob(view, initAction)
         addObserver(deviceManager.getDevice(initAction.deviceName))
-
-        GlobalScope.launch { callDeviceAction(initAction) }
 
         return view
     }

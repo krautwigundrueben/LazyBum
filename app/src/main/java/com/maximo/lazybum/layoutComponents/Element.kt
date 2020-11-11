@@ -4,7 +4,7 @@ import android.content.Context
 import android.view.View
 import androidx.fragment.app.Fragment
 
-interface ListElement {
+interface Element {
     val text: String
 
     fun getViewType(): Int

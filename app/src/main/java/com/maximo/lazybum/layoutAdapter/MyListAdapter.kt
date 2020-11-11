@@ -5,14 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.fragment.app.Fragment
+import com.maximo.lazybum.layoutComponents.Element
 import com.maximo.lazybum.layoutComponents.Group
 import com.maximo.lazybum.layoutComponents.Header
 import com.maximo.lazybum.layoutComponents.Item
-import com.maximo.lazybum.layoutComponents.ListElement
 
 class MyListAdapter(private var context: Context, groups: List<Group>, private val fragment: Fragment) : BaseAdapter() {
 
-    private val listItems = mutableListOf<ListElement>()
+    private val listItems = mutableListOf<Element>()
 
     init {
         for (group in groups) {

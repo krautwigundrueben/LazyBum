@@ -43,7 +43,7 @@ data class Item (
     val subText: String,
     val icon: String,
     val actions: List<Action>
-) : ListElement {
+) : Element {
 
     private lateinit var imageView: ImageView
     private var itemType: ItemType
