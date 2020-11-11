@@ -3,6 +3,7 @@ package com.maximo.lazybum.layoutComponents
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.net.wifi.WifiManager
@@ -70,24 +71,18 @@ data class Item (
         val layoutInflater: LayoutInflater = LayoutInflater.from(mCtx)
         var view = convertView
 
-        if (view != null) {
-            imageView = view.findViewById(R.id.imageView)
-
-            initializeItemView(view, mCtx)
-            setOnClickListener(view, mCtx)
-            setOnLongClickListener(view, mCtx)
-            addObservers(fragment, mCtx)
-        } else {
+        if (view == null) {
             view = layoutInflater.inflate(R.layout.list_item, null)
-            imageView = view.findViewById(R.id.imageView)
-
-            initializeItemView(view, mCtx)
-            setOnClickListener(view, mCtx)
-            setOnLongClickListener(view, mCtx)
-            addObservers(fragment, mCtx)
         }
 
-        return view as View
+        imageView = view?.findViewById(R.id.imageView)!!
+
+        initializeItemView(view, mCtx)
+        setOnClickListener(view, mCtx)
+        setOnLongClickListener(view, mCtx)
+        addObservers(fragment, mCtx)
+
+        return view
     }
 
     override fun getViewType(): Int {
@@ -187,19 +182,37 @@ data class Item (
     }
 
     private fun setOnLongClickListener(view: View, mCtx: Context) {
-        if (actions.size == 1 ) {
-            with(actions[0].deviceName) {
-                when {
-                    contains("ledGrid") -> setOnLongClickListenerGrid(view, mCtx, actions[0])
-                    contains("spotLight") -> setOnLongClickListenerSpots(view, mCtx, actions[0])
-                }
+
+        with(text) {
+            when {
+                contains("Grid") -> setOnLongClickListenerGrid(view, mCtx, actions[0])
+                contains("Strahler") -> setOnLongClickListenerSpots(view, mCtx, actions[0])
+                contains("Spotify") -> setOnLongClickListenerSpotify(view, mCtx, actions)
             }
         }
     }
 
-    private fun setOnLongClickListenerGrid(view: View?, mCtx: Context, action: Action) {
+    private fun setOnLongClickListenerSpotify(view: View, mCtx: Context, actionList: List<Action>) {
 
-        view?.setOnLongClickListener {
+        view.setOnLongClickListener {
+            GlobalScope.launch { callDeviceActions(actionList, mCtx) }
+
+            val packageManager = mCtx.packageManager
+            try {
+                val intent = packageManager.getLaunchIntentForPackage("com.spotify.music")
+                intent?.addCategory(Intent.CATEGORY_LAUNCHER)
+                mCtx.startActivity(intent)
+            } catch (e: Exception) {
+                Toast.makeText(mCtx, "Spotify App nicht installiert.", Toast.LENGTH_LONG).show()
+            }
+
+            true
+        }
+    }
+
+    private fun setOnLongClickListenerGrid(view: View, mCtx: Context, action: Action) {
+
+        view.setOnLongClickListener {
 
             val ledGrid = deviceManager.getDevice(action.deviceName)?.dInstance as MyStromDimmer
             val rgb = ledGrid.responseObj.color.substring(2, 8)
@@ -226,11 +239,11 @@ data class Item (
                             2, color,6,2))
                         color = color.substring(2, 4) + "000000"
 
-                    val actns: MutableList<Action> = mutableListOf(
+                    val actionList: MutableList<Action> = mutableListOf(
                         Action("{\"color\":\"$color\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"0\"}", action.deviceName)
                     )
 
-                    GlobalScope.launch { callDeviceActions(actns, mCtx) }
+                    GlobalScope.launch { callDeviceActions(actionList, mCtx) }
                 }
                 .setPositiveButton("Ok") { dialog, selectedColor, allColors ->
                     gridColor = selectedColor

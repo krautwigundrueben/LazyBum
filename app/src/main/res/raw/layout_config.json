@@ -152,18 +152,7 @@
         "items": [
           {
             "text": "Spotify",
-            "subText": "Quelle Bose Adapter",
-            "icon": "ic_music",
-            "actions": [
-              {
-                "deviceName": "arduinoAvReceiver",
-                "commandName": "{\"turn\":\"Bose\"}"
-              }
-            ]
-          },
-          {
-            "text": "Bose Soundtouch",
-            "subText": "Quelle Bose Adapter",
+            "subText": "lang drücken für Wechsel zur App",
             "icon": "ic_music",
             "actions": [
               {
