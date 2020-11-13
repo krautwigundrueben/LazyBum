@@ -27,6 +27,10 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
     private val initColor = 0xff0000ff.toString()
     private val toggleCommand = MyStromDimmerCommand("33000000", "rgb", "toggle", 2000)
 
+    fun isResponseInitialized(): Boolean {
+        return this::responseObj.isInitialized
+    }
+
     suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromDimmerApi::class.java)

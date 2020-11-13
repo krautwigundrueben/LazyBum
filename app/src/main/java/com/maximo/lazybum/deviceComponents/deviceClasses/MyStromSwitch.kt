@@ -24,6 +24,10 @@ data class MyStromSwitch(override val dUrl: String, override val dName: String):
 
     private val switchMap: HashMap<String, Int> = hashMapOf("on" to 1, "off" to 0)
 
+    fun isResponseInitialized(): Boolean {
+        return this::responseObj.isInitialized
+    }
+
     suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromSwitchApi::class.java)

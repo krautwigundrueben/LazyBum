@@ -23,6 +23,7 @@ import com.maximo.lazybum.Globals.devicesFragmentGroups
 import com.maximo.lazybum.Globals.scenesFragmentGroups
 import com.maximo.lazybum.Globals.shutterFragmentGroups
 import com.maximo.lazybum.deviceComponents.DeviceManager
+import com.maximo.lazybum.layoutComponents.Action
 import com.maximo.lazybum.layoutComponents.Tab
 import java.io.IOException
 import java.io.InputStreamReader
@@ -33,26 +34,36 @@ class MainActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
+
+        deviceManager = DeviceManager(this)
+        getInitialStatuses()
+
+        setupPermissions()
+        readLayoutConfigFile()
+
         setContentView(R.layout.activity_main)
+
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         val viewPager: ViewPager = findViewById(R.id.view_pager)
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.tabs)
         tabs.setupWithViewPager(viewPager)
-
-        deviceManager = DeviceManager(this)
-        deviceManager.getInitialStatus(this)
-        readLayoutConfigFile()
-        setupPermissions()
     }
 
     override fun onResume() {
         super.onResume()
-        deviceManager.getInitialStatus(this)
+        getInitialStatuses()
     }
 
-    private fun readLayoutConfigFile() {
+    private fun getInitialStatuses() {
+        for (device in deviceManager.myDevices) {
+            deviceManager.launchAction(this, Action(getString(R.string.status_request_command), device.dName))
+        }
+    }
+
+    private fun readLayoutConfigFile(): Boolean {
         val layoutConfigFile = resources.openRawResource(R.raw.layout_config)
         val type = object: TypeToken<List<Tab>>() {}.type
         try {
@@ -63,8 +74,10 @@ class MainActivity : AppCompatActivity() {
             avReceiverFragmentGroups = tabsList[AVREC_TAB_POS].groups
             shutterFragmentGroups = tabsList[SHUTTER_TAB_POS].groups
         } catch (ioException: IOException) {
-            Toast.makeText(this, "Failed to read layout config file.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.read_layout_config_failed), Toast.LENGTH_SHORT).show()
+            return false
         }
+        return true
     }
 
     private fun setupPermissions() {
@@ -72,22 +85,22 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_FINE_LOCATION)
 
         if (permission != PackageManager.PERMISSION_GRANTED) {
-            makeRequest()
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), recordRequestCode)
         }
-    }
-
-    private fun makeRequest() {
-        ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), recordRequestCode)
     }
 
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
             recordRequestCode -> {
-                if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, "You'll regret this.", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(this, "You won't regret this.", Toast.LENGTH_SHORT).show()
+                try {
+                    if (grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this, getString(R.string.permission_request_denied), Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, getString(R.string.permission_request_granted), Toast.LENGTH_SHORT).show()
+                    }
+                } catch (e: Exception) {
+                    Toast.makeText(this, getString(R.string.permission_request_problem), Toast.LENGTH_SHORT).show()
                 }
             }
         }

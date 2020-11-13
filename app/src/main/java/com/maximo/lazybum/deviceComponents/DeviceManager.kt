@@ -1,9 +1,8 @@
 package com.maximo.lazybum.deviceComponents
 
-import android.app.Activity
 import android.content.Context
 import android.net.wifi.WifiManager
-import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -13,6 +12,7 @@ import com.google.gson.reflect.TypeToken
 import com.maximo.lazybum.Globals
 import com.maximo.lazybum.MainActivity
 import com.maximo.lazybum.MyDeviceViewModelFactory
+import com.maximo.lazybum.R
 import com.maximo.lazybum.deviceComponents.dataClasses.DeviceClass
 import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import com.maximo.lazybum.deviceComponents.statusClasses.SwitchStatus
@@ -34,10 +34,10 @@ class DeviceManager(mainActivity: MainActivity) {
     }
 
     enum class DeviceType { AV_RECEIVER, DIMMER, SWITCH, SHUTTER }
-    private val myDevices = mutableListOf<DeviceViewModel>()
+    val myDevices = mutableListOf<DeviceViewModel>()
 
     init {
-        val devices: List<DeviceClass> = readDeviceConfigFile()
+        val devices: List<DeviceClass> = readDeviceConfigFile(mainActivity)
 
         for (device in devices) {
             registerDevice(mainActivity, device)
@@ -45,9 +45,8 @@ class DeviceManager(mainActivity: MainActivity) {
     }
 
     private fun registerDevice(mainActivity: MainActivity, newDevice: DeviceClass) {
-
         val kClass =
-            Class.forName("com.maximo.lazybum.deviceComponents.deviceClasses." + newDevice.dType).kotlin
+            Class.forName(mainActivity.getString(R.string.device_classes_location) + newDevice.dType).kotlin
         val instance =
             kClass.constructors.first().call(newDevice.dUrl, newDevice.dName) as Device
 
@@ -61,22 +60,21 @@ class DeviceManager(mainActivity: MainActivity) {
         return myDevices.find { it.dName == deviceName }
     }
 
-    fun getInitialStatus(activity: Activity) {
-        val connMgr = activity.getSystemService(Context.WIFI_SERVICE) as WifiManager
+    fun launchAction(context: Context, action: Action) {
+        val connMgr = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
         if (Globals.supportedWifiSSIDs.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-            for (device in myDevices) {
-                try {
-                    GlobalScope.launch {
-                        executeCommand(Action("status", device.dName))
-                    }
-                } catch (e: Exception) {
-                    Log.e("DeviceManager", e.message.toString())
-                }
+            try {
+                GlobalScope.launch { executeCommand(action) }
+            } catch (e: Exception) {
+                Toast.makeText(context, e.message, Toast.LENGTH_LONG).show()
             }
+        } else {
+            Toast.makeText(context, context.getString(R.string.not_at_home), Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
-    suspend fun executeCommand(action: Action) {
+    private suspend fun executeCommand(action: Action) {
         val targetDevice = getDevice(action.deviceName)
         val targetFunction =
             targetDevice?.dCommands!!.find { it.cName.startsWith(action.commandName) }?.cFunction
@@ -94,8 +92,8 @@ class DeviceManager(mainActivity: MainActivity) {
     }
 
 
-    private fun readDeviceConfigFile(): List<DeviceClass> {
-        val deviceConfigFile = this::class.java.getResourceAsStream("/res/raw/devices_config.json")
+    private fun readDeviceConfigFile(mainActivity: MainActivity): List<DeviceClass> {
+        val deviceConfigFile = this::class.java.getResourceAsStream(mainActivity.getString(R.string.devices_config_location))
         val listDeviceType = object : TypeToken<List<DeviceClass>>() {}.type
         return Gson().fromJson(InputStreamReader(deviceConfigFile), listDeviceType)
     }

@@ -1,6 +1,6 @@
 package com.maximo.lazybum.deviceComponents.dataClasses.shellyDataClasses
 
-data class ShellyShutter(
+data class Shutter(
     val calibrating: Boolean,
     val current_pos: Int,
     val is_valid: Boolean,

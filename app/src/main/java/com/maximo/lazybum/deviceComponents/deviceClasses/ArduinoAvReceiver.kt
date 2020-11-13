@@ -25,6 +25,10 @@ data class ArduinoAvReceiver(override val dUrl: String, override val dName: Stri
 
     private lateinit var responseObj: AvReceiverJson
 
+    fun isResponseInitialized(): Boolean {
+        return this::responseObj.isInitialized
+    }
+
     suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ArduinoAvReceiverApi::class.java)

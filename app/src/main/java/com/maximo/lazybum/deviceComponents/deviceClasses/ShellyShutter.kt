@@ -6,7 +6,7 @@ import com.maximo.lazybum.RequestBuilder
 import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
-import com.maximo.lazybum.deviceComponents.dataClasses.shellyDataClasses.ShellyShutter
+import com.maximo.lazybum.deviceComponents.dataClasses.shellyDataClasses.Shutter
 import com.maximo.lazybum.deviceComponents.statusClasses.ShutterStatus
 import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import retrofit2.Call
@@ -20,8 +20,14 @@ import kotlin.coroutines.suspendCoroutine
 
 data class ShellyShutter(override val dUrl: String, override val dName: String): Device {
 
-    private lateinit var responseObj: ShellyShutter
+    private lateinit var responseObj: Shutter
     private var nextGo: String = "close"
+
+    private val nextGoMap: HashMap<String, String> = hashMapOf("stop" to "stop", "close" to "runter", "open" to "hoch")
+
+    fun isResponseInitialized(): Boolean {
+        return this::responseObj.isInitialized
+    }
 
     suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
@@ -78,9 +84,11 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
     }
 
     private fun processResponse(response: Response<JsonObject>): Status {
-        responseObj = Gson().fromJson(response.body(), ShellyShutter::class.java)
+        responseObj = Gson().fromJson(response.body(), Shutter::class.java)
         determineNextGo(responseObj.state, responseObj.last_direction)
-        return ShutterStatus(false, responseObj.last_direction)
+        return if (!nextGoMap.get(nextGo).isNullOrBlank()) nextGoMap[nextGo]?.let {
+            ShutterStatus(false, it)}!!
+        else return ShutterStatus(false, "stop")
     }
 
     override fun getType(): DeviceManager.DeviceType {

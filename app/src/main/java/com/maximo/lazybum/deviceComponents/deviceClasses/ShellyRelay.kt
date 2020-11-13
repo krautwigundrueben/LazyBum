@@ -22,6 +22,10 @@ data class ShellyRelay(override val dUrl: String, override val dName: String): D
 
     private lateinit var responseObj: Relay
 
+    fun isResponseInitialized(): Boolean {
+        return this::responseObj.isInitialized
+    }
+
     suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyRelayApi::class.java)

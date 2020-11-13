@@ -23,6 +23,10 @@ data class ShellyDimmer(override val dUrl: String, override val dName: String): 
 
     lateinit var responseObj: Light
 
+    fun isResponseInitialized(): Boolean {
+        return this::responseObj.isInitialized
+    }
+
     suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyDimmerApi::class.java)
@@ -64,7 +68,7 @@ data class ShellyDimmer(override val dUrl: String, override val dName: String): 
     }
 
     override fun getType(): DeviceManager.DeviceType {
-        return DeviceManager.DeviceType.SWITCH
+        return DeviceManager.DeviceType.DIMMER
     }
 
     override fun getCommands(): Array<Command> {

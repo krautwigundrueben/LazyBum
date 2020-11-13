@@ -11,4 +11,20 @@
     <string name="tab_scenes">Szenen</string>
     <string name="avReceiverDeviceName">arduinoAvReceiver</string>
     <string name="not_at_home">Nicht im Heimnetz</string>
+    <string name="permission_request_denied">You\'ll regret this.</string>
+    <string name="permission_request_granted">You won\'t regret this.</string>
+    <string name="permission_request_problem">A problem occurred granting permissions.</string>
+    <string name="read_layout_config_failed">Failed to read layout config file.</string>
+    <string name="status_request_command">status</string>
+    <string name="croller_stop_touch_problem">Progress couldn\'t be read?</string>
+    <string name="open_spotify_not_installed">Spotify App nicht installiert.</string>
+    <string name="open_spotify_package_name">com.spotify.music</string>
+    <string name="init_color_grid_picker_1">ffffff</string>
+    <string name="init_color_grid_picker_2">ff</string>
+    <string name="black">000000</string>
+    <string name="grid_picker_choose_color_text">Farbe wählen</string>
+    <string name="Ok">Ok</string>
+    <string name="spots_picker_choose_brightness">Helligkeit wählen</string>
+    <string name="device_classes_location">com.maximo.lazybum.deviceComponents.deviceClasses.</string>
+    <string name="devices_config_location">/res/raw/devices_config.json</string>
 </resources>
