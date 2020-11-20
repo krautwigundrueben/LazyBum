@@ -6,6 +6,8 @@ import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +29,14 @@ import com.maximo.lazybum.layoutComponents.Item
 class MainActivity : AppCompatActivity() {
 
     private val recordRequestCode = 101
+    lateinit var statusHandler: Handler
+
+    private val updateStatusesTask = object : Runnable {
+        override fun run() {
+            getInitialStatuses()
+            statusHandler.postDelayed(this, 5000)
+        }
+    }
 
     @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         deviceManager = DeviceManager(this)
-        getInitialStatuses()
+        statusHandler = Handler(Looper.getMainLooper())
 
         setupPermissions()
         readLayoutConfigFile()
@@ -50,19 +60,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        
-        val connMgr = getSystemService(Context.WIFI_SERVICE) as WifiManager
-        if (Globals.supportedWifiSSIDs.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
-            getInitialStatuses()
-        } else {
-            Toast.makeText(this, R.string.not_at_home, Toast.LENGTH_SHORT)
-                .show()
-        }
+        statusHandler.post(updateStatusesTask)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        statusHandler.removeCallbacks(updateStatusesTask)
     }
 
     private fun getInitialStatuses() {
-        for (device in deviceManager.myDevices) {
-            deviceManager.launchAction(this, Action(device.dName, getString(R.string.status_request_command)))
+        val connMgr = getSystemService(Context.WIFI_SERVICE) as WifiManager
+        if (Globals.supportedWifiSSIDs.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
+            for (device in deviceManager.myDevices) {
+                deviceManager.launchAction(this, Action(device.dName, getString(R.string.status_request_command)))
+            }
+        } else {
+            Toast.makeText(this, R.string.not_at_home, Toast.LENGTH_SHORT).show()
         }
     }
 
