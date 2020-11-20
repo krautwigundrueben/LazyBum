@@ -25,6 +25,8 @@ The icons used are downloaded from <a href="https://www.flaticon.com/de/" title=
 - <a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a>
 - <a href="https://www.flaticon.com/de/autoren/smalllikeart" title="smalllikeart">smalllikeart</a>
 - <a href="https://www.flaticon.com/de/autoren/freepik" title="Freepik">Freepik</a>
+- <a href="https://www.flaticon.com/authors/kiranshastry" title="Kiranshastry">Kiranshastry</a>
+- <a href="https://www.flaticon.com/de/autoren/monkik" title="monkik">monkik</a>
 
 ### Dependencies
 

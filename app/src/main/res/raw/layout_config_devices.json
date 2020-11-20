@@ -1,0 +1,83 @@
+[
+  {
+    "group_name": "Küche",
+    "itemList": [
+      {
+        "mainText": "Kaffeemaschine",
+        "subText": "wechselnd an | aus",
+        "icon": "ic_coffee",
+        "actionList": [
+          {
+            "deviceName": "coffeeSwitch",
+            "commandName": "toggle"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group_name": "Essbereich",
+    "itemList": [
+      {
+        "mainText": "Esstischlampe",
+        "subText": "wechselnd an | aus",
+        "icon": "ic_dining",
+        "actionList": [
+          {
+            "deviceName": "diningLight",
+            "commandName": "toggle"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group_name": "Wohnzimmer",
+    "itemList": [
+      {
+        "mainText": "LED Grid",
+        "subText": "wechselnd an | aus - lang drücken für mehr",
+        "icon": "ic_led_grid",
+        "actionList": [
+          {
+            "deviceName": "ledGridSwitch",
+            "commandName": "toggle"
+          }
+        ]
+      },
+      {
+        "mainText": "Strahler",
+        "subText": "wechselnd an | aus - lang drücken für mehr",
+        "icon": "ic_spots",
+        "actionList": [
+          {
+            "deviceName": "spotLight",
+            "commandName": "{\"turn\":\"toggle\",\"brightness\":\"40\"}"
+          }
+        ]
+      },
+      {
+        "mainText": "Fernseher",
+        "subText": "wechselnd an | aus",
+        "icon": "ic_monitor",
+        "actionList": [
+          {
+            "deviceName": "tvSwitch",
+            "commandName": "toggle"
+          }
+        ]
+      },
+      {
+        "mainText": "TV Receiver",
+        "subText": "wechselnd an | aus",
+        "icon": "ic_sky",
+        "actionList": [
+          {
+            "deviceName": "arduinoSkyReceiver",
+            "commandName": "{\"turn\":\"toggleSky\"}"
+          }
+        ]
+      }
+    ]
+  }
+]

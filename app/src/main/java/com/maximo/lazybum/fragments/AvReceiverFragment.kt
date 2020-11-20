@@ -28,7 +28,7 @@ class AvReceiverFragment : Fragment() {
         val listView = view.media_list
         listView.adapter = MyListAdapter(requireContext(), avReceiverFragmentGroups, this)
 
-        val initAction = Action(getString(R.string.status_request_command), resources.getString(avReceiverDeviceName))
+        val initAction = Action(resources.getString(avReceiverDeviceName), getString(R.string.status_request_command))
         setupVolumeKnob(view, initAction)
         addObserver(deviceManager.getDevice(initAction.deviceName))
 

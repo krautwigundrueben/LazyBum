@@ -10,7 +10,7 @@ import com.maximo.lazybum.R
 import com.maximo.lazybum.layoutAdapter.MyListAdapter
 
 data class Header(
-    override val text: String
+    override val mainText: String
 ): Element {
 
     @SuppressLint("InflateParams")
@@ -25,11 +25,11 @@ data class Header(
 
         if (view != null) {
             val textView: TextView = view.findViewById(R.id.groupHeaderText)
-            textView.text = text
+            textView.text = mainText
         } else {
             view = layoutInflater.inflate(R.layout.list_group_header, null)
             val textView: TextView = view.findViewById(R.id.groupHeaderText)
-            textView.text = text
+            textView.text = mainText
         }
         return view as View
     }

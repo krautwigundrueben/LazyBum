@@ -8,16 +8,15 @@ import com.maximo.lazybum.Globals.AVREC_TAB_POS
 import com.maximo.lazybum.Globals.DEVICES_TAB_POS
 import com.maximo.lazybum.Globals.SCENES_TAB_POS
 import com.maximo.lazybum.Globals.SHUTTER_TAB_POS
-import com.maximo.lazybum.fragments.AvReceiverFragment
-import com.maximo.lazybum.fragments.DevicesFragment
-import com.maximo.lazybum.fragments.ScenesFragment
-import com.maximo.lazybum.fragments.ShutterFragment
+import com.maximo.lazybum.Globals.VACUUM_TAB_POS
+import com.maximo.lazybum.fragments.*
 
 private val TAB_TITLES = arrayOf(
     R.string.tab_devices,
     R.string.tab_scenes,
     R.string.tab_av_receiver,
-    R.string.tab_shutter
+    R.string.tab_shutter,
+    R.string.tab_vacuum
 )
 
 /**
@@ -35,6 +34,7 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
             SCENES_TAB_POS -> ScenesFragment()
             AVREC_TAB_POS -> AvReceiverFragment()
             SHUTTER_TAB_POS -> ShutterFragment()
+            VACUUM_TAB_POS -> VacuumFragment()
             else -> DevicesFragment()
         }
     }
@@ -44,6 +44,6 @@ class SectionsPagerAdapter(private val context: Context, fm: FragmentManager)
     }
 
     override fun getCount(): Int {
-        return 4
+        return 5
     }
 }

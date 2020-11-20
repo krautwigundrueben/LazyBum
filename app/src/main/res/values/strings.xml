@@ -27,4 +27,5 @@
     <string name="spots_picker_choose_brightness">Helligkeit wählen</string>
     <string name="device_classes_location">com.maximo.lazybum.deviceComponents.deviceClasses.</string>
     <string name="devices_config_location">/res/raw/devices_config.json</string>
+    <string name="tab_vacuum">Saugen</string>
 </resources>
