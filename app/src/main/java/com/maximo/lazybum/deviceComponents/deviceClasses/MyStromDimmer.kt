@@ -13,10 +13,7 @@ import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -81,9 +78,13 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
     }
 
     private fun processResponse(response: Response<JsonObject>): Status {
-        val dataJson = response.body()?.getAsJsonObject("840D8E3D9494")
-        responseObj = Gson().fromJson(dataJson, D8E3D9494::class.java)
-        return DimmerStatus(responseObj.on, responseObj.color)
+        return try {
+            val dataJson = response.body()?.getAsJsonObject("840D8E3D9494")
+            responseObj = Gson().fromJson(dataJson, D8E3D9494::class.java)
+            DimmerStatus(responseObj.on, responseObj.color)
+        } catch (exception: Exception) {
+            DimmerStatus(false, initColor)
+        }
     }
 
     override fun getType(): DeviceManager.DeviceType {
@@ -101,6 +102,9 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
 
 interface MyStromDimmerApi {
     @GET("/api/v1/device")
+    @Headers(
+        "Referer: http://192.168.178.32/index.html"
+    )
     fun getStatus(): Call<JsonObject>
 
     @FormUrlEncoded

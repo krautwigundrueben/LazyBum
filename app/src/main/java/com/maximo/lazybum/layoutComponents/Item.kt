@@ -47,7 +47,7 @@ data class Item (
     private var itemType: ItemType
 
     enum class ItemType {
-        SINGLE, SCENE, AV_REC_COMMAND, SHUTTER
+        SINGLE, SCENE, AV_REC_COMMAND, SHUTTER, VACUUM
     }
 
     init {
@@ -56,6 +56,7 @@ data class Item (
                 when {
                     contains("AvReceiver") -> AV_REC_COMMAND
                     contains("shutter") -> SHUTTER
+                    contains("roborock") -> VACUUM
                     else -> SINGLE
                 }
             }
@@ -146,6 +147,7 @@ data class Item (
             SINGLE -> return allItemStatuses[0].value?.isActive!!
             AV_REC_COMMAND -> return actionList[0].commandName.contains((allItemStatuses[0].value as AvReceiverStatus).mode) && allItemStatuses[0].value?.isActive!!
             SHUTTER -> return false
+            VACUUM -> return false
             SCENE -> {
                 try {
                     actionList.forEachIndexed { index, action ->

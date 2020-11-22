@@ -88,10 +88,10 @@ class MainActivity : AppCompatActivity() {
         vacuumFragmentGroups = vacuumTabGroups
 
         /*
-        val devicesLayoutConfig = resources.openRawResource(R.raw.layout_config_devices)
+        val scenes = resources.openRawResource(R.raw.scenes)
             .bufferedReader().use { it.readText() }
         val groupType = object: TypeToken<List<Group>>() {}.type
-        val devicesGroups: List<Group> = Gson().fromJson(devicesLayoutConfig, groupType)
+        val scenesGroups: List<Group> = Gson().fromJson(scenes, groupType)
 
         val layoutConfig = resources.openRawResource(R.raw.layout_config)
             .bufferedReader().use { it.readText() }
@@ -250,17 +250,30 @@ class MainActivity : AppCompatActivity() {
                     Action("shutterLivingSpices", "next")))))
         )
         val vacuumTabGroups: List<Group> = listOf(
+            Group("Steuerbefehle", listOf(
+                Item("Zur Ladestation", "Roboter fährt zur Ladestation zurück", "ic_charging_station", listOf(
+                    Action("roborock", "home"))),
+                Item("Stop", "Roboter bleibt stehen", "ic_halt", listOf(
+                    Action("roborock", "stop"))))
+            ),
             Group("Zonenreinigung", listOf(
+                Item("Schlafzimmer", "Roboter saugt Schlafzimmer", "ic_sleeping", listOf(
+                    Action("roborock", "[[22050,28386,26309,31419,1]]"))),
+                Item("Arbeitszimmer", "Roboter saugt Arbeitszimmer", "ic_work", listOf(
+                    Action("roborock", "[[23188,22570,26344,25982,1]]"))),
+                Item("Kinderzimmer", "Roboter saugt Kinderzimmer", "ic_baby", listOf(
+                    Action("roborock", "[[ 23135, 19084, 26370, 22478, 1 ]]"))),
+                Item("Eingangsbereich", "Roboter saugt Eingangsbereich", "ic_entrance", listOf(
+                    Action("roborock", "[[ 21494, 24432, 23122, 27756, 1 ]]"))),
+                Item("Flur", "Roboter saugt Flur", "ic_tunnel", listOf(
+                    Action("roborock", "[[ 21882, 18272, 23114, 27791, 1 ], [ 21079, 23418, 21878, 27306, 1 ]]"))),
                 Item("Küche", "Roboter saugt Küchenbereich", "ic_kitchen", listOf(
                     Action("roborock", "[[20549,16454,22099,18524,1]]"))),
-                Item("Schlafzimmer", "Roboter saugt Schlafzimmer", "ic_sleeping", listOf(
-                    Action("roborock", "[[22050,28386,26309,31419,1]]"))))
-            ),
-            Group("Steuerbefehle", listOf(
-                Item("Stop", "Roboter bleibt stehen", "ic_halt", listOf(
-                    Action("roborock", "stop"))),
-                Item("Zur Ladestation", "Roboter fährt zur Ladestation zurück", "ic_charging_station", listOf(
-                    Action("roborock", "home"))))
+                Item("Essbereich", "Roboter saugt Essbereich", "ic_dining", listOf(
+                    Action("roborock", "[[ 19993, 12483, 22981, 15815, 1 ], [ 21847, 15836, 23140, 18533, 1 ]]"))),
+                Item("Wohnzimmer", "Roboter saugt Wohnzimmer", "ic_living", listOf(
+                    Action("roborock", "[[ 22959, 14980, 26326, 18560, 1 ]]"))),
+                )
             )
         )
     }

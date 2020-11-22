@@ -33,7 +33,7 @@ class DeviceManager(mainActivity: MainActivity) {
         fun setStatus(newStatus: Status) { _status.postValue(newStatus) }
     }
 
-    enum class DeviceType { AV_RECEIVER, DIMMER, SWITCH, SHUTTER }
+    enum class DeviceType { AV_RECEIVER, DIMMER, SWITCH, SHUTTER, VACUUM }
     val myDevices = mutableListOf<DeviceViewModel>()
 
     init {

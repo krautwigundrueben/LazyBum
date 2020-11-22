@@ -16,6 +16,7 @@ class ScenesFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list, container, false)
         val listView = view.list
+
         listView.adapter = MyListAdapter(requireContext(), scenesFragmentGroups,this)
 
         return view

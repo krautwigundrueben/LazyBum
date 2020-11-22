@@ -1,0 +1,172 @@
+[
+  {
+    "group_name": "Bewegtbild",
+    "itemList": [
+      {
+        "mainText": "Fernsehen",
+        "subText": "LED Grid gedimmt - Spots aus - TV an",
+        "icon": "ic_monitor",
+        "actionList": [
+          {
+            "deviceName": "ledGridSwitch",
+            "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"
+          },
+          {
+            "deviceName": "spotLight",
+            "commandName": "{\"turn\":\"off\",\"brightness\":\"40\"}"
+          },
+          {
+            "deviceName": "tvSwitch",
+            "commandName": "{\"turn\":\"on\"}"
+          },
+          {
+            "deviceName": "arduinoSkyReceiver",
+            "commandName": "{\"turn\":\"on\"}"
+          },
+          {
+            "deviceName": "arduinoAvReceiver",
+            "commandName": "{\"turn\":\"TV\"}"
+          }
+        ]
+      },
+      {
+        "mainText": "Großleinwand",
+        "subText": "LED Grid aus - Spots aus - Receiver an",
+        "icon": "ic_football",
+        "actionList": [
+          {
+            "deviceName": "ledGridSwitch",
+            "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"off\",\"ramp\":\"2000\"}"
+          },
+          {
+            "deviceName": "spotLight",
+            "commandName": "{\"turn\":\"off\",\"brightness\":\"40\"}"
+          },
+          {
+            "deviceName": "tvSwitch",
+            "commandName": "{\"turn\":\"off\"}"
+          },
+          {
+            "deviceName": "arduinoSkyReceiver",
+            "commandName": "{\"turn\":\"on\"}"
+          },
+          {
+            "deviceName": "arduinoAvReceiver",
+            "commandName": "{\"turn\":\"TV\"}"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group_name": "Auf die Ohren",
+    "itemList": [
+      {
+        "mainText": "Spotify",
+        "subText": "lang drücken für Wechsel zur App",
+        "icon": "ic_music",
+        "actionList": [
+          {
+            "deviceName": "arduinoAvReceiver",
+            "commandName": "{\"turn\":\"Bose\"}"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group_name": "Licht und Schatten",
+    "itemList": [
+      {
+        "mainText": "Soirée",
+        "subText": "gedimmtes Licht im Wohnzimmer",
+        "icon": "ic_dining",
+        "actionList": [
+          {
+            "deviceName": "ledGridSwitch",
+            "commandName": "{\"color\":\"99000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"
+          },
+          {
+            "deviceName": "spotLight",
+            "commandName": "{\"turn\":\"on\",\"brightness\":\"20\"}"
+          }
+        ]
+      },
+      {
+        "mainText": "Heißer Tag",
+        "subText": "alle Rollos runter",
+        "icon": "ic_shutter",
+        "actionList": [
+          {
+            "deviceName": "shutterParents",
+            "commandName": "close"
+          },
+          {
+            "deviceName": "shutterBathroom",
+            "commandName": "close"
+          },
+          {
+            "deviceName": "shutterWork",
+            "commandName": "close"
+          },
+          {
+            "deviceName": "shutterChildLeft",
+            "commandName": "close"
+          },
+          {
+            "deviceName": "shutterChildRight",
+            "commandName": "close"
+          },
+          {
+            "deviceName": "shutterLivingPergola",
+            "commandName": "close"
+          },
+          {
+            "deviceName": "shutterLivingSofa",
+            "commandName": "close"
+          },
+          {
+            "deviceName": "shutterLivingDoor",
+            "commandName": "close"
+          },
+          {
+            "deviceName": "shutterLivingSpices",
+            "commandName": "close"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "group_name": "Sonstiges",
+    "itemList": [
+      {
+        "mainText": "Alles ausschalten",
+        "subText": "schaltet alles aus",
+        "icon": "ic_power_off",
+        "actionList": [
+          {
+            "deviceName": "ledGridSwitch",
+            "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"off\",\"ramp\":\"2000\"}"
+          },
+          {
+            "deviceName": "spotLight",
+            "commandName": "{\"turn\":\"off\",\"brightness\":\"40\"}"
+          },
+          {
+            "deviceName": "tvSwitch",
+            "commandName": "{\"turn\":\"off\"}"
+          },
+          {
+            "deviceName": "arduinoSkyReceiver",
+            "commandName": "{\"turn\":\"off\"}"
+          },
+          {
+            "deviceName": "arduinoAvReceiver",
+            "commandName": "{\"turn\":\"DvcsOff\"}"
+          }
+        ]
+      }
+    ]
+  }
+]

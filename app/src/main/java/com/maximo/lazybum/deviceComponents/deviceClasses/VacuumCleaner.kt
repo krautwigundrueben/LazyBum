@@ -6,6 +6,7 @@ import com.maximo.lazybum.RequestBuilder
 import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
+import com.maximo.lazybum.deviceComponents.DeviceManager.DeviceType.VACUUM
 import com.maximo.lazybum.deviceComponents.dataClasses.vacuumClasses.Vacuum
 import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import com.maximo.lazybum.deviceComponents.statusClasses.VacuumStatus
@@ -96,7 +97,7 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
     }
 
     override fun getType(): DeviceManager.DeviceType {
-        return DeviceManager.DeviceType.SWITCH
+        return VACUUM
     }
 
     override fun getCommands(): Array<Command> {

@@ -27,6 +27,10 @@ The icons used are downloaded from <a href="https://www.flaticon.com/de/" title=
 - <a href="https://www.flaticon.com/de/autoren/freepik" title="Freepik">Freepik</a>
 - <a href="https://www.flaticon.com/authors/kiranshastry" title="Kiranshastry">Kiranshastry</a>
 - <a href="https://www.flaticon.com/de/autoren/monkik" title="monkik">monkik</a>
+- <a href="https://www.flaticon.com/de/autoren/retinaicons" title="Retinaicons">Retinaicons</a>
+- <a href="https://www.flaticon.com/de/autoren/good-ware" title="Good Ware">Good Ware</a>
+- <a href="https://www.flaticon.com/de/autoren/mavadee" title="mavadee">mavadee</a>
+- <a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a>
 
 ### Dependencies
 
