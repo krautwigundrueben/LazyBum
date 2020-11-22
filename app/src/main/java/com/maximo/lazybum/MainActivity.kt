@@ -227,26 +227,26 @@ class MainActivity : AppCompatActivity() {
         )
         val shutterTabGroups: List<Group> = listOf(
             Group("Elternzimmer", listOf(
-                Item("Schlafzimmer", "wechselnd runter | stop | hoch", "ic_shutter", listOf(
+                Item("Schlafzimmer", "wechselnd runter | stop | hoch", "ic_sleeping", listOf(
                     Action("shutterParents", "next"))),
-                Item("Bad", "wechselnd runter | stop | hoch", "ic_shutter", listOf(
+                Item("Bad", "wechselnd runter | stop | hoch", "ic_bathroom", listOf(
                     Action("shutterBathroom", "next"))))),
             Group("Arbeitszimmer", listOf(
-                Item("es gibt nur eins", "wechselnd runter | stop | hoch", "ic_shutter", listOf(
+                Item("es gibt nur eins", "wechselnd runter | stop | hoch", "ic_work", listOf(
                     Action("shutterWork", "next"))))),
             Group("Kinderzimmer", listOf(
-                Item("links", "wechselnd runter | stop | hoch", "ic_shutter", listOf(
+                Item("links", "wechselnd runter | stop | hoch", "ic_baby_left", listOf(
                     Action("shutterChildLeft", "next"))),
-                Item("rechts", "wechselnd runter | stop | hoch", "ic_shutter", listOf(
+                Item("rechts", "wechselnd runter | stop | hoch", "ic_baby", listOf(
                     Action("shutterChildRight", "next"))))),
             Group("Wohnzimmer", listOf(
-                Item("zur Pergola", "wechselnd runter | stop | hoch", "ic_shutter", listOf(
+                Item("zur Pergola", "wechselnd runter | stop | hoch", "ic_pergola", listOf(
                     Action("shutterLivingPergola", "next"))),
-                Item("hinterm Sofa", "wechselnd runter | stop | hoch", "ic_shutter", listOf(
+                Item("hinterm Sofa", "wechselnd runter | stop | hoch", "ic_living", listOf(
                     Action("shutterLivingSofa", "next"))),
-                Item("zur Terassentür", "wechselnd runter | stop | hoch", "ic_shutter", listOf(
+                Item("zur Terrassentür", "wechselnd runter | stop | hoch", "ic_terrasse", listOf(
                     Action("shutterLivingDoor", "next"))),
-                Item("zur Kräuterschnecke", "wechselnd runter | stop | hoch", "ic_shutter", listOf(
+                Item("zur Kräuterschnecke", "wechselnd runter | stop | hoch", "ic_spices", listOf(
                     Action("shutterLivingSpices", "next")))))
         )
         val vacuumTabGroups: List<Group> = listOf(
@@ -259,6 +259,8 @@ class MainActivity : AppCompatActivity() {
             Group("Zonenreinigung", listOf(
                 Item("Schlafzimmer", "Roboter saugt Schlafzimmer", "ic_sleeping", listOf(
                     Action("roborock", "[[22050,28386,26309,31419,1]]"))),
+                Item("Ensuite-Bad", "Roboter saugt Ensuite-Bad", "ic_bathroom", listOf(
+                    Action("roborock", "[ 23965, 26454, 26353, 28330, 1 ]"))),
                 Item("Arbeitszimmer", "Roboter saugt Arbeitszimmer", "ic_work", listOf(
                     Action("roborock", "[[23188,22570,26344,25982,1]]"))),
                 Item("Kinderzimmer", "Roboter saugt Kinderzimmer", "ic_baby", listOf(
@@ -267,6 +269,8 @@ class MainActivity : AppCompatActivity() {
                     Action("roborock", "[[ 21494, 24432, 23122, 27756, 1 ]]"))),
                 Item("Flur", "Roboter saugt Flur", "ic_tunnel", listOf(
                     Action("roborock", "[[ 21882, 18272, 23114, 27791, 1 ], [ 21079, 23418, 21878, 27306, 1 ]]"))),
+                Item("Bad", "Roboter saugt Bad", "ic_shower", listOf(
+                    Action("roborock", "[ 20258, 20673, 21913, 23343, 1 ]"))),
                 Item("Küche", "Roboter saugt Küchenbereich", "ic_kitchen", listOf(
                     Action("roborock", "[[20549,16454,22099,18524,1]]"))),
                 Item("Essbereich", "Roboter saugt Essbereich", "ic_dining", listOf(

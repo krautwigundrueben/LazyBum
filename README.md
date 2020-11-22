@@ -31,6 +31,8 @@ The icons used are downloaded from <a href="https://www.flaticon.com/de/" title=
 - <a href="https://www.flaticon.com/de/autoren/good-ware" title="Good Ware">Good Ware</a>
 - <a href="https://www.flaticon.com/de/autoren/mavadee" title="mavadee">mavadee</a>
 - <a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a>
+- <a href="https://www.flaticon.com/de/autoren/surang" title="surang">surang</a>
+- <a href="https://www.flaticon.com/de/autoren/smalllikeart" title="smalllikeart">smalllikeart</a>
 
 ### Dependencies
 
