@@ -161,6 +161,10 @@ class MainActivity : AppCompatActivity() {
                     Action("tvSwitch", "toggle"))),
                 Item("TV Receiver", "wechselnd an | aus", "ic_sky", listOf(
                     Action("arduinoSkyReceiver", "{\"turn\":\"toggleSky\"}"))))
+            ),
+            Group("Arbeitszimmer", listOf(
+                Item("Zimmerlampe", "wechselnd an | aus", "ic_work", listOf(
+                    Action("workLight", "toggle"))))
             )
         )
         val scenesTabGroups: List<Group> = listOf(

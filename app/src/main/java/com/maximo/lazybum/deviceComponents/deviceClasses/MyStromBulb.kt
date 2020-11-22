@@ -20,7 +20,7 @@ import retrofit2.http.POST
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-data class MyStromDimmer(override val dUrl: String, override val dName: String): Device {
+data class MyStromBulb(override val dUrl: String, override val dName: String): Device {
 
     lateinit var responseObj: Bulb
 
@@ -33,7 +33,7 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
 
     suspend fun status(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
-            val request = RequestBuilder.buildRequest(dUrl, MyStromDimmerApi::class.java)
+            val request = RequestBuilder.buildRequest(dUrl, MyStromBulbApi::class.java)
 
             request.getStatus().enqueue(object : Callback<JsonObject> {
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
@@ -47,9 +47,9 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
 
     suspend fun toggle(pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
-            val request = RequestBuilder.buildRequest(dUrl, MyStromDimmerApi::class.java)
+            val request = RequestBuilder.buildRequest(dUrl, MyStromBulbApi::class.java)
 
-            request.set(toggleCommand.color, toggleCommand.mode, toggleCommand.action, toggleCommand.ramp).enqueue(object : Callback<JsonObject> {
+            request.action(toggleCommand.action).enqueue(object : Callback<JsonObject> {
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -64,7 +64,7 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
             val jCmd = Gson().fromJson(sCmd, MyStromDimmerCommand::class.java)
 
             return suspendCoroutine { continuation ->
-                val request = RequestBuilder.buildRequest(dUrl, MyStromDimmerApi::class.java)
+                val request = RequestBuilder.buildRequest(dUrl, MyStromBulbApi::class.java)
 
                 request.set(jCmd.color, jCmd.mode, jCmd.action, jCmd.ramp).enqueue(object : Callback<JsonObject> {
                     override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
@@ -82,7 +82,7 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
 
     private fun processResponse(response: Response<JsonObject>): Status {
         return try {
-            val dataJson = response.body()?.getAsJsonObject("840D8E3D9494")
+            val dataJson = response.body()?.getAsJsonObject("68C63AD026E9")
             responseObj = Gson().fromJson(dataJson, Bulb::class.java)
             DimmerStatus(responseObj.on, responseObj.color)
         } catch (exception: Exception) {
@@ -103,16 +103,22 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
     }
 }
 
-interface MyStromDimmerApi {
+interface MyStromBulbApi {
     @GET("/api/v1/device")
     fun getStatus(): Call<JsonObject>
 
     @FormUrlEncoded
-    @POST("/api/v1/device/840D8E3D9494")
+    @POST("/api/v1/device/68C63AD026E9")
     fun set(
         @Field("color") color: String,
         @Field("mode") mode: String,
         @Field("action") action: String,
         @Field("ramp") ramp: Int
+    ): Call<JsonObject>
+
+    @FormUrlEncoded
+    @POST("/api/v1/device/68C63AD026E9")
+    fun action(
+        @Field("action") action: String
     ): Call<JsonObject>
 }

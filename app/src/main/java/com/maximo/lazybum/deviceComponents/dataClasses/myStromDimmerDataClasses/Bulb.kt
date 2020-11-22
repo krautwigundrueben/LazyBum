@@ -1,6 +1,6 @@
 package com.maximo.lazybum.deviceComponents.dataClasses.myStromDimmerDataClasses
 
-data class D8E3D9494(
+data class Bulb(
     val battery: Boolean,
     var color: String,
     val connectionStatus: ConnectionStatus,

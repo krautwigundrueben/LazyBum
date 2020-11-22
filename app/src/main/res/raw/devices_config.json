@@ -83,5 +83,10 @@
     "dUrl": "http://192.168.178.66",
     "dName": "roborock",
     "dType": "VacuumCleaner"
+  },
+  {
+    "dUrl": "http://192.168.178.36",
+    "dName": "workLight",
+    "dType": "MyStromBulb"
   }
 ]
