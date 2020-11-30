@@ -16,8 +16,8 @@ class MyListAdapter(private var context: Context, groups: List<Group>, private v
 
     init {
         for (group in groups) {
-            registerGroupHeader(group.group_name)
-            registerGroupItems(group.itemList)
+            registerGroupHeader(group.header)
+            registerGroupItems(group.items)
         }
     }
 
@@ -28,7 +28,7 @@ class MyListAdapter(private var context: Context, groups: List<Group>, private v
 
     private fun registerGroupItems(groupItems: List<Item>) {
         groupItems.forEach { item ->
-            val instance = Item(item.mainText, item.subText, item.icon, item.actionList)
+            val instance = Item(item.mainText, item.subText, item.icon, item.actions)
             listItems.add(instance)
         }
     }

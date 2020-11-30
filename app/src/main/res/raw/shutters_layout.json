@@ -1,0 +1,121 @@
+[
+  {
+    "header": "Elternzimmer",
+    "items": [
+      {
+        "mainText": "Schlafzimmer",
+        "subText": "wechselnd runter | stop | hoch",
+        "icon": "ic_sleeping",
+        "actions": [
+          {
+            "deviceName": "shutterParents",
+            "commandName": "next"
+          }
+        ]
+      },
+      {
+        "mainText": "Bad",
+        "subText": "wechselnd runter | stop | hoch",
+        "icon": "ic_bathroom",
+        "actions": [
+          {
+            "deviceName": "shutterBathroom",
+            "commandName": "next"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "header": "Arbeitszimmer",
+    "items": [
+      {
+        "mainText": "es gibt nur eins",
+        "subText": "wechselnd runter | stop | hoch",
+        "icon": "ic_work",
+        "actions": [
+          {
+            "deviceName": "shutterWork",
+            "commandName": "next"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "header": "Kinderzimmer",
+    "items": [
+      {
+        "mainText": "links",
+        "subText": "wechselnd runter | stop | hoch",
+        "icon": "ic_baby_left",
+        "actions": [
+          {
+            "deviceName": "shutterChildLeft",
+            "commandName": "next"
+          }
+        ]
+      },
+      {
+        "mainText": "rechts",
+        "subText": "wechselnd runter | stop | hoch",
+        "icon": "ic_baby",
+        "actions": [
+          {
+            "deviceName": "shutterChildRight",
+            "commandName": "next"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "header": "Wohnzimmer",
+    "items": [
+      {
+        "mainText": "zur Pergola",
+        "subText": "wechselnd runter | stop | hoch",
+        "icon": "ic_pergola",
+        "actions": [
+          {
+            "deviceName": "shutterLivingPergola",
+            "commandName": "next"
+          }
+        ]
+      },
+      {
+        "mainText": "hinterm Sofa",
+        "subText": "wechselnd runter | stop | hoch",
+        "icon": "ic_living",
+        "actions": [
+          {
+            "deviceName": "shutterLivingSofa",
+            "commandName": "next"
+          }
+        ]
+      },
+      {
+        "mainText": "zur Terassentür",
+        "subText": "wechselnd runter | stop | hoch",
+        "icon": "ic_terrasse",
+        "actions": [
+          {
+            "deviceName": "shutterLivingDoor",
+            "commandName": "next"
+          }
+        ]
+      },
+      {
+        "mainText": "zur Kräuterschnecke",
+        "subText": "wechselnd runter | stop | hoch",
+        "icon": "ic_spices",
+        "actions": [
+          {
+            "deviceName": "shutterLivingSpices",
+            "commandName": "next"
+          }
+        ]
+      }
+    ]
+  }
+]

@@ -29,7 +29,7 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
         return this::responseObj.isInitialized
     }
 
-    suspend fun status(pseudoParam: String): Status {
+    suspend fun status(deviceName: String, pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
 
@@ -43,7 +43,7 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun next(pseudoParam: String): Status {
+    suspend fun next(deviceName: String, pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
 
@@ -57,7 +57,7 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun default(sCmd: String): Status {
+    suspend fun default(deviceName: String, sCmd: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
 

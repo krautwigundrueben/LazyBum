@@ -15,16 +15,24 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
-import com.maximo.lazybum.Globals.avReceiverFragmentGroups
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.maximo.lazybum.Globals.AVREC_TAB_POS
+import com.maximo.lazybum.Globals.DEVICES_TAB_POS
+import com.maximo.lazybum.Globals.SCENES_TAB_POS
+import com.maximo.lazybum.Globals.SHUTTER_TAB_POS
+import com.maximo.lazybum.Globals.VACUUM_TAB_POS
+import com.maximo.lazybum.Globals.avReceiverGroups
 import com.maximo.lazybum.Globals.deviceManager
-import com.maximo.lazybum.Globals.devicesFragmentGroups
-import com.maximo.lazybum.Globals.scenesFragmentGroups
-import com.maximo.lazybum.Globals.shutterFragmentGroups
-import com.maximo.lazybum.Globals.vacuumFragmentGroups
+import com.maximo.lazybum.Globals.devicesGroups
+import com.maximo.lazybum.Globals.scenesGroups
+import com.maximo.lazybum.Globals.shuttersGroups
+import com.maximo.lazybum.Globals.vacuumGroups
 import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.layoutComponents.Action
 import com.maximo.lazybum.layoutComponents.Group
-import com.maximo.lazybum.layoutComponents.Item
+import com.maximo.lazybum.layoutComponents.LayoutGroup
+import java.io.IOException
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,15 +55,19 @@ class MainActivity : AppCompatActivity() {
         statusHandler = Handler(Looper.getMainLooper())
 
         setupPermissions()
-        readLayoutConfigFile()
+        val continueOk = readLayoutConfigFile()
 
-        setContentView(R.layout.activity_main)
+        if (continueOk) {
+            setContentView(R.layout.activity_main)
 
-        val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
-        val viewPager: ViewPager = findViewById(R.id.view_pager)
-        viewPager.adapter = sectionsPagerAdapter
-        val tabs: TabLayout = findViewById(R.id.tabs)
-        tabs.setupWithViewPager(viewPager)
+            val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
+            val viewPager: ViewPager = findViewById(R.id.view_pager)
+            viewPager.adapter = sectionsPagerAdapter
+            val tabs: TabLayout = findViewById(R.id.tabs)
+            tabs.setupWithViewPager(viewPager)
+        } else {
+            Toast.makeText(this, getString(R.string.read_file_error), Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onResume() {
@@ -81,36 +93,35 @@ class MainActivity : AppCompatActivity() {
 
     private fun readLayoutConfigFile(): Boolean {
 
-        devicesFragmentGroups = devicesTabGroups
-        scenesFragmentGroups = scenesTabGroups
-        avReceiverFragmentGroups = avRecTabGroups
-        shutterFragmentGroups = shutterTabGroups
-        vacuumFragmentGroups = vacuumTabGroups
-
-        /*
-        val scenes = resources.openRawResource(R.raw.scenes)
-            .bufferedReader().use { it.readText() }
-        val groupType = object: TypeToken<List<Group>>() {}.type
-        val scenesGroups: List<Group> = Gson().fromJson(scenes, groupType)
-
         val layoutConfig = resources.openRawResource(R.raw.layout_config)
             .bufferedReader().use { it.readText() }
-        val type = object: TypeToken<List<Tab>>() {}.type
-        try {
-            val tabsList: List<Tab> = Gson().fromJson(layoutConfig, type)
+        val type = object: TypeToken<List<List<LayoutGroup>>>() {}.type
 
-            devicesFragmentGroups = tabsList[DEVICES_TAB_POS].groupList
-            scenesFragmentGroups = tabsList[SCENES_TAB_POS].groupList
-            avReceiverFragmentGroups = tabsList[AVREC_TAB_POS].groupList
-            shutterFragmentGroups = tabsList[SHUTTER_TAB_POS].groupList
+        try {
+            val layoutTabList: List<List<LayoutGroup>> = Gson().fromJson(layoutConfig, type)
+
+            devicesGroups = toGroupList(layoutTabList[DEVICES_TAB_POS])
+            scenesGroups = toGroupList(layoutTabList[SCENES_TAB_POS])
+            avReceiverGroups = toGroupList(layoutTabList[AVREC_TAB_POS])
+            shuttersGroups = toGroupList(layoutTabList[SHUTTER_TAB_POS])
+            vacuumGroups = toGroupList(layoutTabList[VACUUM_TAB_POS])
 
         } catch (ioException: IOException) {
             Toast.makeText(this, getString(R.string.read_layout_config_failed), Toast.LENGTH_SHORT).show()
             return false
         }
 
-         */
         return true
+    }
+
+    fun toGroupList(layoutGroupList: List<LayoutGroup>?): List<Group> {
+        val groupList: MutableList<Group> = mutableListOf()
+        if (layoutGroupList != null) {
+            for (layoutGroup in layoutGroupList) {
+                groupList.add(layoutGroup.toGroup())
+            }
+        }
+        return groupList
     }
 
     private fun setupPermissions() {
@@ -137,152 +148,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    companion object {
-        val devicesTabGroups: List<Group> = listOf(
-            Group("Küche", listOf(
-                Item("Kaffeemaschine", "wechselnd an | aus", "ic_coffee", listOf(
-                    Action("coffeeSwitch", "toggle"))))
-            ),
-            Group("Essbereich", listOf(
-                Item("Esstischlampe", "wechselnd an | aus", "ic_dining", listOf(
-                    Action("diningLight", "toggle"))))
-            ),
-            Group("Wohnzimmer", listOf(
-                Item("LED Grid",
-                    "wechselnd an | aus - lang drücken für mehr",
-                    "ic_led_grid",
-                    listOf(
-                        Action("ledGridSwitch", "toggle"))),
-                Item("Strahler", "wechselnd an | aus - lang drücken für mehr", "ic_spots", listOf(
-                    Action("spotLight", "{\"turn\":\"toggle\",\"brightness\":\"40\"}"))),
-                Item("Fernseher", "wechselnd an | aus", "ic_monitor", listOf(
-                    Action("tvSwitch", "toggle"))),
-                Item("TV Receiver", "wechselnd an | aus", "ic_sky", listOf(
-                    Action("arduinoSkyReceiver", "{\"turn\":\"toggleSky\"}"))))
-            ),
-            Group("Arbeitszimmer", listOf(
-                Item("Zimmerlampe", "wechselnd an | aus", "ic_work", listOf(
-                    Action("workLight", "toggle"))))
-            )
-        )
-        val scenesTabGroups: List<Group> = listOf(
-            Group("Bewegtbild", listOf(
-                Item("Fernsehen", "LED Grid gedimmt - Spots aus - TV an", "ic_monitor", listOf(
-                    Action("ledGridSwitch",
-                        "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"),
-                    Action("spotLight", "{\"turn\":\"off\",\"brightness\":\"40\"}"),
-                    Action("tvSwitch", "{\"turn\":\"on\"}"),
-                    Action("arduinoSkyReceiver", "{\"turn\":\"on\"}"),
-                    Action("arduinoAvReceiver", "{\"turn\":\"TV\"}"))),
-                Item("Großleinwand",
-                    "LED Grid aus - Spots aus - Receiver an",
-                    "ic_football",
-                    listOf(
-                        Action("ledGridSwitch",
-                            "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"off\",\"ramp\":\"2000\"}"),
-                        Action("spotLight", "{\"turn\":\"off\",\"brightness\":\"40\"}"),
-                        Action("tvSwitch", "{\"turn\":\"off\"}"),
-                        Action("arduinoSkyReceiver", "{\"turn\":\"on\"}"),
-                        Action("arduinoAvReceiver", "{\"turn\":\"TV\"}"))))),
-            Group("Auf die Ohren", listOf(
-                Item("Spotify", "lang drücken für Wechsel zur App", "ic_music", listOf(
-                    Action("arduinoAvReceiver", "{\"turn\":\"Bose\"}"))))
-            ),
-            Group("Licht und Schatten", listOf(
-                Item("Soirée", "gedimmtes Licht im Wohnzimmer", "ic_dining", listOf(
-                    Action("ledGridSwitch",
-                        "{\"color\":\"99000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"),
-                    Action("spotLight", "{\"turn\":\"on\",\"brightness\":\"20\"}"))),
-                Item("Heißer Tag", "alle Rollos runter", "ic_shutter", listOf(
-                    Action("shutterParents", "close"),
-                    Action("shutterBathroom", "close"),
-                    Action("shutterWork", "close"),
-                    Action("shutterChildLeft", "close"),
-                    Action("shutterChildRight", "close"),
-                    Action("shutterLivingPergola", "close"),
-                    Action("shutterLivingSofa", "close"),
-                    Action("shutterLivingDoor", "close"),
-                    Action("shutterLivingSpices", "close"))))),
-            Group("Sonstiges", listOf(
-                Item("Alles ausschalten", "schaltet alles aus", "ic_power_off", listOf(
-                    Action("ledGridSwitch",
-                        "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"off\",\"ramp\":\"2000\"}"),
-                    Action("spotLight", "{\"turn\":\"off\",\"brightness\":\"40\"}"),
-                    Action("tvSwitch", "{\"turn\":\"off\"}"),
-                    Action("arduinoSkyReceiver", "{\"turn\":\"off\"}"),
-                    Action("arduinoAvReceiver", "{\"turn\":\"DvcsOff\"}"))))
-            )
-        )
-        val avRecTabGroups : List<Group> = listOf(
-            Group("Modus einstellen", listOf(
-                Item("Fernsehen", "Quelle Sky Receiver", "ic_football", listOf(
-                    Action("arduinoAvReceiver", "{\"turn\":\"TV\"}"))),
-                Item("Musik über Bose System", "Quelle Bose Adapter", "ic_music", listOf(
-                    Action("arduinoAvReceiver", "{\"turn\":\"Bose\"}"))),
-                Item("Musik oder Video über Chromecast", "Quelle Chromecast", "ic_film", listOf(
-                    Action("arduinoAvReceiver", "{\"turn\":\"CCaudio\"}"))))
-            ),
-            Group("Sonstige", listOf(
-                Item("Ausschalten", "schaltet AV Receiver aus", "ic_power_off", listOf(
-                    Action("arduinoAvReceiver", "{\"turn\":\"DvcsOff\"}"))))
-            )
-        )
-        val shutterTabGroups: List<Group> = listOf(
-            Group("Elternzimmer", listOf(
-                Item("Schlafzimmer", "wechselnd runter | stop | hoch", "ic_sleeping", listOf(
-                    Action("shutterParents", "next"))),
-                Item("Bad", "wechselnd runter | stop | hoch", "ic_bathroom", listOf(
-                    Action("shutterBathroom", "next"))))),
-            Group("Arbeitszimmer", listOf(
-                Item("es gibt nur eins", "wechselnd runter | stop | hoch", "ic_work", listOf(
-                    Action("shutterWork", "next"))))),
-            Group("Kinderzimmer", listOf(
-                Item("links", "wechselnd runter | stop | hoch", "ic_baby_left", listOf(
-                    Action("shutterChildLeft", "next"))),
-                Item("rechts", "wechselnd runter | stop | hoch", "ic_baby", listOf(
-                    Action("shutterChildRight", "next"))))),
-            Group("Wohnzimmer", listOf(
-                Item("zur Pergola", "wechselnd runter | stop | hoch", "ic_pergola", listOf(
-                    Action("shutterLivingPergola", "next"))),
-                Item("hinterm Sofa", "wechselnd runter | stop | hoch", "ic_living", listOf(
-                    Action("shutterLivingSofa", "next"))),
-                Item("zur Terrassentür", "wechselnd runter | stop | hoch", "ic_terrasse", listOf(
-                    Action("shutterLivingDoor", "next"))),
-                Item("zur Kräuterschnecke", "wechselnd runter | stop | hoch", "ic_spices", listOf(
-                    Action("shutterLivingSpices", "next")))))
-        )
-        val vacuumTabGroups: List<Group> = listOf(
-            Group("Steuerbefehle", listOf(
-                Item("Zur Ladestation", "Roboter fährt zur Ladestation zurück", "ic_charging_station", listOf(
-                    Action("roborock", "home"))),
-                Item("Stop", "Roboter bleibt stehen", "ic_halt", listOf(
-                    Action("roborock", "stop"))))
-            ),
-            Group("Zonenreinigung", listOf(
-                Item("Schlafzimmer", "Roboter saugt Schlafzimmer", "ic_sleeping", listOf(
-                    Action("roborock", "[[22050,28386,26309,31419,1]]"))),
-                Item("Ensuite-Bad", "Roboter saugt Ensuite-Bad", "ic_bathroom", listOf(
-                    Action("roborock", "[ 23965, 26454, 26353, 28330, 1 ]"))),
-                Item("Arbeitszimmer", "Roboter saugt Arbeitszimmer", "ic_work", listOf(
-                    Action("roborock", "[[23188,22570,26344,25982,1]]"))),
-                Item("Kinderzimmer", "Roboter saugt Kinderzimmer", "ic_baby", listOf(
-                    Action("roborock", "[[ 23135, 19084, 26370, 22478, 1 ]]"))),
-                Item("Eingangsbereich", "Roboter saugt Eingangsbereich", "ic_entrance", listOf(
-                    Action("roborock", "[[ 21494, 24432, 23122, 27756, 1 ]]"))),
-                Item("Flur", "Roboter saugt Flur", "ic_tunnel", listOf(
-                    Action("roborock", "[[ 21882, 18272, 23114, 27791, 1 ], [ 21079, 23418, 21878, 27306, 1 ]]"))),
-                Item("Bad", "Roboter saugt Bad", "ic_shower", listOf(
-                    Action("roborock", "[ 20258, 20673, 21913, 23343, 1 ]"))),
-                Item("Küche", "Roboter saugt Küchenbereich", "ic_kitchen", listOf(
-                    Action("roborock", "[[20549,16454,22099,18524,1]]"))),
-                Item("Essbereich", "Roboter saugt Essbereich", "ic_dining", listOf(
-                    Action("roborock", "[[ 19993, 12483, 22981, 15815, 1 ], [ 21847, 15836, 23140, 18533, 1 ]]"))),
-                Item("Wohnzimmer", "Roboter saugt Wohnzimmer", "ic_living", listOf(
-                    Action("roborock", "[[ 22959, 14980, 26326, 18560, 1 ]]"))),
-                )
-            )
-        )
     }
 }

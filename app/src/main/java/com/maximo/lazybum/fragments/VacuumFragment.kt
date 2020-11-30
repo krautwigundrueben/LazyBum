@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.maximo.lazybum.Globals.vacuumFragmentGroups
+import com.maximo.lazybum.Globals.vacuumGroups
 import com.maximo.lazybum.R
 import com.maximo.lazybum.layoutAdapter.MyListAdapter
 import kotlinx.android.synthetic.main.list.view.*
@@ -16,7 +16,8 @@ class VacuumFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list, container, false)
         val listView = view.list
-        listView.adapter = MyListAdapter(requireContext(), vacuumFragmentGroups,this)
+
+        listView.adapter = MyListAdapter(requireContext(), vacuumGroups,this)
 
         return view
     }

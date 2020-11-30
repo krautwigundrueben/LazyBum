@@ -10,7 +10,7 @@ import com.maximo.lazybum.R
 import com.maximo.lazybum.layoutAdapter.MyListAdapter
 
 data class Header(
-    override val mainText: String
+    val mainText: String
 ): Element {
 
     @SuppressLint("InflateParams")

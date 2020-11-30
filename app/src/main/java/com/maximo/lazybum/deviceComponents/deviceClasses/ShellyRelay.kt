@@ -26,7 +26,7 @@ data class ShellyRelay(override val dUrl: String, override val dName: String): D
         return this::responseObj.isInitialized
     }
 
-    suspend fun status(pseudoParam: String): Status {
+    suspend fun status(deviceName: String, pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyRelayApi::class.java)
 
@@ -40,7 +40,7 @@ data class ShellyRelay(override val dUrl: String, override val dName: String): D
         }
     }
 
-    suspend fun toggle(pseudoParam: String): Status {
+    suspend fun toggle(deviceName: String, pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyRelayApi::class.java)
 

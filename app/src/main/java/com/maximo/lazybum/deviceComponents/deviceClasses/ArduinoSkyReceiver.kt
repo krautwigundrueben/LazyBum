@@ -28,7 +28,7 @@ data class ArduinoSkyReceiver(override val dUrl: String, override val dName: Str
         return this::responseObj.isInitialized
     }
 
-    suspend fun status(pseudoParam: String): Status {
+    suspend fun status(deviceName: String, pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ArduinoSkyReceiverApi::class.java)
 
@@ -42,7 +42,7 @@ data class ArduinoSkyReceiver(override val dUrl: String, override val dName: Str
         }
     }
 
-    suspend fun default(sCmd: String): Status {
+    suspend fun default(deviceName: String, sCmd: String): Status {
         try {
             val jCmd = Gson().fromJson(sCmd, ArduinoCommand::class.java)
 

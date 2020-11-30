@@ -28,7 +28,7 @@ data class MyStromSwitch(override val dUrl: String, override val dName: String):
         return this::responseObj.isInitialized
     }
 
-    suspend fun status(pseudoParam: String): Status {
+    suspend fun status(deviceName: String, pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromSwitchApi::class.java)
 
@@ -42,7 +42,7 @@ data class MyStromSwitch(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun toggle(pseudoParam: String): Status {
+    suspend fun toggle(deviceName: String, pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromSwitchApi::class.java)
 
@@ -56,7 +56,7 @@ data class MyStromSwitch(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun switch(sCmd: String): Status {
+    suspend fun switch(deviceName: String, sCmd: String): Status {
         val jCmd = Gson().fromJson(sCmd, ArduinoCommand::class.java)
 
         return suspendCoroutine { continuation ->

@@ -32,7 +32,7 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
         return this::responseObj.isInitialized
     }
 
-    suspend fun default(zone: String): Status {
+    suspend fun default(deviceName: String, zone: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, VacuumApi::class.java)
 
@@ -49,7 +49,7 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun home(zone: String): Status {
+    suspend fun home(deviceName: String, zone: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, VacuumApi::class.java)
 
@@ -63,7 +63,7 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun stop(zone: String): Status {
+    suspend fun stop(deviceName: String, zone: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, VacuumApi::class.java)
 
@@ -77,7 +77,7 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
         }
     }
 
-    suspend fun status(zone: String): Status {
+    suspend fun status(deviceName: String, zone: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, VacuumApi::class.java)
 

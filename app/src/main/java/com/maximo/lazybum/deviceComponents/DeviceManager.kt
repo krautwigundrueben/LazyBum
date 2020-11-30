@@ -82,10 +82,10 @@ class DeviceManager(mainActivity: MainActivity) {
         var response: Status = SwitchStatus(false)
 
         withContext(IO) {
-            response = targetFunction?.callSuspend(action.commandName)
+            response = targetFunction?.callSuspend(action.deviceName, action.commandName)
                 ?: // must be an appropriate Command Json then
                         targetDevice.dCommands.find { it.cName == "default" }?.cFunction?.callSuspend(
-                            action.commandName)!!
+                            action.deviceName, action.commandName)!!
         }
 
         targetDevice.setStatus(response)

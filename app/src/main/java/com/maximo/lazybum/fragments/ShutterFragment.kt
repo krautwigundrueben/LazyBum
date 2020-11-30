@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.maximo.lazybum.Globals.shutterFragmentGroups
+import com.maximo.lazybum.Globals.shuttersGroups
 import com.maximo.lazybum.R
 import com.maximo.lazybum.layoutAdapter.MyListAdapter
 import kotlinx.android.synthetic.main.list.view.*
@@ -16,7 +16,8 @@ class ShutterFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list, container, false)
         val listView = view.list
-        listView.adapter = MyListAdapter(requireContext(), shutterFragmentGroups,this)
+
+        listView.adapter = MyListAdapter(requireContext(), shuttersGroups,this)
 
         return view
     }

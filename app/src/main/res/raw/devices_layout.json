@@ -1,12 +1,12 @@
 [
   {
-    "group_name": "Küche",
-    "itemList": [
+    "header": "Küche",
+    "items": [
       {
         "mainText": "Kaffeemaschine",
         "subText": "wechselnd an | aus",
         "icon": "ic_coffee",
-        "actionList": [
+        "actions": [
           {
             "deviceName": "coffeeSwitch",
             "commandName": "toggle"
@@ -16,13 +16,13 @@
     ]
   },
   {
-    "group_name": "Essbereich",
-    "itemList": [
+    "header": "Essbereich",
+    "items": [
       {
         "mainText": "Esstischlampe",
         "subText": "wechselnd an | aus",
         "icon": "ic_dining",
-        "actionList": [
+        "actions": [
           {
             "deviceName": "diningLight",
             "commandName": "toggle"
@@ -32,16 +32,16 @@
     ]
   },
   {
-    "group_name": "Wohnzimmer",
-    "itemList": [
+    "header": "Wohnzimmer",
+    "items": [
       {
         "mainText": "LED Grid",
         "subText": "wechselnd an | aus - lang drücken für mehr",
         "icon": "ic_led_grid",
-        "actionList": [
+        "actions": [
           {
-            "deviceName": "ledGridSwitch",
-            "commandName": "toggle"
+            "deviceName": "840D8E3D9494",
+            "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"toggle\",\"ramp\":\"2000\"}"
           }
         ]
       },
@@ -49,7 +49,7 @@
         "mainText": "Strahler",
         "subText": "wechselnd an | aus - lang drücken für mehr",
         "icon": "ic_spots",
-        "actionList": [
+        "actions": [
           {
             "deviceName": "spotLight",
             "commandName": "{\"turn\":\"toggle\",\"brightness\":\"40\"}"
@@ -60,7 +60,7 @@
         "mainText": "Fernseher",
         "subText": "wechselnd an | aus",
         "icon": "ic_monitor",
-        "actionList": [
+        "actions": [
           {
             "deviceName": "tvSwitch",
             "commandName": "toggle"
@@ -71,10 +71,26 @@
         "mainText": "TV Receiver",
         "subText": "wechselnd an | aus",
         "icon": "ic_sky",
-        "actionList": [
+        "actions": [
           {
             "deviceName": "arduinoSkyReceiver",
             "commandName": "{\"turn\":\"toggleSky\"}"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "header": "Arbeitszimmer",
+    "items": [
+      {
+        "mainText": "Zimmerlampe",
+        "subText": "wechselnd an | aus",
+        "icon": "ic_work",
+        "actions": [
+          {
+            "deviceName": "68C63AD026E9",
+            "commandName": "{\"color\":\"FF000000\",\"mode\":\"rgb\",\"action\":\"toggle\",\"ramp\":\"0\"}"
           }
         ]
       }

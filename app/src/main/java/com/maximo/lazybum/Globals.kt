@@ -14,9 +14,9 @@ object Globals {
 
     lateinit var deviceManager: DeviceManager
 
-    lateinit var devicesFragmentGroups: List<Group>
-    lateinit var scenesFragmentGroups: List<Group>
-    lateinit var avReceiverFragmentGroups: List<Group>
-    lateinit var shutterFragmentGroups: List<Group>
-    lateinit var vacuumFragmentGroups: List<Group>
+    lateinit var devicesGroups: List<Group>
+    lateinit var scenesGroups: List<Group>
+    lateinit var avReceiverGroups: List<Group>
+    lateinit var shuttersGroups: List<Group>
+    lateinit var vacuumGroups: List<Group>
 }

@@ -1,7 +1,7 @@
 package com.maximo.lazybum.deviceComponents
 
 import com.maximo.lazybum.deviceComponents.statusClasses.Status
-import kotlin.reflect.KSuspendFunction1
+import kotlin.reflect.KSuspendFunction2
 
 interface Device {
     val dUrl: String
@@ -13,5 +13,5 @@ interface Device {
 
 class Command(
     val cName: String,
-    val cFunction: KSuspendFunction1<String, Status>,
+    val cFunction: KSuspendFunction2<String, String, Status>,
 )

@@ -1,14 +1,14 @@
 [
   {
-    "group_name": "Bewegtbild",
-    "itemList": [
+    "header": "Bewegtbild",
+    "items": [
       {
         "mainText": "Fernsehen",
         "subText": "LED Grid gedimmt - Spots aus - TV an",
         "icon": "ic_monitor",
-        "actionList": [
+        "actions": [
           {
-            "deviceName": "ledGridSwitch",
+            "deviceName": "840D8E3D9494",
             "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"
           },
           {
@@ -33,9 +33,9 @@
         "mainText": "Großleinwand",
         "subText": "LED Grid aus - Spots aus - Receiver an",
         "icon": "ic_football",
-        "actionList": [
+        "actions": [
           {
-            "deviceName": "ledGridSwitch",
+            "deviceName": "840D8E3D9494",
             "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"off\",\"ramp\":\"2000\"}"
           },
           {
@@ -59,13 +59,13 @@
     ]
   },
   {
-    "group_name": "Auf die Ohren",
-    "itemList": [
+    "header": "Auf die Ohren",
+    "items": [
       {
         "mainText": "Spotify",
         "subText": "lang drücken für Wechsel zur App",
         "icon": "ic_music",
-        "actionList": [
+        "actions": [
           {
             "deviceName": "arduinoAvReceiver",
             "commandName": "{\"turn\":\"Bose\"}"
@@ -75,15 +75,15 @@
     ]
   },
   {
-    "group_name": "Licht und Schatten",
-    "itemList": [
+    "header": "Licht und Schatten",
+    "items": [
       {
         "mainText": "Soirée",
         "subText": "gedimmtes Licht im Wohnzimmer",
         "icon": "ic_dining",
-        "actionList": [
+        "actions": [
           {
-            "deviceName": "ledGridSwitch",
+            "deviceName": "840D8E3D9494",
             "commandName": "{\"color\":\"99000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"
           },
           {
@@ -96,7 +96,7 @@
         "mainText": "Heißer Tag",
         "subText": "alle Rollos runter",
         "icon": "ic_shutter",
-        "actionList": [
+        "actions": [
           {
             "deviceName": "shutterParents",
             "commandName": "close"
@@ -138,15 +138,15 @@
     ]
   },
   {
-    "group_name": "Sonstiges",
-    "itemList": [
+    "header": "Sonstiges",
+    "items": [
       {
         "mainText": "Alles ausschalten",
         "subText": "schaltet alles aus",
         "icon": "ic_power_off",
-        "actionList": [
+        "actions": [
           {
-            "deviceName": "ledGridSwitch",
+            "deviceName": "840D8E3D9494",
             "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"off\",\"ramp\":\"2000\"}"
           },
           {

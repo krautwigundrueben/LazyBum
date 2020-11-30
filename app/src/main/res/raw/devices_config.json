@@ -16,7 +16,7 @@
   },
   {
     "dUrl": "http://192.168.178.32",
-    "dName": "ledGridSwitch",
+    "dName": "840D8E3D9494",
     "dType": "MyStromDimmer"
   },
   {
@@ -86,7 +86,7 @@
   },
   {
     "dUrl": "http://192.168.178.36",
-    "dName": "workLight",
-    "dType": "MyStromBulb"
+    "dName": "68C63AD026E9",
+    "dType": "MyStromDimmer"
   }
 ]

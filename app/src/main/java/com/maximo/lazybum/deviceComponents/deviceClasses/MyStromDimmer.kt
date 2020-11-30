@@ -13,25 +13,20 @@ import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 data class MyStromDimmer(override val dUrl: String, override val dName: String): Device {
 
     lateinit var responseObj: Bulb
-
     private val initColor = 0xff0000ff.toString()
-    private val toggleCommand = MyStromDimmerCommand("33000000", "rgb", "toggle", 2000)
 
     fun isResponseInitialized(): Boolean {
         return this::responseObj.isInitialized
     }
 
-    suspend fun status(pseudoParam: String): Status {
+    suspend fun status(deviceName: String, pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, MyStromDimmerApi::class.java)
 
@@ -39,38 +34,24 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    continuation.resume(processResponse(response))
+                    continuation.resume(processResponse(response, deviceName))
                 }
             })
         }
     }
 
-    suspend fun toggle(pseudoParam: String): Status {
-        return suspendCoroutine { continuation ->
-            val request = RequestBuilder.buildRequest(dUrl, MyStromDimmerApi::class.java)
-
-            request.set(toggleCommand.color, toggleCommand.mode, toggleCommand.action, toggleCommand.ramp).enqueue(object : Callback<JsonObject> {
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
-
-                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    continuation.resume(processResponse(response))
-                }
-            })
-        }
-    }
-
-    suspend fun default(sCmd: String): Status {
+    suspend fun default(deviceName: String, sCmd: String): Status {
         try {
             val jCmd = Gson().fromJson(sCmd, MyStromDimmerCommand::class.java)
 
             return suspendCoroutine { continuation ->
                 val request = RequestBuilder.buildRequest(dUrl, MyStromDimmerApi::class.java)
 
-                request.set(jCmd.color, jCmd.mode, jCmd.action, jCmd.ramp).enqueue(object : Callback<JsonObject> {
+                request.set(deviceName, jCmd.color, jCmd.mode, jCmd.action, jCmd.ramp).enqueue(object : Callback<JsonObject> {
                     override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
 
                     override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                        continuation.resume(processResponse(response))
+                        continuation.resume(processResponse(response, deviceName))
                     }
                 })
             }
@@ -80,9 +61,9 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
         }
     }
 
-    private fun processResponse(response: Response<JsonObject>): Status {
+    private fun processResponse(response: Response<JsonObject>, deviceName: String): Status {
         return try {
-            val dataJson = response.body()?.getAsJsonObject("840D8E3D9494")
+            val dataJson = response.body()?.getAsJsonObject(deviceName)
             responseObj = Gson().fromJson(dataJson, Bulb::class.java)
             DimmerStatus(responseObj.on, responseObj.color)
         } catch (exception: Exception) {
@@ -98,7 +79,6 @@ data class MyStromDimmer(override val dUrl: String, override val dName: String):
         return arrayOf(
             Command("default", ::default),
             Command("status", ::status),
-            Command("toggle", ::toggle)
         )
     }
 }
@@ -108,8 +88,9 @@ interface MyStromDimmerApi {
     fun getStatus(): Call<JsonObject>
 
     @FormUrlEncoded
-    @POST("/api/v1/device/840D8E3D9494")
+    @POST("/api/v1/device/{deviceName}")
     fun set(
+        @Path("deviceName") deviceName: String,
         @Field("color") color: String,
         @Field("mode") mode: String,
         @Field("action") action: String,

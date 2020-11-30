@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.maximo.lazybum.Globals.avReceiverFragmentGroups
+import com.maximo.lazybum.Globals.avReceiverGroups
 import com.maximo.lazybum.Globals.deviceManager
 import com.maximo.lazybum.R
 import com.maximo.lazybum.R.string.avReceiverDeviceName
@@ -26,7 +26,8 @@ class AvReceiverFragment : Fragment() {
 
         val view = inflater.inflate(R.layout.list_croller, container, false)
         val listView = view.media_list
-        listView.adapter = MyListAdapter(requireContext(), avReceiverFragmentGroups, this)
+
+        listView.adapter = MyListAdapter(requireContext(), avReceiverGroups, this)
 
         val initAction = Action(resources.getString(avReceiverDeviceName), getString(R.string.status_request_command))
         setupVolumeKnob(view, initAction)

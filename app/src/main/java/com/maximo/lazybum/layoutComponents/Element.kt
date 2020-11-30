@@ -5,8 +5,6 @@ import android.view.View
 import androidx.fragment.app.Fragment
 
 interface Element {
-    val mainText: String
-
     fun getViewType(): Int
     fun getView(
         convertView: View?,

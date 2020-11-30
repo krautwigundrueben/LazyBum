@@ -36,10 +36,10 @@ import com.maximo.lazybum.layoutComponents.Item.ItemType.*
 import kotlinx.android.synthetic.main.brightness_dialog.view.*
 
 data class Item (
-    override val mainText: String,
+    val mainText: String,
     val subText: String,
     val icon: String,
-    val actionList: List<Action>
+    val actions: List<Action>
 ) : Element {
 
     private lateinit var imageView: ImageView
@@ -51,8 +51,8 @@ data class Item (
     }
 
     init {
-        itemType = if (actionList.size == 1) {
-            with (actionList[0].deviceName) {
+        itemType = if (actions.size == 1) {
+            with (actions[0].deviceName) {
                 when {
                     contains("AvReceiver") -> AV_REC_COMMAND
                     contains("shutter") -> SHUTTER
@@ -64,9 +64,9 @@ data class Item (
     }
 
     @SuppressLint("InflateParams")
-    override fun getView(convertView: View?, context: Context, fragment: Fragment): View {
+    override fun getView(convertView: View?, mCtx: Context, fragment: Fragment): View {
 
-        val layoutInflater: LayoutInflater = LayoutInflater.from(context)
+        val layoutInflater: LayoutInflater = LayoutInflater.from(mCtx)
         var view = convertView
 
         if (view == null) {
@@ -76,10 +76,10 @@ data class Item (
         imageView = view?.findViewById(R.id.imageView)!!
         subtextView = view.findViewById(R.id.subText)
 
-        initializeItemView(view, context)
-        setOnClickListener(view, context)
-        setOnLongClickListener(view, context)
-        addObservers(fragment, context)
+        initializeItemView(view, mCtx)
+        setOnClickListener(view, mCtx)
+        setOnLongClickListener(view, mCtx)
+        addObservers(fragment, mCtx)
 
         return view
     }
@@ -105,7 +105,7 @@ data class Item (
 
         val allItemStatuses: MutableList<LiveData<Status>> = mutableListOf()
 
-        for (action in actionList) {
+        for (action in actions) {
             allItemStatuses.add(deviceManager.getDevice(action.deviceName)?.getStatus()!!)
         }
 
@@ -145,12 +145,12 @@ data class Item (
 
         when (itemType) {
             SINGLE -> return allItemStatuses[0].value?.isActive!!
-            AV_REC_COMMAND -> return actionList[0].commandName.contains((allItemStatuses[0].value as AvReceiverStatus).mode) && allItemStatuses[0].value?.isActive!!
+            AV_REC_COMMAND -> return actions[0].commandName.contains((allItemStatuses[0].value as AvReceiverStatus).mode) && allItemStatuses[0].value?.isActive!!
             SHUTTER -> return false
             VACUUM -> return false
             SCENE -> {
                 try {
-                    actionList.forEachIndexed { index, action ->
+                    actions.forEachIndexed { index, action ->
                         if (action.commandName.contains("toggle") &&
                             !deviceManager.getDevice(action.deviceName)?.getStatus()?.value?.isActive!! ||
                             action.commandName.contains("on") && !allItemStatuses[index].value?.isActive!! ||
@@ -176,7 +176,7 @@ data class Item (
 
     private fun setOnClickListener(view: View, context: Context) {
         view.setOnClickListener {
-            for (action in actionList) {
+            for (action in actions) {
                 deviceManager.launchAction(context, action)
             }
         }
@@ -186,7 +186,7 @@ data class Item (
 
         with(mainText) {
             when {
-                contains("Grid") -> setOnLongClickListenerGrid(view, context)
+                contains("Grid") || contains("Zimmerlampe") -> setOnLongClickListenerGrid(view, context)
                 contains("Strahler") -> setOnLongClickListenerSpots(view, context)
                 contains("Spotify") -> setOnLongClickListenerSpotify(view, context)
             }
@@ -197,7 +197,7 @@ data class Item (
 
         view.setOnLongClickListener {
 
-            for (action in actionList) {
+            for (action in actions) {
                 deviceManager.launchAction(context, action)
             }
 
@@ -218,23 +218,13 @@ data class Item (
 
         view.setOnLongClickListener {
 
-            val ledGrid = deviceManager.getDevice(actionList[0].deviceName)?.dInstance as MyStromDimmer
-            val rgb = if (ledGrid.isResponseInitialized()) ledGrid.responseObj.color.substring(2, 8)
-            else context.getString(R.string.init_color_grid_picker_1)
-
-            val ww = if (ledGrid.isResponseInitialized()) ledGrid.responseObj.color.substring(0, 2)
-            else context.getString(R.string.init_color_grid_picker_2)
-
-            var gridColor: Int
-
-            gridColor = if (rgb != context.getString(R.string.black)) Color.parseColor("#$rgb")
-            else Color.parseColor("#$ww$ww$ww")
+            var currentColor = getCurrentColor(context)
 
             ColorPickerDialogBuilder
                 .with(context)
                 .setTitle(context.getString(R.string.grid_picker_choose_color_text))
                 .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
-                .initialColor(gridColor)
+                .initialColor(currentColor)
                 .density(6)
                 .lightnessSliderOnly()
                 .setOnColorChangedListener { selectedColor ->
@@ -245,10 +235,10 @@ data class Item (
                     }
 
                     deviceManager.launchAction(context,
-                        Action(actionList[0].deviceName, "{\"color\":\"$color\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"0\"}"))
+                        Action(actions[0].deviceName, "{\"color\":\"$color\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"0\"}"))
                 }
                 .setPositiveButton(context.getString(R.string.Ok)) { dialog, selectedColor, allColors ->
-                    gridColor = selectedColor
+                    currentColor = selectedColor
                 }
                 .build()
                 .show()
@@ -256,12 +246,30 @@ data class Item (
         }
     }
 
+    private fun getCurrentColor(context: Context): Int {
+
+        val light = deviceManager.getDevice(actions[0].deviceName)?.dInstance as MyStromDimmer
+        val rgb: String
+        val ww: String
+
+        if (light.isResponseInitialized() && !light.responseObj.color.contains(';')) {
+            rgb = light.responseObj.color.substring(2, 8)
+            ww = light.responseObj.color.substring(0, 2)
+        } else {
+            rgb = context.getString(R.string.init_color_grid_picker_1)
+            ww = context.getString(R.string.init_color_grid_picker_2)
+        }
+
+        return if (rgb != context.getString(R.string.black)) Color.parseColor("#$rgb")
+        else Color.parseColor("#$ww$ww$ww")
+    }
+
     private fun setOnLongClickListenerSpots(view: View?, context: Context) {
 
         view?.setOnLongClickListener {
 
             val middle = 50
-            val spots = deviceManager.getDevice(actionList[0].deviceName)?.dInstance as ShellyDimmer
+            val spots = deviceManager.getDevice(actions[0].deviceName)?.dInstance as ShellyDimmer
             var spotsBrightness = if (spots.isResponseInitialized()) spots.responseObj.brightness
             else middle
 
@@ -291,7 +299,7 @@ data class Item (
                 override fun onStopTrackingTouch(seekBar: RubberSeekBar) {
 
                     deviceManager.launchAction(context,
-                        Action(actionList[0].deviceName, "{\"turn\":\"on\",\"brightness\":\"${spotsBrightness}\"}"))
+                        Action(actions[0].deviceName, "{\"turn\":\"on\",\"brightness\":\"${spotsBrightness}\"}"))
                 }
             })
             true
@@ -299,7 +307,7 @@ data class Item (
     }
 
     private fun addObservers(fragment: Fragment, context: Context) {
-        for (action in actionList) {
+        for (action in actions) {
             val device = deviceManager.getDevice(action.deviceName)
 
             device?.getStatus()?.observe(fragment,
