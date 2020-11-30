@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    fun toGroupList(layoutGroupList: List<LayoutGroup>?): List<Group> {
+    private fun toGroupList(layoutGroupList: List<LayoutGroup>?): List<Group> {
         val groupList: MutableList<Group> = mutableListOf()
         if (layoutGroupList != null) {
             for (layoutGroup in layoutGroupList) {
