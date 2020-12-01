@@ -472,6 +472,17 @@
               "commandName": "stop"
             }
           ]
+        },
+        {
+          "mainText": "Zum Mülleimer",
+          "subText": "Roboter fährt zum Leeren vor",
+          "icon": "ic_empty",
+          "actions": [
+            {
+              "deviceName": "roborock",
+              "commandName": "empty"
+            }
+          ]
         }
       ]
     },
@@ -485,7 +496,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[[22050,28386,26309,31419,1]]"
+              "commandName": "[ 28608, 24930, 31609, 29172, 1 ]"
             }
           ]
         },
@@ -496,7 +507,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[[23965, 26454, 26353, 28330, 1]]"
+              "commandName": "[[ 26737, 24866, 28502, 27231, 1 ]]"
             }
           ]
         },
@@ -507,7 +518,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[[23188,22570,26344,25982,1]]"
+              "commandName": "[ 22834, 24878, 26234, 28021, 1 ]"
             }
           ]
         },
@@ -518,7 +529,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[[ 23135, 19084, 26370, 22478, 1 ]]"
+              "commandName": "[[ 19325, 24860, 22780, 28010, 1 ]]"
             }
           ]
         },
@@ -529,7 +540,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[[ 21494, 24432, 23122, 27756, 1 ]]"
+              "commandName": "[[ 24437, 28071, 27946, 29661, 1 ]]"
             }
           ]
         },
@@ -540,7 +551,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[[ 21882, 18272, 23114, 27791, 1 ], [ 21079, 23418, 21878, 27306, 1 ]]"
+              "commandName": "[[ 18597, 28041, 27901, 29256, 1 ], [ 23680, 29267, 27337, 30090, 1 ]]"
             }
           ]
         },
@@ -551,7 +562,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[ 20258, 20673, 21913, 23343, 1 ]"
+              "commandName": "[ 20771, 29282, 23647, 31098, 1 ]"
             }
           ]
         },
@@ -562,7 +573,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[[20549,16454,22099,18524,1]]"
+              "commandName": "[ 16653, 29276, 18716, 30577, 1 ]"
             }
           ]
         },
@@ -573,7 +584,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[[ 19993, 12483, 22981, 15815, 1 ], [ 21847, 15836, 23140, 18533, 1 ]]"
+              "commandName": "[[ 12727, 28102, 16081, 31141, 1 ], [ 16095, 28097, 18658, 29279, 1 ]]"
             }
           ]
         },
@@ -584,7 +595,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[[ 22959, 14980, 26326, 18560, 1 ]]"
+              "commandName": "[[ 14960, 24981, 18755, 28195, 1 ]]"
             }
           ]
         }

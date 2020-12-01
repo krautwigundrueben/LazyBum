@@ -33,6 +33,7 @@ The icons used are downloaded from <a href="https://www.flaticon.com/de/" title=
 - <a href="https://www.flaticon.com/de/autoren/smashicons" title="Smashicons">Smashicons</a>
 - <a href="https://www.flaticon.com/de/autoren/surang" title="surang">surang</a>
 - <a href="https://www.flaticon.com/de/autoren/smalllikeart" title="smalllikeart">smalllikeart</a>
+- <a href="https://smashicons.com/" title="Smashicons">Smashicons</a>
 
 ### Dependencies
 

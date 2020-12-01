@@ -27,6 +27,7 @@ import kotlin.coroutines.suspendCoroutine
 data class VacuumCleaner(override val dUrl: String, override val dName: String): Device {
 
     private lateinit var responseObj: Vacuum
+    private val spot = "{\"x\":18142,\"y\":29634}"
 
     fun isResponseInitialized(): Boolean {
         return this::responseObj.isInitialized
@@ -40,6 +41,23 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
             val body: RequestBody = zone.toRequestBody(mediaType)
 
             request.zonedCleanup(body).enqueue(object : Callback<JsonObject> {
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
+
+                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                    continuation.resume(VacuumStatus(false))
+                }
+            })
+        }
+    }
+
+    suspend fun empty(deviceName: String, commandName: String): Status {
+        return suspendCoroutine { continuation ->
+            val request = RequestBuilder.buildRequest(dUrl, VacuumApi::class.java)
+
+            val mediaType: MediaType? = "application/json".toMediaTypeOrNull()
+            val body: RequestBody = spot.toRequestBody(mediaType)
+
+            request.empty(body).enqueue(object : Callback<JsonObject> {
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -103,6 +121,7 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
     override fun getCommands(): Array<Command> {
         return arrayOf(
             Command("default", ::default),
+            Command("empty", ::empty),
             Command("home", ::home),
             Command("stop", ::stop),
             Command("status", ::status)
@@ -116,7 +135,7 @@ interface VacuumApi {
 
     @PUT("/api/start_cleaning_zone")
     fun zonedCleanup(
-        @Body body: RequestBody,
+        @Body body: RequestBody
     ): Call<JsonObject>
 
     @PUT("/api/stop_cleaning")
@@ -124,4 +143,9 @@ interface VacuumApi {
 
     @PUT("/api/drive_home")
     fun home(): Call<JsonObject>
+
+    @PUT("/api/go_to")
+    fun empty(
+        @Body body: RequestBody
+    ): Call<JsonObject>
 }

@@ -1,5 +1,10 @@
 [
   {
+    "dUrl": "http://192.168.178.108",
+    "dName": "arduinoAvReceiver",
+    "dType": "ArduinoAvReceiver"
+  },
+  {
     "dUrl": "http://192.168.178.47",
     "dName": "coffeeSwitch",
     "dType": "MyStromSwitch"
@@ -23,16 +28,6 @@
     "dUrl": "http://192.168.178.45",
     "dName": "spotLight",
     "dType": "ShellyDimmer"
-  },
-  {
-    "dUrl": "http://192.168.178.108",
-    "dName": "arduinoSkyReceiver",
-    "dType": "ArduinoSkyReceiver"
-  },
-  {
-    "dUrl": "http://192.168.178.108",
-    "dName": "arduinoAvReceiver",
-    "dType": "ArduinoAvReceiver"
   },
   {
     "dUrl": "http://192.168.178.55",
@@ -88,5 +83,10 @@
     "dUrl": "http://192.168.178.36",
     "dName": "68C63AD026E9",
     "dType": "MyStromDimmer"
+  },
+  {
+    "dUrl": "http://192.168.178.108",
+    "dName": "arduinoSkyReceiver",
+    "dType": "ArduinoSkyReceiver"
   }
 ]
