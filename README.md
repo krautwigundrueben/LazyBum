@@ -7,8 +7,9 @@ _LazyBum_ makes use of the design patterns Strategy and MVVM, so you should be a
 
 - 📦 **modular devices** can be switched on and off - some devices offer more features via alert dialog on long press
 - 🌅 **scenes** can control several devices at once
-- 📺 **av receiver** for controlling the receiver's source and volume
-- 🏠 **rollers** alternates between up, stop and down
+- 📺 **av receiver** for controlling the receiver's source and volume via custom made Arduino interface
+- 🏠 **rollers** actions alternate between up, stop and down
+- 🤖 **vacuum cleaner** for controlling Roborock vacuum cleaner flashed with open source Valetudo firmware
 
 ## Screenshots
 

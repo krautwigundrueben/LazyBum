@@ -45,7 +45,7 @@ class AvReceiverFragment : Fragment() {
             croller.progress = vol - 40
             croller.indicatorColor = resources.getColor(R.color.colorAccent, context?.theme)
         } else {
-            volumeText.text = resources.getString(R.string.text_croller)
+            volumeText.text = if (vol == -1) "ERR" else resources.getString(R.string.text_croller)
             croller.progress = 0
             croller.indicatorColor = View.GONE
         }

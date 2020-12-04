@@ -13,6 +13,8 @@ class AvReceiverStatus(isOn: Boolean, _mode: Int, volString: String): Status {
             isActive = isOn
             mode = modeMap[_mode].toString()
             vol = volString.toInt()
-        } catch (exception: Exception) { }
+        } catch (exception: Exception) {
+            vol = -1
+        }
     }
 }
