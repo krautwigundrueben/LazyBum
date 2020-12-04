@@ -203,11 +203,11 @@ data class Item (
 
             val packageManager = context.packageManager
             try {
-                val intent = packageManager.getLaunchIntentForPackage(context.getString(R.string.open_spotify_package_name))
+                val intent = packageManager.getLaunchIntentForPackage(context.getString(R.string.package_name_spotify))
                 intent?.addCategory(Intent.CATEGORY_LAUNCHER)
                 context.startActivity(intent)
             } catch (e: Exception) {
-                Toast.makeText(context, context.getString(R.string.open_spotify_not_installed), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.error_spotify_not_installed), Toast.LENGTH_LONG).show()
             }
 
             true
@@ -222,7 +222,7 @@ data class Item (
 
             ColorPickerDialogBuilder
                 .with(context)
-                .setTitle(context.getString(R.string.grid_picker_choose_color_text))
+                .setTitle(context.getString(R.string.text_choose_color))
                 .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
                 .initialColor(currentColor)
                 .density(6)
@@ -237,7 +237,7 @@ data class Item (
                     deviceManager.launchAction(context,
                         Action(actions[0].deviceName, "{\"color\":\"$color\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"0\"}"))
                 }
-                .setPositiveButton(context.getString(R.string.Ok)) { dialog, selectedColor, allColors ->
+                .setPositiveButton(context.getString(R.string.text_ok)) { dialog, selectedColor, allColors ->
                     currentColor = selectedColor
                 }
                 .build()
@@ -256,8 +256,8 @@ data class Item (
             rgb = light.responseObj.color.substring(2, 8)
             ww = light.responseObj.color.substring(0, 2)
         } else {
-            rgb = context.getString(R.string.init_color_grid_picker_1)
-            ww = context.getString(R.string.init_color_grid_picker_2)
+            rgb = context.getString(R.string.color_picker_init_1)
+            ww = context.getString(R.string.color_picker_init_2)
         }
 
         return if (rgb != context.getString(R.string.black)) Color.parseColor("#$rgb")
@@ -279,8 +279,8 @@ data class Item (
 
             AlertDialog.Builder(context)
                 .setView(mDialogView)
-                .setTitle(context.getString(R.string.spots_picker_choose_brightness))
-                .setPositiveButton(context.getString(R.string.Ok)) { diaglog, selectedBrightness -> }
+                .setTitle(context.getString(R.string.text_choose_brightness))
+                .setPositiveButton(context.getString(R.string.text_ok)) { diaglog, selectedBrightness -> }
                 .show()
 
             rubberSeekBar.setCurrentValue(spotsBrightness)

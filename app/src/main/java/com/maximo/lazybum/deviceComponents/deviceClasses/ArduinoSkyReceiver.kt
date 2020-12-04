@@ -2,11 +2,11 @@ package com.maximo.lazybum.deviceComponents.deviceClasses
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.maximo.lazybum.RequestBuilder
 import com.maximo.lazybum.commandComponents.ArduinoCommand
 import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
+import com.maximo.lazybum.deviceComponents.RequestBuilder
 import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.ArduinoResponseJson
 import com.maximo.lazybum.deviceComponents.dataClasses.arduinoDataClasses.SkyReceiverJson
 import com.maximo.lazybum.deviceComponents.statusClasses.Status

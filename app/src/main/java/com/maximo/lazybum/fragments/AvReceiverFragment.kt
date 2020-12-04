@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.maximo.lazybum.Globals.avReceiverGroups
 import com.maximo.lazybum.Globals.deviceManager
 import com.maximo.lazybum.R
-import com.maximo.lazybum.R.string.avReceiverDeviceName
+import com.maximo.lazybum.R.string.device_name_av_receiver
 import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.deviceComponents.statusClasses.AvReceiverStatus
 import com.maximo.lazybum.layoutAdapter.MyListAdapter
@@ -29,7 +29,7 @@ class AvReceiverFragment : Fragment() {
 
         listView.adapter = MyListAdapter(requireContext(), avReceiverGroups, this)
 
-        val initAction = Action(resources.getString(avReceiverDeviceName), getString(R.string.status_request_command))
+        val initAction = Action(resources.getString(device_name_av_receiver), getString(R.string.function_name_get_status))
         setupVolumeKnob(view, initAction)
         addObserver(deviceManager.getDevice(initAction.deviceName))
 
@@ -80,7 +80,7 @@ class AvReceiverFragment : Fragment() {
                     context?.let { deviceManager.launchAction(it, action) }
 
                 } catch (e: java.lang.Exception) {
-                    Toast.makeText(context, getString(R.string.croller_stop_touch_problem), Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, getString(R.string.error_croller_stop_touch), Toast.LENGTH_LONG).show()
                 }
             }
         }

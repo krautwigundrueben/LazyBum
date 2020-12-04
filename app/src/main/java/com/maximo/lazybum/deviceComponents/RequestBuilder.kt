@@ -1,4 +1,4 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.deviceComponents
 
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient

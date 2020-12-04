@@ -1,9 +1,7 @@
-package com.maximo.lazybum
+package com.maximo.lazybum.deviceComponents
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.maximo.lazybum.deviceComponents.Command
-import com.maximo.lazybum.deviceComponents.DeviceManager
 
 @Suppress("UNCHECKED_CAST")
 class MyDeviceViewModelFactory(
@@ -16,6 +14,6 @@ class MyDeviceViewModelFactory(
         if (modelClass.isAssignableFrom(DeviceManager.DeviceViewModel::class.java)) {
             return DeviceManager.DeviceViewModel(dName, dInstance, dCommands) as T
         }
-        throw IllegalArgumentException("ViewModel class not found.")
+        throw IllegalArgumentException("ViewModel Klasse nicht gefunden.")
     }
 }

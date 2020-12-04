@@ -1,32 +1,39 @@
 <resources>
+    <!-- Buttons and Headers -->
     <string name="app_name">LazyBum</string>
     <string name="tab_devices">Geräte</string>
     <string name="tab_av_receiver">AV Receiver</string>
+    <string name="tab_shutter">Rollos</string>
+    <string name="tab_scenes">Szenen</string>
+    <string name="tab_vacuum">Saugen</string>
+    <string name="text_croller">Aus</string>
+    <string name="text_ok">OK</string>
+    <string name="text_choose_color">Farbe wählen</string>
+    <string name="text_choose_brightness">Helligkeit wählen</string>
+
+    <!-- Toast Messages -->
+    <string name="permission_request_denied">Das wirst du bereuen.</string>
+    <string name="permission_request_granted">Das wirst du nicht bereuen.</string>
+    <string name="permission_request_problem">Berechtigung konnte nicht erteilt werden.</string>
+    <string name="error_not_at_home">Nicht im Heimnetz</string>
+    <string name="error_croller_stop_touch">Gewünschte Lautstärke nicht erkannt.</string>
+    <string name="error_spotify_not_installed">Spotify App nicht installiert.</string>
+    <string name="error_read_file">Problem grande</string>
+
+    <!-- Default Strings GUI Editor -->
     <string name="device_icon_image">Device Icon Image</string>
     <string name="device_list_title">Main Title</string>
     <string name="device_list_sub_title">Sub Title</string>
-    <string name="text_croller">Aus</string>
     <string name="device_list_section_header">Section Header</string>
-    <string name="tab_shutter">Rollos</string>
-    <string name="tab_scenes">Szenen</string>
-    <string name="avReceiverDeviceName">arduinoAvReceiver</string>
-    <string name="not_at_home">Nicht im Heimnetz</string>
-    <string name="permission_request_denied">Das wirst du bereuen.</string>
-    <string name="permission_request_granted">Das wirst du nicht bereuen.</string>
-    <string name="permission_request_problem">A problem occurred granting permissions.</string>
-    <string name="read_layout_config_failed">Failed to read layout config file.</string>
-    <string name="status_request_command">status</string>
-    <string name="croller_stop_touch_problem">Progress couldn\'t be read?</string>
-    <string name="open_spotify_not_installed">Spotify App nicht installiert.</string>
-    <string name="open_spotify_package_name">com.spotify.music</string>
-    <string name="init_color_grid_picker_1">ffffff</string>
-    <string name="init_color_grid_picker_2">ff</string>
+
+    <!-- in-Code Strings -->
+    <string name="device_name_av_receiver">arduinoAvReceiver</string>
+    <string name="function_name_get_status">status</string>
+    <string name="function_name_default">default</string>
+    <string name="package_name_spotify">com.spotify.music</string>
+    <string name="color_picker_init_1">ffffff</string>
+    <string name="color_picker_init_2">ff</string>
     <string name="black">000000</string>
-    <string name="grid_picker_choose_color_text">Farbe wählen</string>
-    <string name="Ok">Ok</string>
-    <string name="spots_picker_choose_brightness">Helligkeit wählen</string>
-    <string name="device_classes_location">com.maximo.lazybum.deviceComponents.deviceClasses.</string>
-    <string name="devices_config_location">/res/raw/devices_config.json</string>
-    <string name="tab_vacuum">Saugen</string>
-    <string name="read_file_error">Problem grande</string>
+    <string name="path_device_classes">com.maximo.lazybum.deviceComponents.deviceClasses.</string>
+    <string name="path_devices_config">/res/raw/devices_config.json</string>
 </resources>

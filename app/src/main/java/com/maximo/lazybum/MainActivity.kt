@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
 
     private val updateStatusesTask = object : Runnable {
         override fun run() {
-            getInitialStatuses()
+            getDeviceStatuses()
             statusHandler.postDelayed(this, 5000)
         }
     }
@@ -53,20 +53,18 @@ class MainActivity : AppCompatActivity() {
 
         deviceManager = DeviceManager(this)
         statusHandler = Handler(Looper.getMainLooper())
-
         setupPermissions()
         val continueOk = readLayoutConfigFile()
 
         if (continueOk) {
             setContentView(R.layout.activity_main)
-
             val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
             val viewPager: ViewPager = findViewById(R.id.view_pager)
             viewPager.adapter = sectionsPagerAdapter
             val tabs: TabLayout = findViewById(R.id.tabs)
             tabs.setupWithViewPager(viewPager)
         } else {
-            Toast.makeText(this, getString(R.string.read_file_error), Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_read_file), Toast.LENGTH_LONG).show()
         }
     }
 
@@ -80,14 +78,12 @@ class MainActivity : AppCompatActivity() {
         statusHandler.removeCallbacks(updateStatusesTask)
     }
 
-    private fun getInitialStatuses() {
+    private fun getDeviceStatuses() {
         val connMgr = getSystemService(Context.WIFI_SERVICE) as WifiManager
         if (Globals.supportedWifiSSIDs.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
             for (device in deviceManager.myDevices) {
-                deviceManager.launchAction(this, Action(device.dName, getString(R.string.status_request_command)))
+                deviceManager.launchAction(this, Action(device.dName, getString(R.string.function_name_get_status)))
             }
-        } else {
-            Toast.makeText(this, R.string.not_at_home, Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -100,17 +96,15 @@ class MainActivity : AppCompatActivity() {
         try {
             val layoutTabList: List<List<LayoutGroup>> = Gson().fromJson(layoutConfig, type)
 
+            // this cannot be done analogue to the way the devices are being read due to Samsung issue
+            // trust me...
             devicesGroups = toGroupList(layoutTabList[DEVICES_TAB_POS])
             scenesGroups = toGroupList(layoutTabList[SCENES_TAB_POS])
             avReceiverGroups = toGroupList(layoutTabList[AVREC_TAB_POS])
             shuttersGroups = toGroupList(layoutTabList[SHUTTER_TAB_POS])
             vacuumGroups = toGroupList(layoutTabList[VACUUM_TAB_POS])
 
-        } catch (ioException: IOException) {
-            Toast.makeText(this, getString(R.string.read_layout_config_failed), Toast.LENGTH_SHORT).show()
-            return false
-        }
-
+        } catch (ioException: IOException) { return false }
         return true
     }
 
