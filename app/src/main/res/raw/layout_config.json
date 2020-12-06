@@ -125,7 +125,11 @@
             },
             {
               "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"TV\"}"
+              "commandName": "{\"turn\":\"PO\"}"
+            },
+            {
+              "deviceName": "arduinoAvReceiver",
+              "commandName": "{\"turn\":\"06FN\"}"
             }
           ]
         },
@@ -152,7 +156,11 @@
             },
             {
               "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"TV\"}"
+              "commandName": "{\"turn\":\"PO\"}"
+            },
+            {
+              "deviceName": "arduinoAvReceiver",
+              "commandName": "{\"turn\":\"06FN\"}"
             }
           ]
         }
@@ -168,7 +176,11 @@
           "actions": [
             {
               "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"Bose\"}"
+              "commandName": "{\"turn\":\"PO\"}"
+            },
+            {
+              "deviceName": "arduinoAvReceiver",
+              "commandName": "{\"turn\":\"01FN\"}"
             }
           ]
         }
@@ -263,7 +275,7 @@
             },
             {
               "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"DvcsOff\"}"
+              "commandName": "{\"turn\":\"PF\"}"
             }
           ]
         }
@@ -281,7 +293,7 @@
           "actions": [
             {
               "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"TV\"}"
+              "commandName": "{\"turn\":\"06FN\"}"
             }
           ]
         },
@@ -292,7 +304,7 @@
           "actions": [
             {
               "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"Bose\"}"
+              "commandName": "{\"turn\":\"01FN\"}"
             }
           ]
         },
@@ -303,7 +315,7 @@
           "actions": [
             {
               "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"CCaudio\"}"
+              "commandName": "{\"turn\":\"04FN\"}"
             }
           ]
         }
@@ -319,7 +331,7 @@
           "actions": [
             {
               "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"DvcsOff\"}"
+              "commandName": "{\"turn\":\"PF\"}"
             }
           ]
         }

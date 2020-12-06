@@ -2,7 +2,7 @@ package com.maximo.lazybum.deviceComponents.statusClasses
 
 class AvReceiverStatus(isOn: Boolean, _mode: Int, volString: String): Status {
 
-    private val modeMap: HashMap<Int, String> = hashMapOf(1 to "TV", 2 to "CCaudio", 4 to "Bose")
+    private val modeMap: HashMap<Int, String> = hashMapOf(1 to "06FN", 2 to "04FN", 4 to "01FN")
 
     override var isActive = false
     var mode: String = modeMap[1].toString()

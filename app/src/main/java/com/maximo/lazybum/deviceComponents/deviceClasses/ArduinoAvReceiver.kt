@@ -24,6 +24,7 @@ import kotlin.coroutines.suspendCoroutine
 data class ArduinoAvReceiver(override val dUrl: String, override val dName: String): Device, ViewModel() {
 
     private lateinit var responseObj: AvReceiverJson
+    private val arduinoUrl = "http://192.168.178.108"
 
     fun isResponseInitialized(): Boolean {
         return this::responseObj.isInitialized
@@ -31,7 +32,7 @@ data class ArduinoAvReceiver(override val dUrl: String, override val dName: Stri
 
     suspend fun status(deviceName: String, pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
-            val request = RequestBuilder.buildRequest(dUrl, ArduinoAvReceiverApi::class.java)
+            val request = RequestBuilder.buildRequest(arduinoUrl, ArduinoAvReceiverApi::class.java)
 
             request.getStatus().enqueue(object : Callback<JsonObject> {
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
@@ -44,25 +45,18 @@ data class ArduinoAvReceiver(override val dUrl: String, override val dName: Stri
     }
 
     suspend fun default(deviceName: String, sCmd: String): Status {
-        try {
-            val jCmd = Gson().fromJson(sCmd, ArduinoCommand::class.java)
+        val jCmd = Gson().fromJson(sCmd, ArduinoCommand::class.java)
 
-            return suspendCoroutine { continuation ->
-                val request = RequestBuilder.buildRequest(dUrl, ArduinoAvReceiverApi::class.java)
+        return suspendCoroutine { continuation ->
+            val request = RequestBuilder.buildRequest(dUrl, ArduinoAvReceiverApi::class.java)
 
-                request.set(jCmd.turn).enqueue(object : Callback<JsonObject> {
-                    override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
+            request.setv2(jCmd.turn).enqueue(object : Callback<JsonObject> {
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
 
-                    override fun onResponse(
-                        call: Call<JsonObject>,
-                        response: Response<JsonObject>
-                    ) {
-                        continuation.resume(processResponse(response))
-                    }
-                })
-            }
-        } catch (exception: Exception) {
-            return AvReceiverStatus(false, 1, "0")
+                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                    continuation.resume(AvReceiverStatus(true, 1, "0"))
+                }
+            })
         }
     }
 
@@ -90,5 +84,10 @@ interface ArduinoAvReceiverApi {
     @POST("/")
     fun set(
         @Query("cmd") command: String
+    ): Call<JsonObject>
+    
+    @GET("/EventHandler.asp")
+    fun setv2(
+        @Query("WebToHostItem") command: String
     ): Call<JsonObject>
 }
