@@ -496,7 +496,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[ 28608, 24930, 31609, 29172, 1 ]"
+              "commandName": "[[ 28608, 24930, 31609, 29172, 1 ]]"
             }
           ]
         },
@@ -518,7 +518,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[ 22834, 24878, 26234, 28021, 1 ]"
+              "commandName": "[[ 22834, 24878, 26234, 28021, 1 ]]"
             }
           ]
         },
@@ -562,7 +562,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[ 20771, 29282, 23647, 31098, 1 ]"
+              "commandName": "[[ 20771, 29282, 23647, 31098, 1 ]]"
             }
           ]
         },
@@ -573,7 +573,7 @@
           "actions": [
             {
               "deviceName": "roborock",
-              "commandName": "[ 16653, 29276, 18716, 30577, 1 ]"
+              "commandName": "[[ 16653, 29276, 18716, 30577, 1 ]]"
             }
           ]
         },
