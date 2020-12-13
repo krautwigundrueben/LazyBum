@@ -1,6 +1,6 @@
 [
   {
-    "dUrl": "http://192.168.178.34",
+    "dUrl": "http://192.168.178.108",
     "dName": "arduinoAvReceiver",
     "dType": "ArduinoAvReceiver"
   },

@@ -160,7 +160,7 @@ data class Item (
                         } else {
                             when (deviceManager.getDevice(action.deviceName)?.deviceType) {
                                 DIMMER -> if (!action.commandName.contains((allItemStatuses[index].value as DimmerStatus).value)) return false
-                                AV_RECEIVER -> if (!action.commandName.contains((allItemStatuses[index].value as AvReceiverStatus).mode) && !action.commandName.contains("{\"turn\":\"PO\"}")) return false
+                                AV_RECEIVER -> if (!action.commandName.contains((allItemStatuses[index].value as AvReceiverStatus).mode)) return false
                                 DeviceManager.DeviceType.SHUTTER -> return false
                                 else -> { }
                             }
