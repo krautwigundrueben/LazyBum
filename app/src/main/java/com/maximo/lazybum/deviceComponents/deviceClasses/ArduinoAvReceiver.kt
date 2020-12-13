@@ -54,7 +54,7 @@ data class ArduinoAvReceiver(override val dUrl: String, override val dName: Stri
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    continuation.resume(AvReceiverStatus(true, 1, "0"))
+                    continuation.resume(AvReceiverStatus(true, 1, "101"))
                 }
             })
         }
