@@ -36,4 +36,6 @@
     <string name="black">000000</string>
     <string name="path_device_classes">com.maximo.lazybum.deviceComponents.deviceClasses.</string>
     <string name="path_devices_config">/res/raw/devices_config.json</string>
+    <string name="path_zones_config">/res/raw/vacuum_zones.json</string>
+    <string name="zones_header">Zonenreinigung</string>
 </resources>

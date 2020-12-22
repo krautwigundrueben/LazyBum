@@ -27,7 +27,7 @@ import kotlin.coroutines.suspendCoroutine
 data class VacuumCleaner(override val dUrl: String, override val dName: String): Device {
 
     private lateinit var responseObj: Vacuum
-    private val spot = "{\"x\":18142,\"y\":29634}"
+    private val spot = "{\"x\":32958,\"y\":21822}"
 
     fun isResponseInitialized(): Boolean {
         return this::responseObj.isInitialized

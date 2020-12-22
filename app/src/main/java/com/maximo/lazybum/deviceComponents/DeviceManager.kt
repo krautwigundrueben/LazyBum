@@ -91,5 +91,4 @@ class DeviceManager(mainActivity: MainActivity) {
         val listDeviceType = object : TypeToken<List<DeviceClass>>() {}.type
         return Gson().fromJson(InputStreamReader(deviceConfigFile), listDeviceType)
     }
-
 }

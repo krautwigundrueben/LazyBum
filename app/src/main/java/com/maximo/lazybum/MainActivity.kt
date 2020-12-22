@@ -29,10 +29,12 @@ import com.maximo.lazybum.Globals.scenesGroups
 import com.maximo.lazybum.Globals.shuttersGroups
 import com.maximo.lazybum.Globals.vacuumGroups
 import com.maximo.lazybum.deviceComponents.DeviceManager
+import com.maximo.lazybum.deviceComponents.dataClasses.vacuumClasses.Zones
 import com.maximo.lazybum.layoutComponents.Action
 import com.maximo.lazybum.layoutComponents.Group
 import com.maximo.lazybum.layoutComponents.LayoutGroup
 import java.io.IOException
+import java.io.InputStreamReader
 
 class MainActivity : AppCompatActivity() {
 
@@ -102,10 +104,26 @@ class MainActivity : AppCompatActivity() {
             scenesGroups = toGroupList(layoutTabList[SCENES_TAB_POS])
             avReceiverGroups = toGroupList(layoutTabList[AVREC_TAB_POS])
             shuttersGroups = toGroupList(layoutTabList[SHUTTER_TAB_POS])
-            vacuumGroups = toGroupList(layoutTabList[VACUUM_TAB_POS])
+            vacuumGroups = toGroupList(setVacuumZonesFromConfigFile(layoutTabList[VACUUM_TAB_POS]))
 
         } catch (ioException: IOException) { return false }
         return true
+    }
+
+    private fun setVacuumZonesFromConfigFile(vacuumLayoutGroups: List<LayoutGroup>): List<LayoutGroup> {
+        val zonesConfigFile = this::class.java.getResourceAsStream(getString(R.string.path_zones_config))
+        val zonesType = object : TypeToken<Zones>() {}.type
+        val zones: Zones = Gson().fromJson(InputStreamReader(zonesConfigFile), zonesType)
+
+        vacuumLayoutGroups.find { it.header.contains(getString(R.string.zones_header)) }?.items?.forEach { item ->
+            zones.forEach {
+                if (item.mainText.contains(it.name)) {
+                    item.actions[0].commandName = it.coordinates.toString()
+                }
+            }
+        }
+
+        return vacuumLayoutGroups
     }
 
     private fun toGroupList(layoutGroupList: List<LayoutGroup>?): List<Group> {
