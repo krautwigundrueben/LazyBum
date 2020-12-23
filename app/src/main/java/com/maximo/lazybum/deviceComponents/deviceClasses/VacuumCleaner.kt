@@ -8,6 +8,7 @@ import com.maximo.lazybum.deviceComponents.DeviceManager
 import com.maximo.lazybum.deviceComponents.DeviceManager.DeviceType.VACUUM
 import com.maximo.lazybum.deviceComponents.RequestBuilder
 import com.maximo.lazybum.deviceComponents.dataClasses.vacuumClasses.Vacuum
+import com.maximo.lazybum.deviceComponents.dataClasses.vacuumClasses.Zones
 import com.maximo.lazybum.deviceComponents.statusClasses.Status
 import com.maximo.lazybum.deviceComponents.statusClasses.VacuumStatus
 import okhttp3.MediaType
@@ -27,7 +28,7 @@ import kotlin.coroutines.suspendCoroutine
 data class VacuumCleaner(override val dUrl: String, override val dName: String): Device {
 
     private lateinit var responseObj: Vacuum
-    private val spot = "{\"x\":32958,\"y\":21822}"
+    private val spot = "{\"x\":29927,\"y\":24410}"
 
     fun isResponseInitialized(): Boolean {
         return this::responseObj.isInitialized
@@ -44,7 +45,7 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    continuation.resume(VacuumStatus(false))
+                    continuation.resume(processStatusResponse(response))
                 }
             })
         }
@@ -61,7 +62,7 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    continuation.resume(VacuumStatus(false))
+                    continuation.resume(processStatusResponse(response))
                 }
             })
         }
@@ -75,7 +76,7 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    continuation.resume(VacuumStatus(false))
+                    continuation.resume(processStatusResponse(response))
                 }
             })
         }
@@ -89,7 +90,7 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    continuation.resume(VacuumStatus(false))
+                    continuation.resume(processStatusResponse(response))
                 }
             })
         }
@@ -103,15 +104,34 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    continuation.resume(processResponse(response))
+                    continuation.resume(processStatusResponse(response))
                 }
             })
         }
     }
 
-    fun processResponse(response: Response<JsonObject>): Status {
+    fun processStatusResponse(response: Response<JsonObject>): Status {
         responseObj = Gson().fromJson(response.body(), Vacuum::class.java)
-        return VacuumStatus(false)
+        return VacuumStatus(false, Zones())
+    }
+
+    suspend fun zones(deviceName: String, zone: String): Status {
+        return suspendCoroutine { continuation ->
+            val request = RequestBuilder.buildRequest(dUrl, VacuumApi::class.java)
+
+            request.zones().enqueue(object : Callback<JsonObject> {
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
+
+                override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
+                    continuation.resume(processZonesResponse(response))
+                }
+            })
+        }
+    }
+
+    fun processZonesResponse(response: Response<JsonObject>): Status {
+        val zonesResponseObj: Zones = Gson().fromJson(response.body(), Zones::class.java)
+        return VacuumStatus(false, zonesResponseObj)
     }
 
     override fun getType(): DeviceManager.DeviceType {
@@ -124,7 +144,8 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
             Command("empty", ::empty),
             Command("home", ::home),
             Command("stop", ::stop),
-            Command("status", ::status)
+            Command("status", ::status),
+            Command("zones", ::zones)
         )
     }
 }
@@ -132,6 +153,9 @@ data class VacuumCleaner(override val dUrl: String, override val dName: String):
 interface VacuumApi {
     @GET("/api/current_status")
     fun status(): Call<JsonObject>
+
+    @GET("/api/zones")
+    fun zones(): Call<JsonObject>
 
     @PUT("/api/start_cleaning_zone")
     fun zonedCleanup(

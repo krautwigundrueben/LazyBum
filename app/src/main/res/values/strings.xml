@@ -6,6 +6,7 @@
     <string name="tab_shutter">Rollos</string>
     <string name="tab_scenes">Szenen</string>
     <string name="tab_vacuum">Saugen</string>
+    <string name="zones_header">Zonenreinigung</string>
     <string name="text_croller">Aus</string>
     <string name="text_ok">OK</string>
     <string name="text_choose_color">Farbe wählen</string>
@@ -28,8 +29,10 @@
 
     <!-- in-Code Strings -->
     <string name="device_name_av_receiver">arduinoAvReceiver</string>
+    <string name="device_name_vacuum_cleaner">roborock</string>
     <string name="function_name_get_status">status</string>
     <string name="function_name_default">default</string>
+    <string name="function_name_zones">zones</string>
     <string name="package_name_spotify">com.spotify.music</string>
     <string name="color_picker_init_1">ffffff</string>
     <string name="color_picker_init_2">ff</string>
@@ -37,5 +40,4 @@
     <string name="path_device_classes">com.maximo.lazybum.deviceComponents.deviceClasses.</string>
     <string name="path_devices_config">/res/raw/devices_config.json</string>
     <string name="path_zones_config">/res/raw/vacuum_zones.json</string>
-    <string name="zones_header">Zonenreinigung</string>
 </resources>

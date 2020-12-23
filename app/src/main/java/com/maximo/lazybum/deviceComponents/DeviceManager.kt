@@ -59,7 +59,7 @@ class DeviceManager(mainActivity: MainActivity) {
         return myDevices.find { it.dName == deviceName }
     }
 
-    private fun getFunction(targetDevice: DeviceViewModel?, functionName: String, context: Context): KSuspendFunction2<String, String, Status>? {
+    fun getFunction(targetDevice: DeviceViewModel?, functionName: String, context: Context): KSuspendFunction2<String, String, Status>? {
         return targetDevice?.dCommands!!.find { it.cName.startsWith(functionName) }?.cFunction
             ?: targetDevice.dCommands.find { it.cName == context.getString(R.string.function_name_default) }?.cFunction // must be an appropriate Command Json then
     }

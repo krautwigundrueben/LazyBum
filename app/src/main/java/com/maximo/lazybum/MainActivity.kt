@@ -126,6 +126,34 @@ class MainActivity : AppCompatActivity() {
         return vacuumLayoutGroups
     }
 
+    /*
+    private suspend fun setZones(vacuumLayoutGroups: List<LayoutGroup>) {
+
+        withContext(Default) {
+
+            val targetDevice = deviceManager.getDevice(getString(R.string.device_name_vacuum_cleaner))
+            val targetFunction = deviceManager.getFunction(targetDevice, getString(R.string.function_name_zones),this@MainActivity)
+            var response: Status? = VacuumStatus(false, Zones())
+            val zones: Zones
+
+            val connMgr = getSystemService(WIFI_SERVICE) as WifiManager
+            if (Globals.supportedWifiSSIDs.contains(connMgr.connectionInfo.ssid.filterNot { it == '\"' })) {
+                zones = (targetFunction?.callSuspend("", "") as VacuumStatus).zones
+
+                vacuumLayoutGroups.find { it.header.contains(getString(R.string.zones_header)) }?.items?.forEach { item ->
+                    zones.forEach {
+                        if (item.mainText.contains(it.name)) {
+                            item.actions[0].commandName = it.coordinates.toString()
+                        }
+                    }
+                }
+                vacuumGroups = toGroupList(vacuumLayoutGroups)
+            }
+        }
+    }
+
+     */
+
     private fun toGroupList(layoutGroupList: List<LayoutGroup>?): List<Group> {
         val groupList: MutableList<Group> = mutableListOf()
         if (layoutGroupList != null) {

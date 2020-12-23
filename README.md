@@ -1,6 +1,6 @@
 # LazyBum
 
-_LazyBum_ is a highly customized home automation app that can serve as an inspiration and / or starting point for your own app. It integrates different kinds of home automation devices from brands, such as [Shelly](<https://shelly.cloud>) and [MyStrom](<https://mystrom.com>) and my own Arduino. The Arduino offers an API, which lets the app control peripherals like an AV Receiver (via UDP over Ethernet) and a Sky TV Receiver (via IR LED).  
+_LazyBum_ is a highly customized home automation app that can serve as an inspiration and / or starting point for your own app. It integrates different kinds of home automation devices from brands such as [Shelly](<https://shelly.cloud>) and [MyStrom](<https://mystrom.com>) and my own Arduino. The Arduino offers an API, which lets the app control peripherals like an AV Receiver (via Telnet) and a Sky TV Receiver (via IR LED).
 _LazyBum_ makes use of the design patterns Strategy and MVVM, so you should be able to adapt it for your purposes quickly. I could make a short tutorial on how to do so, if enough interest is there.
 
 ## Tabs
