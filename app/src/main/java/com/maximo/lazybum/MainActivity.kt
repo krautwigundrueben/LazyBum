@@ -117,7 +117,7 @@ class MainActivity : AppCompatActivity() {
 
         vacuumLayoutGroups.find { it.header.contains(getString(R.string.zones_header)) }?.items?.forEach { item ->
             zones.forEach {
-                if (item.mainText.contains(it.name)) {
+                if (item.mainText == it.name) {
                     item.actions[0].commandName = it.coordinates.toString()
                 }
             }

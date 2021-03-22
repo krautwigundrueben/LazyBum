@@ -2,6 +2,7 @@ package com.maximo.lazybum.deviceComponents.deviceClasses
 
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.maximo.lazybum.commandComponents.ShellyShutterCommand
 import com.maximo.lazybum.deviceComponents.Command
 import com.maximo.lazybum.deviceComponents.Device
 import com.maximo.lazybum.deviceComponents.DeviceManager
@@ -47,7 +48,7 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
 
-            request.go(nextGo).enqueue(object : Callback<JsonObject> {
+            request.go(nextGo, null).enqueue(object : Callback<JsonObject> {
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -58,10 +59,12 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
     }
 
     suspend fun default(deviceName: String, sCmd: String): Status {
+        val jCmd = Gson().fromJson(sCmd, ShellyShutterCommand::class.java)
+
         return suspendCoroutine { continuation ->
             val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
 
-            request.go(sCmd).enqueue(object : Callback<JsonObject> {
+            request.go(jCmd.go, jCmd.roller_pos).enqueue(object : Callback<JsonObject> {
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
@@ -107,7 +110,8 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
 interface ShellyShutterApi {
     @POST("/roller/0")
     fun go(
-        @Query("go") go: String
+        @Query("go") go: String,
+        @Query("roller_pos") pos: String?
     ): Call<JsonObject>
 
     @GET("/roller/0")

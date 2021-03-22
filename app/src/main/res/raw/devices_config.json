@@ -15,8 +15,13 @@
     "dType": "MyStromSwitch"
   },
   {
-    "dUrl": "http://192.168.178.46",
+    "dUrl": "http://192.168.178.100",
     "dName": "diningLight",
+    "dType": "ShellyRelay"
+  },
+  {
+    "dUrl": "http://192.168.178.46",
+    "dName": "storeLight",
     "dType": "ShellyRelay"
   },
   {

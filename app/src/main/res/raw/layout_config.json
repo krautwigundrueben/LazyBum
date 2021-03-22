@@ -82,16 +82,16 @@
       ]
     },
     {
-      "header": "Arbeitszimmer",
+      "header": "Abstellkammer",
       "items": [
         {
-          "mainText": "Zimmerlampe",
-          "subText": "wechselnd an | aus",
-          "icon": "ic_work",
+          "mainText": "Beleuchtung",
+          "subText": "nur Kontrollleuchte",
+          "icon": "ic_spots",
           "actions": [
             {
-              "deviceName": "68C63AD026E9",
-              "commandName": "{\"color\":\"FF000000\",\"mode\":\"rgb\",\"action\":\"toggle\",\"ramp\":\"0\"}"
+              "deviceName": "storeLight",
+              "commandName": ""
             }
           ]
         }
@@ -178,17 +178,25 @@
       "header": "Licht und Schatten",
       "items": [
         {
-          "mainText": "Soirée",
-          "subText": "gedimmtes Licht im Wohnzimmer",
-          "icon": "ic_dining",
+          "mainText": "Sichtschutz",
+          "subText": "Rollos runter und gedimmtes Licht im Wohnzimmer",
+          "icon": "ic_fence",
           "actions": [
             {
               "deviceName": "840D8E3D9494",
-              "commandName": "{\"color\":\"99000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"
+              "commandName": "{\"color\":\"15000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"
             },
             {
               "deviceName": "spotLight",
-              "commandName": "{\"turn\":\"on\",\"brightness\":\"20\"}"
+              "commandName": "{\"turn\":\"off\",\"brightness\":\"20\"}"
+            },
+            {
+              "deviceName": "shutterLivingPergola",
+              "commandName": "{\"go\":\"to_pos\",\"roller_pos\":\"55\"}"
+            },
+            {
+              "deviceName": "shutterLivingSofa",
+              "commandName": "{\"go\":\"close\"}"
             }
           ]
         },
@@ -199,39 +207,39 @@
           "actions": [
             {
               "deviceName": "shutterParents",
-              "commandName": "close"
+              "commandName": "{\"go\":\"close\"}"
             },
             {
               "deviceName": "shutterBathroom",
-              "commandName": "close"
+              "commandName": "{\"go\":\"close\"}"
             },
             {
               "deviceName": "shutterWork",
-              "commandName": "close"
+              "commandName": "{\"go\":\"close\"}"
             },
             {
               "deviceName": "shutterChildLeft",
-              "commandName": "close"
+              "commandName": "{\"go\":\"close\"}"
             },
             {
               "deviceName": "shutterChildRight",
-              "commandName": "close"
+              "commandName": "{\"go\":\"close\"}"
             },
             {
               "deviceName": "shutterLivingPergola",
-              "commandName": "close"
+              "commandName": "{\"go\":\"close\"}"
             },
             {
               "deviceName": "shutterLivingSofa",
-              "commandName": "close"
+              "commandName": "{\"go\":\"close\"}"
             },
             {
               "deviceName": "shutterLivingDoor",
-              "commandName": "close"
+              "commandName": "{\"go\":\"close\"}"
             },
             {
               "deviceName": "shutterLivingSpices",
-              "commandName": "close"
+              "commandName": "{\"go\":\"close\"}"
             }
           ]
         }

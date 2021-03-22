@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.*
 import android.graphics.Color
 import android.graphics.PorterDuff
+import android.net.Uri
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
 import android.util.Log
@@ -203,9 +205,18 @@ data class Item (
 
             val packageManager = context.packageManager
             try {
-                val intent = packageManager.getLaunchIntentForPackage(context.getString(R.string.package_name_spotify))
-                intent?.addCategory(Intent.CATEGORY_LAUNCHER)
+
+                val intent = Intent(ACTION_VIEW, Uri.parse(context.getString(R.string.package_name_spotify)))
+                intent.addCategory(CATEGORY_APP_MUSIC)
+                intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_REQUIRE_NON_BROWSER or FLAG_ACTIVITY_REQUIRE_DEFAULT
                 context.startActivity(intent)
+                        //startActivity(intent)
+
+
+                    //val intent: Intent? = packageManager.getLaunchIntentForPackage(context.getString(R.string.package_name_spotify))
+
+                //intent?.addCategory(Intent.CATEGORY_LAUNCHER)
+                //context.startActivity(intent)
             } catch (e: Exception) {
                 Toast.makeText(context, context.getString(R.string.error_spotify_not_installed), Toast.LENGTH_LONG).show()
             }

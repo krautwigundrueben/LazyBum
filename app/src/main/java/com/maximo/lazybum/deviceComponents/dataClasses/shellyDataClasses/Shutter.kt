@@ -10,5 +10,6 @@ data class Shutter(
     val power: Double,
     val safety_switch: Boolean,
     val state: String,
-    val stop_reason: String
+    val stop_reason: String,
+    val source: String
 )
