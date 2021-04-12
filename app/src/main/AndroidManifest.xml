@@ -10,7 +10,7 @@
     <queries>
         <package android:name="com.spotify.music" />
         <intent>
-            <action android:name="android.intent.action.RUN" />
+            <action android:name="android.intent.action.VIEW" />
         </intent>
     </queries>
 
