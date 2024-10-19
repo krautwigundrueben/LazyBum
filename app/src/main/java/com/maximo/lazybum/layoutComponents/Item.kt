@@ -9,7 +9,6 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.text.SpannableString
 import android.text.style.UnderlineSpan
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -315,7 +314,7 @@ data class Item (
             device?.getStatus()?.observe(fragment,
                 { status ->
                     paintStatus(context)
-                    Log.e("Item", "Der neue Status von ${device.dName} ist ${status?.isActive}")
+                    // Log.e("Item", "Der neue Status von ${device.dName} ist ${status?.isActive}")
                 })
         }
     }

@@ -1,7 +1,6 @@
 package com.maximo.lazybum.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -92,7 +91,7 @@ class AvReceiverFragment : Fragment() {
         avReceiver?.getStatus()?.observe(viewLifecycleOwner,
             { t ->
                 setVolumeKnobView(t as AvReceiverStatus)
-                Log.e("AvReceiverFragment", "Neuer Status: isActive: ${t.isActive}, mode: ${t.mode}, vol: ${t.vol}")
+                // Log.e("AvReceiverFragment", "Neuer Status: isActive: ${t.isActive}, mode: ${t.mode}, vol: ${t.vol}")
             })
     }
 }

@@ -1,5 +1,6 @@
 package com.maximo.lazybum.deviceComponents.deviceClasses
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.maximo.lazybum.commandComponents.ShellyShutterCommand
@@ -14,7 +15,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.http.GET
-import retrofit2.http.POST
 import retrofit2.http.Query
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -32,10 +32,11 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
 
     suspend fun status(deviceName: String, pseudoParam: String): Status {
         return suspendCoroutine { continuation ->
-            val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java)
-
-            request.getStatus().enqueue(object : Callback<JsonObject> {
-                override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
+            val request = RequestBuilder.buildRequest(dUrl, ShellyShutterApi::class.java);
+            var statusInterface = request.getStatus();
+            if (dUrl == "http://192.168.178.59") statusInterface = request.getStatusV2();
+            statusInterface.enqueue(object : Callback<JsonObject> {
+                override fun onFailure(call: Call<JsonObject>, t: Throwable) {}
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
                     continuation.resume(processResponse(response))
@@ -52,7 +53,7 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
                 override fun onFailure(call: Call<JsonObject>, t: Throwable) { }
 
                 override fun onResponse(call: Call<JsonObject>, response: Response<JsonObject>) {
-                    continuation.resume(processResponse(response))
+                    continuation.resume(processResponseModified(response))
                 }
             })
         }
@@ -74,23 +75,35 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
         }
     }
 
-    private fun determineNextGo(state: String?, lastDirection: String?) {
-        nextGo = if (state == "stop") {
-            if (lastDirection == "close") {
-                "open"
-            } else {
-                "close"
-            }
-        } else {
-            "stop"
+    private fun determineNextGo(state: String?, lastDirection: String?, moveStartedAt: Double): String {
+        if (dUrl == "http://192.168.178.59") Log.e("state", "$state, $lastDirection, $moveStartedAt")
+        return if (state == "stop" || state == "stopped") {
+            if (lastDirection == "close") "open" else "close"
+        } else if (nextGo != "stop" && moveStartedAt == 0.0 && dUrl == "http://192.168.178.59") {
+            if (lastDirection == "close") "open" else "close"
         }
+        else "stop"
     }
 
     private fun processResponse(response: Response<JsonObject>): Status {
         responseObj = Gson().fromJson(response.body(), Shutter::class.java)
-        determineNextGo(responseObj.state, responseObj.last_direction)
+//        if(dUrl=="http://192.168.178.59") Log.e("next go", responseObj.toString())
+        nextGo = determineNextGo(responseObj.state, responseObj.last_direction, responseObj.move_started_at)
         return if (!nextGoMap.get(nextGo).isNullOrBlank()) nextGoMap[nextGo]?.let {
-            ShutterStatus(false, it)}!!
+            ShutterStatus(false, it)
+        }!!
+        else return ShutterStatus(false, "stop")
+    }
+
+    private fun processResponseModified(response: Response<JsonObject>): Status {
+        responseObj = Gson().fromJson(response.body(), Shutter::class.java)
+//        if(dUrl=="http://192.168.178.59") Log.e("next go", responseObj.toString())
+        if (dUrl == "http://192.168.178.59") {
+            nextGo = determineNextGo(nextGo, responseObj.last_direction, -1.0)
+        } else nextGo = determineNextGo(responseObj.state, responseObj.last_direction, -1.0)
+        return if (!nextGoMap.get(nextGo).isNullOrBlank()) nextGoMap[nextGo]?.let {
+            ShutterStatus(false, it)
+        }!!
         else return ShutterStatus(false, "stop")
     }
 
@@ -108,7 +121,7 @@ data class ShellyShutter(override val dUrl: String, override val dName: String):
 }
 
 interface ShellyShutterApi {
-    @POST("/roller/0")
+    @GET("/roller/0")
     fun go(
         @Query("go") go: String,
         @Query("roller_pos") pos: String?
@@ -116,4 +129,7 @@ interface ShellyShutterApi {
 
     @GET("/roller/0")
     fun getStatus(): Call<JsonObject>
+
+    @GET("/rpc/Cover.GetStatus?id=0")
+    fun getStatusV2(): Call<JsonObject>
 }

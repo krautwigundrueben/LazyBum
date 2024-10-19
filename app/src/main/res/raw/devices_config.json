@@ -40,26 +40,6 @@
     "dType": "ShellyShutter"
   },
   {
-    "dUrl": "http://192.168.178.54",
-    "dName": "shutterBathroom",
-    "dType": "ShellyShutter"
-  },
-  {
-    "dUrl": "http://192.168.178.57",
-    "dName": "shutterWork",
-    "dType": "ShellyShutter"
-  },
-  {
-    "dUrl": "http://192.168.178.51",
-    "dName": "shutterChildLeft",
-    "dType": "ShellyShutter"
-  },
-  {
-    "dUrl": "http://192.168.178.56",
-    "dName": "shutterChildRight",
-    "dType": "ShellyShutter"
-  },
-  {
     "dUrl": "http://192.168.178.58",
     "dName": "shutterLivingPergola",
     "dType": "ShellyShutter"
@@ -83,15 +63,5 @@
     "dUrl": "http://192.168.178.66",
     "dName": "roborock",
     "dType": "VacuumCleaner"
-  },
-  {
-    "dUrl": "http://192.168.178.36",
-    "dName": "68C63AD026E9",
-    "dType": "MyStromDimmer"
-  },
-  {
-    "dUrl": "http://192.168.178.108",
-    "dName": "arduinoSkyReceiver",
-    "dType": "ArduinoSkyReceiver"
   }
 ]

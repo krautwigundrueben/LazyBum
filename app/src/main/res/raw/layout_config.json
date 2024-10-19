@@ -67,17 +67,6 @@
               "commandName": "toggle"
             }
           ]
-        },
-        {
-          "mainText": "TV Receiver",
-          "subText": "wechselnd an | aus",
-          "icon": "ic_sky",
-          "actions": [
-            {
-              "deviceName": "arduinoSkyReceiver",
-              "commandName": "{\"turn\":\"toggleSky\"}"
-            }
-          ]
         }
       ]
     },
@@ -120,12 +109,31 @@
               "commandName": "{\"turn\":\"on\"}"
             },
             {
-              "deviceName": "arduinoSkyReceiver",
+              "deviceName": "arduinoAvReceiver",
+              "commandName": "{\"turn\":\"TV\"}"
+            }
+          ]
+        },
+        {
+          "mainText": "Chromecast",
+          "subText": "LED Grid gedimmt - Spots aus - TV an",
+          "icon": "ic_monitor",
+          "actions": [
+            {
+              "deviceName": "840D8E3D9494",
+              "commandName": "{\"color\":\"33000000\",\"mode\":\"rgb\",\"action\":\"on\",\"ramp\":\"2000\"}"
+            },
+            {
+              "deviceName": "spotLight",
+              "commandName": "{\"turn\":\"off\",\"brightness\":\"40\"}"
+            },
+            {
+              "deviceName": "tvSwitch",
               "commandName": "{\"turn\":\"on\"}"
             },
             {
               "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"TV\"}"
+              "commandName": "{\"turn\":\"CCaudio\"}"
             }
           ]
         },
@@ -147,12 +155,8 @@
               "commandName": "{\"turn\":\"off\"}"
             },
             {
-              "deviceName": "arduinoSkyReceiver",
-              "commandName": "{\"turn\":\"on\"}"
-            },
-            {
               "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"TV\"}"
+              "commandName": "{\"turn\":\"CCaudio\"}"
             }
           ]
         }
@@ -199,49 +203,6 @@
               "commandName": "{\"go\":\"close\"}"
             }
           ]
-        },
-        {
-          "mainText": "Heißer Tag",
-          "subText": "alle Rollos runter",
-          "icon": "ic_shutter",
-          "actions": [
-            {
-              "deviceName": "shutterParents",
-              "commandName": "{\"go\":\"close\"}"
-            },
-            {
-              "deviceName": "shutterBathroom",
-              "commandName": "{\"go\":\"close\"}"
-            },
-            {
-              "deviceName": "shutterWork",
-              "commandName": "{\"go\":\"close\"}"
-            },
-            {
-              "deviceName": "shutterChildLeft",
-              "commandName": "{\"go\":\"close\"}"
-            },
-            {
-              "deviceName": "shutterChildRight",
-              "commandName": "{\"go\":\"close\"}"
-            },
-            {
-              "deviceName": "shutterLivingPergola",
-              "commandName": "{\"go\":\"close\"}"
-            },
-            {
-              "deviceName": "shutterLivingSofa",
-              "commandName": "{\"go\":\"close\"}"
-            },
-            {
-              "deviceName": "shutterLivingDoor",
-              "commandName": "{\"go\":\"close\"}"
-            },
-            {
-              "deviceName": "shutterLivingSpices",
-              "commandName": "{\"go\":\"close\"}"
-            }
-          ]
         }
       ]
     },
@@ -266,10 +227,6 @@
               "commandName": "{\"turn\":\"off\"}"
             },
             {
-              "deviceName": "arduinoSkyReceiver",
-              "commandName": "{\"turn\":\"off\"}"
-            },
-            {
               "deviceName": "arduinoAvReceiver",
               "commandName": "{\"turn\":\"DvcsOff\"}"
             }
@@ -283,18 +240,7 @@
       "header": "Modus einstellen",
       "items": [
         {
-          "mainText": "Fernsehen",
-          "subText": "Quelle Sky Receiver",
-          "icon": "ic_football",
-          "actions": [
-            {
-              "deviceName": "arduinoAvReceiver",
-              "commandName": "{\"turn\":\"TV\"}"
-            }
-          ]
-        },
-        {
-          "mainText": "Musik über Bose System",
+          "mainText": "Bose System",
           "subText": "Quelle Bose Adapter",
           "icon": "ic_music",
           "actions": [
@@ -305,13 +251,24 @@
           ]
         },
         {
-          "mainText": "Musik oder Video über Chromecast",
+          "mainText": "Chromecast",
           "subText": "Quelle Chromecast",
           "icon": "ic_film",
           "actions": [
             {
               "deviceName": "arduinoAvReceiver",
               "commandName": "{\"turn\":\"CCaudio\"}"
+            }
+          ]
+        },
+        {
+          "mainText": "Kabel",
+          "subText": "Quelle Kabelreceiver",
+          "icon": "ic_film",
+          "actions": [
+            {
+              "deviceName": "arduinoAvReceiver",
+              "commandName": "{\"turn\":\"TV\"}"
             }
           ]
         }
@@ -385,62 +342,8 @@
       ]
     },
     {
-      "header": "Kinderzimmer",
-      "items": [
-        {
-          "mainText": "rechts",
-          "subText": "wechselnd runter | stop | hoch",
-          "icon": "ic_baby",
-          "actions": [
-            {
-              "deviceName": "shutterChildRight",
-              "commandName": "next"
-            }
-          ]
-        },
-        {
-          "mainText": "links",
-          "subText": "wechselnd runter | stop | hoch",
-          "icon": "ic_baby_left",
-          "actions": [
-            {
-              "deviceName": "shutterChildLeft",
-              "commandName": "next"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "header": "Arbeitszimmer",
-      "items": [
-        {
-          "mainText": "es gibt nur eins",
-          "subText": "wechselnd runter | stop | hoch",
-          "icon": "ic_work",
-          "actions": [
-            {
-              "deviceName": "shutterWork",
-              "commandName": "next"
-            }
-          ]
-        }
-      ]
-    },
-    {
       "header": "Elternzimmer",
       "items": [
-        {
-          "mainText": "Bad",
-          "subText": "wechselnd runter | stop | hoch",
-          "icon": "ic_bathroom",
-          "actions": [
-            {
-              "deviceName": "shutterBathroom",
-              "commandName": "next"
-            }
-          ]
-        },
         {
           "mainText": "Schlafzimmer",
           "subText": "wechselnd runter | stop | hoch",
@@ -556,17 +459,6 @@
           "mainText": "Flur",
           "subText": "Roboter saugt Flur",
           "icon": "ic_tunnel",
-          "actions": [
-            {
-              "deviceName": "roborock",
-              "commandName": ""
-            }
-          ]
-        },
-        {
-          "mainText": "Bad",
-          "subText": "Roboter saugt Bad",
-          "icon": "ic_shower",
           "actions": [
             {
               "deviceName": "roborock",
